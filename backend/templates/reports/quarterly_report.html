@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <title>Observatório Telecom GB — {{ period_label }}</title>
+    <style>
+        @page { size: A4; margin: 2cm; }
+        body { font-family: 'Helvetica', 'Arial', sans-serif; font-size: 10pt; color: #333; line-height: 1.5; }
+        h1 { color: #1B2A4A; font-size: 22pt; margin-bottom: 0.5em; }
+        h2 { color: #1B2A4A; font-size: 14pt; border-bottom: 2px solid #1B2A4A; padding-bottom: 4px; margin-top: 1.5em; }
+        h3 { color: #2C3E6B; font-size: 11pt; margin-top: 1em; }
+        .cover { text-align: center; padding-top: 8cm; page-break-after: always; }
+        .cover .logo { font-size: 28pt; font-weight: bold; color: #1B2A4A; letter-spacing: 4px; }
+        .cover .subtitle { font-size: 16pt; color: #555; margin-top: 1em; }
+        .cover .period { font-size: 20pt; color: #1B2A4A; margin-top: 0.5em; font-weight: bold; }
+        .kpi-grid { display: flex; gap: 15px; margin: 1em 0; flex-wrap: wrap; }
+        .kpi-card { background: #f8f9fa; border-radius: 6px; padding: 12px 16px; flex: 1; min-width: 120px; border-left: 3px solid #1B2A4A; }
+        .kpi-card .label { font-size: 8pt; color: #777; text-transform: uppercase; }
+        .kpi-card .value { font-size: 16pt; font-weight: bold; color: #1B2A4A; }
+        table { width: 100%; border-collapse: collapse; margin: 1em 0; font-size: 9pt; }
+        th { background: #1B2A4A; color: white; padding: 6px 8px; text-align: left; }
+        td { padding: 4px 8px; border-bottom: 1px solid #e0e0e0; }
+        tr:nth-child(even) { background: #f9f9fa; }
+        .level-0 td { font-weight: bold; background: #eef2f7; }
+        .footer { text-align: center; font-size: 8pt; color: #999; margin-top: 2em; border-top: 1px solid #ddd; padding-top: 0.5em; }
+        .page-break { page-break-before: always; }
+        .operator-telecel { color: #E30613; }
+        .operator-orange { color: #FF6600; }
+        .operator-starlink { color: #000000; }
+    </style>
+</head>
+<body>
+    <div class="cover">
+        <div class="logo">ARN</div>
+        <p style="color: #555; font-size: 11pt;">Autoridade Reguladora Nacional — Guiné-Bissau</p>
+        <div class="subtitle">Observatório do Mercado de Telecomunicações</div>
+        <div class="period">{{ period_label }}</div>
+        <p style="color: #777; margin-top: 2em;">Relatório {% if report_type == 'quarterly' %}Trimestral{% else %}Anual{% endif %}</p>
+    </div>
+
+    <h1>Resumo Executivo</h1>
+    <div class="kpi-grid">
+        <div class="kpi-card">
+            <div class="label">Total Assinantes</div>
+            <div class="value">{{ summary.total_subscribers|floatformat:0 }}</div>
+        </div>
+        <div class="kpi-card">
+            <div class="label">Volume de Negócios</div>
+            <div class="value">{{ summary.total_revenue|floatformat:0 }} FCFA</div>
+        </div>
+        <div class="kpi-card">
+            <div class="label">Taxa Penetração</div>
+            <div class="value">{{ summary.penetration_rate }}%</div>
+        </div>
+        <div class="kpi-card">
+            <div class="label">Operadores</div>
+            <div class="value">{{ summary.active_operators }}</div>
+        </div>
+    </div>
+
+    {% if market_shares.mobile %}
+    <h2>Quota de Mercado Móvel</h2>
+    <table>
+        <tr><th>Operador</th><th>Assinantes</th><th>Quota (%)</th></tr>
+        {% for item in market_shares.mobile %}
+        <tr>
+            <td><strong>{{ item.operator_name }}</strong></td>
+            <td>{{ item.value|floatformat:0 }}</td>
+            <td>{{ item.share_pct }}%</td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% endif %}
+
+    {% if market_shares.fixed_internet %}
+    <h2>Quota de Mercado — Internet Fixa</h2>
+    <table>
+        <tr><th>Operador</th><th>Assinantes</th><th>Quota (%)</th></tr>
+        {% for item in market_shares.fixed_internet %}
+        <tr>
+            <td><strong>{{ item.operator_name }}</strong></td>
+            <td>{{ item.value|floatformat:0 }}</td>
+            <td>{{ item.share_pct }}%</td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% endif %}
+
+    <h2>Concentração de Mercado (HHI)</h2>
+    <table>
+        <tr><th>Mercado</th><th>HHI</th><th>Classificação</th></tr>
+        <tr><td>Móvel</td><td>{{ hhi_mobile.hhi|floatformat:0 }}</td><td>{{ hhi_mobile.classification }}</td></tr>
+        <tr><td>Internet Fixa</td><td>{{ hhi_internet.hhi|floatformat:0 }}</td><td>{{ hhi_internet.classification }}</td></tr>
+    </table>
+
+    {% for cat in categories %}
+    <div class="page-break"></div>
+    <h2>{{ cat.order }}. {{ cat.name }}</h2>
+    {% with cat_data=category_data %}
+    {% if cat.code in cat_data %}
+
+    {% if cat_data|length > 0 %}
+    {% with growth_data=cat_data %}
+    {% if cat.code in growth_data and growth_data|length > 0 %}
+    <h3>Crescimento Anual</h3>
+    <table>
+        <tr><th>Operador</th><th>{{ year|add:"-1" }}</th><th>{{ year }}</th><th>Variação</th><th>%</th></tr>
+        {% for g in growth_data.values|first %}
+        {% endfor %}
+    </table>
+    {% endif %}
+    {% endwith %}
+    {% endif %}
+
+    {% endif %}
+    {% endwith %}
+    {% endfor %}
+
+    <div class="footer">
+        <p>Observatório do Mercado de Telecomunicações da Guiné-Bissau — ARN {{ year }}</p>
+        <p>Operadores: Telecel | Orange Bissau | Starlink</p>
+    </div>
+</body>
+</html>

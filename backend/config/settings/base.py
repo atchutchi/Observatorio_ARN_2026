@@ -24,6 +24,9 @@ INSTALLED_APPS = [
     'apps.operators',
     'apps.indicators',
     'apps.data_entry',
+    'apps.dashboards',
+    'apps.reports',
+    'apps.ai_assistant',
 ]
 
 MIDDLEWARE = [
@@ -129,6 +132,10 @@ CELERY_RESULT_BACKEND = os.environ.get('CELERY_RESULT_BACKEND', 'redis://redis:6
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
+
+# Gemini AI
+GEMINI_API_KEY = os.environ.get('GEMINI_API_KEY', '')
+GEMINI_MODEL = os.environ.get('GEMINI_MODEL', 'gemini-2.0-flash')
 
 # Reference data
 POPULATION_REFERENCE = int(os.environ.get('POPULATION_REFERENCE', 2070000))

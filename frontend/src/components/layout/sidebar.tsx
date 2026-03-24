@@ -14,6 +14,18 @@ import {
   Upload,
   CheckCircle,
   History,
+  Users,
+  Phone,
+  PhoneIncoming,
+  Globe,
+  Wifi,
+  Monitor,
+  Activity,
+  CreditCard,
+  Briefcase,
+  Building2,
+  TrendingUp,
+  GitCompare,
 } from 'lucide-react'
 
 type NavItem = {
@@ -35,7 +47,23 @@ const NAV_ITEMS: NavItem[] = [
       { label: 'Histórico', href: '/data-entry/history', icon: History },
     ],
   },
-  { label: 'Análise', href: '/analysis', icon: BarChart3 },
+  {
+    label: 'Análise', href: '/analysis', icon: BarChart3,
+    children: [
+      { label: 'Estações Móveis', href: '/analysis/estacoes_moveis', icon: Users },
+      { label: 'Tráfego Originado', href: '/analysis/trafego_originado', icon: Phone },
+      { label: 'Tráfego Terminado', href: '/analysis/trafego_terminado', icon: PhoneIncoming },
+      { label: 'Roaming', href: '/analysis/trafego_roaming', icon: Globe },
+      { label: 'LBI', href: '/analysis/lbi', icon: Wifi },
+      { label: 'Internet Fixo', href: '/analysis/internet_fixo', icon: Monitor },
+      { label: 'Internet Tráfego', href: '/analysis/internet_trafic', icon: Activity },
+      { label: 'Tarifário Voz', href: '/analysis/tarifario_voz', icon: CreditCard },
+      { label: 'Receitas', href: '/analysis/receitas', icon: Briefcase },
+      { label: 'Empregos', href: '/analysis/empregos', icon: Building2 },
+      { label: 'Investimento', href: '/analysis/investimento', icon: TrendingUp },
+      { label: 'Comparativa', href: '/analysis/comparative', icon: GitCompare },
+    ],
+  },
   { label: 'Relatórios', href: '/reports', icon: FileText },
   { label: 'Assistente IA', href: '/assistant', icon: MessageSquare },
   { label: 'Configurações', href: '/settings', icon: Settings, roles: ['admin_arn'] },
@@ -69,7 +97,7 @@ const Sidebar = () => {
         </div>
       </div>
 
-      <nav className="flex-1 px-3 space-y-1">
+      <nav className="flex-1 px-3 space-y-1 overflow-y-auto">
         {NAV_ITEMS.filter(hasAccess).map((item) => (
           <div key={item.href}>
             <Link
@@ -86,19 +114,19 @@ const Sidebar = () => {
             </Link>
 
             {item.children && isActive(item.href) && (
-              <div className="ml-8 mt-1 space-y-0.5">
+              <div className="ml-8 mt-1 space-y-0.5 max-h-72 overflow-y-auto">
                 {item.children.filter(hasAccess).map((child) => (
                   <Link
                     key={child.href}
                     href={child.href}
                     className={cn(
-                      'flex items-center gap-2 px-3 py-2 rounded-md text-xs font-medium transition-colors',
+                      'flex items-center gap-2 px-3 py-1.5 rounded-md text-xs font-medium transition-colors',
                       pathname === child.href
                         ? 'bg-white/15 text-white'
                         : 'text-white/50 hover:bg-white/10 hover:text-white'
                     )}
                   >
-                    <child.icon className="w-4 h-4 shrink-0" />
+                    <child.icon className="w-3.5 h-3.5 shrink-0" />
                     {child.label}
                   </Link>
                 ))}
