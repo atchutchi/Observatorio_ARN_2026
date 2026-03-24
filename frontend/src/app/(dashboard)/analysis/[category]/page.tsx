@@ -3,9 +3,10 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { ArrowLeft, Download } from 'lucide-react'
-import { ChartWrapper, ComboChart, PieChart, LineChart, BarChart } from '@/components/charts'
+import { ChartWrapper, ComboChart, PieChart, LineChart } from '@/components/charts'
 import api from '@/lib/api'
 import { formatNumber } from '@/lib/utils'
+import toast from 'react-hot-toast'
 
 type IndicatorDataItem = {
   indicator_code: string
@@ -105,8 +106,8 @@ const CategoryAnalysisPage = () => {
       } catch {
         setGrowth([])
       }
-    } catch {
-      // handle error
+    } catch (err) {
+      toast.error('Erro ao carregar dados da categoria')
     } finally {
       setIsLoading(false)
     }
@@ -128,7 +129,7 @@ const CategoryAnalysisPage = () => {
       link.click()
       link.remove()
     } catch {
-      // handle error
+      toast.error('Erro ao exportar dados')
     }
   }
 

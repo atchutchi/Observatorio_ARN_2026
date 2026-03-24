@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { ArrowLeft, FileText, Loader2, CheckCircle, AlertCircle } from 'lucide-react'
 import api from '@/lib/api'
@@ -17,30 +17,39 @@ const GenerateReportPage = () => {
   const [title, setTitle] = useState('')
   const [isGenerating, setIsGenerating] = useState(false)
   const [generatedReport, setGeneratedReport] = useState<{ id: number; status: string } | null>(null)
+  const pollIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
-  const pollStatus = useCallback(async (reportId: number) => {
-    const interval = setInterval(async () => {
+  useEffect(() => {
+    return () => {
+      if (pollIntervalRef.current) clearInterval(pollIntervalRef.current)
+    }
+  }, [])
+
+  const pollStatus = useCallback((reportId: number) => {
+    if (pollIntervalRef.current) clearInterval(pollIntervalRef.current)
+
+    pollIntervalRef.current = setInterval(async () => {
       try {
         const res = await api.get(`/reports/${reportId}/`)
-        const status = res.data.status
-        setGeneratedReport({ id: reportId, status })
+        const reportStatus = res.data.status
+        setGeneratedReport({ id: reportId, status: reportStatus })
 
-        if (status === 'ready' || status === 'error') {
-          clearInterval(interval)
+        if (reportStatus === 'ready' || reportStatus === 'error') {
+          if (pollIntervalRef.current) clearInterval(pollIntervalRef.current)
+          pollIntervalRef.current = null
           setIsGenerating(false)
-          if (status === 'ready') {
+          if (reportStatus === 'ready') {
             toast.success('Relatório gerado com sucesso!')
           } else {
             toast.error('Erro ao gerar relatório')
           }
         }
       } catch {
-        clearInterval(interval)
+        if (pollIntervalRef.current) clearInterval(pollIntervalRef.current)
+        pollIntervalRef.current = null
         setIsGenerating(false)
       }
     }, 3000)
-
-    return () => clearInterval(interval)
   }, [])
 
   const handleGenerate = async () => {

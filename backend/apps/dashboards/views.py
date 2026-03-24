@@ -106,11 +106,26 @@ class DashboardComparativeView(APIView):
                 IndicatorCategory.objects.values_list('code', flat=True),
             )
 
+        category_to_market = {
+            'estacoes_moveis': 'mobile',
+            'trafego_originado': 'voice',
+            'trafego_terminado': 'voice',
+            'trafego_roaming': 'mobile',
+            'internet_fixo': 'fixed_internet',
+            'internet_trafic': 'data',
+            'receitas': 'revenue',
+            'empregos': 'employment',
+            'investimento': 'revenue',
+            'lbi': 'data',
+            'tarifario_voz': 'voice',
+        }
+
         results = {}
         for cat_code in categories:
             try:
                 growth = DashboardService.get_growth_rates(cat_code, year)
-                market = DashboardService.get_market_share(year, market=cat_code)
+                market_key = category_to_market.get(cat_code, 'mobile')
+                market = DashboardService.get_market_share(year, market=market_key)
                 results[cat_code] = {
                     'growth': growth,
                     'market_share': market,

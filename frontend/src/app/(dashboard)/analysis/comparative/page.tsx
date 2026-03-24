@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation'
 import { ChartWrapper, BarChart, PieChart } from '@/components/charts'
 import api from '@/lib/api'
 import { formatNumber } from '@/lib/utils'
+import toast from 'react-hot-toast'
 
 type HHIData = {
   hhi: number
@@ -47,10 +48,7 @@ const ComparativeAnalysisPage = () => {
   const fetchData = useCallback(async () => {
     setIsLoading(true)
     try {
-      const [hhiRes, shareRes] = await Promise.all([
-        api.get('/dashboard/hhi/', { params: { year, market } }),
-        api.get('/dashboard/market-share/', { params: { year, market } }),
-      ])
+      const hhiRes = await api.get('/dashboard/hhi/', { params: { year, market } })
       setHHI(hhiRes.data)
 
       const marketCategoryMap: Record<string, string> = {
@@ -73,7 +71,7 @@ const ComparativeAnalysisPage = () => {
         setGrowth([])
       }
     } catch {
-      // handle error
+      toast.error('Erro ao carregar dados comparativos')
     } finally {
       setIsLoading(false)
     }
