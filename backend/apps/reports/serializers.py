@@ -8,15 +8,16 @@ class ReportSerializer(serializers.ModelSerializer):
     )
     pdf_url = serializers.FileField(source='pdf_file', read_only=True)
     excel_url = serializers.FileField(source='excel_file', read_only=True)
+    docx_url = serializers.FileField(source='docx_file', read_only=True)
 
     class Meta:
         model = Report
         fields = [
             'id', 'title', 'report_type', 'year', 'quarter', 'status',
             'generated_at', 'generated_by_name', 'executive_summary',
-            'pdf_url', 'excel_url', 'error_log',
+            'pdf_url', 'excel_url', 'docx_url', 'error_log',
         ]
-        read_only_fields = ['id', 'generated_at', 'status', 'pdf_url', 'excel_url']
+        read_only_fields = ['id', 'generated_at', 'status', 'pdf_url', 'excel_url', 'docx_url']
 
 
 class ReportGenerateSerializer(serializers.Serializer):

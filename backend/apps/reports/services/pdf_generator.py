@@ -13,6 +13,13 @@ class PDFReportGenerator:
 
     def generate(self):
         context = self._build_context()
+
+        try:
+            from .chart_generator import generate_all_charts
+            context['charts'] = generate_all_charts(self.year, self.quarter)
+        except Exception:
+            context['charts'] = {}
+
         template = 'reports/quarterly_report.html' if self.report_type == 'quarterly' else 'reports/annual_report.html'
         html_content = render_to_string(template, context)
 

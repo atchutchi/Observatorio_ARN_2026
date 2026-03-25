@@ -15,17 +15,16 @@ def generate_report_task(report_id):
     report.save(update_fields=['status'])
 
     try:
+        filename_base = f"observatorio_{report.report_type}_{report.year}"
+        if report.quarter:
+            filename_base += f"_Q{report.quarter}"
+
         pdf_gen = PDFReportGenerator(
             year=report.year,
             quarter=report.quarter,
             report_type=report.report_type,
         )
         pdf_bytes = pdf_gen.generate()
-
-        filename_base = f"observatorio_{report.report_type}_{report.year}"
-        if report.quarter:
-            filename_base += f"_Q{report.quarter}"
-
         report.pdf_file.save(
             f"{filename_base}.pdf",
             ContentFile(pdf_bytes),
@@ -37,10 +36,22 @@ def generate_report_task(report_id):
             quarter=report.quarter,
         )
         excel_bytes = excel_gen.generate()
-
         report.excel_file.save(
             f"{filename_base}.xlsx",
             ContentFile(excel_bytes),
+            save=False,
+        )
+
+        from .services.docx_generator import DocxReportGenerator
+        docx_gen = DocxReportGenerator(
+            year=report.year,
+            quarter=report.quarter,
+            report_type=report.report_type,
+        )
+        docx_bytes = docx_gen.generate()
+        report.docx_file.save(
+            f"{filename_base}.docx",
+            ContentFile(docx_bytes),
             save=False,
         )
 

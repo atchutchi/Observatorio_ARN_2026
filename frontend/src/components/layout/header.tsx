@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useAuthStore } from '@/lib/auth'
 import { LogOut, User } from 'lucide-react'
@@ -31,9 +32,13 @@ const Header = () => {
               </p>
               <p className="text-xs text-gray-500">{user.role_display}</p>
             </div>
-            <div className="w-9 h-9 bg-arn-primary rounded-full flex items-center justify-center">
+            <Link
+              href="/profile"
+              className="w-9 h-9 bg-arn-primary rounded-full flex items-center justify-center hover:bg-arn-secondary transition-colors"
+              aria-label="Ver perfil"
+            >
               <User className="w-4 h-4 text-white" />
-            </div>
+            </Link>
             <button
               type="button"
               onClick={handleLogout}

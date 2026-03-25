@@ -1,5 +1,6 @@
 from django.db import models
 from django.conf import settings
+from simple_history.models import HistoricalRecords
 
 
 class DataEntry(models.Model):
@@ -42,6 +43,8 @@ class DataEntry(models.Model):
         related_name='validated_entries', verbose_name='Validado por',
     )
     validated_at = models.DateTimeField(null=True, blank=True, verbose_name='Data de validação')
+
+    history = HistoricalRecords()
 
     class Meta:
         verbose_name = 'Entrada de Dados'
@@ -93,6 +96,8 @@ class CumulativeData(models.Model):
         default='manual', verbose_name='Fonte',
     )
     is_validated = models.BooleanField(default=False, verbose_name='Validado')
+
+    history = HistoricalRecords()
 
     class Meta:
         verbose_name = 'Dados Cumulativos'

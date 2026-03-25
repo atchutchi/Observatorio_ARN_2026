@@ -17,6 +17,7 @@ type Report = {
   generated_by_name: string
   pdf_url: string | null
   excel_url: string | null
+  docx_url: string | null
 }
 
 const STATUS_CONFIG: Record<string, { icon: React.ElementType; color: string; label: string }> = {
@@ -47,16 +48,16 @@ const ReportsPage = () => {
     fetch()
   }, [])
 
-  const handleDownload = async (reportId: number, format: 'pdf' | 'excel') => {
+  const handleDownload = async (reportId: number, format: 'pdf' | 'excel' | 'docx') => {
     try {
       const res = await api.get(`/reports/${reportId}/download_${format}/`, {
         responseType: 'blob',
       })
-      const ext = format === 'pdf' ? 'pdf' : 'xlsx'
+      const extMap = { pdf: 'pdf', excel: 'xlsx', docx: 'docx' }
       const url = window.URL.createObjectURL(new Blob([res.data]))
       const link = document.createElement('a')
       link.href = url
-      link.setAttribute('download', `report_${reportId}.${ext}`)
+      link.setAttribute('download', `report_${reportId}.${extMap[format]}`)
       document.body.appendChild(link)
       link.click()
       link.remove()
@@ -141,6 +142,15 @@ const ReportsPage = () => {
                       className="flex items-center gap-1.5 px-3 py-1.5 bg-green-50 text-green-700 rounded-lg text-xs font-medium hover:bg-green-100 transition-colors"
                     >
                       <Download className="w-3.5 h-3.5" /> Excel
+                    </button>
+                  )}
+                  {report.docx_url && (report.status === 'ready' || report.status === 'published') && (
+                    <button
+                      type="button"
+                      onClick={() => handleDownload(report.id, 'docx')}
+                      className="flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 text-blue-700 rounded-lg text-xs font-medium hover:bg-blue-100 transition-colors"
+                    >
+                      <Download className="w-3.5 h-3.5" /> Word
                     </button>
                   )}
                 </div>

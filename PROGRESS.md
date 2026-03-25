@@ -11,10 +11,11 @@
 |------|-----------|--------|------|
 | 1 | Fundação (Django, Docker, Modelos, Auth, Seed) | ✅ COMPLETO | Mar 2026 |
 | 2 | Entrada de Dados (Formulários, Upload Excel, ETL) | ✅ COMPLETO | Mar 2026 |
-| 3 | Dashboard e Análise | ✅ COMPLETO (com bugs a corrigir) | Mar 2026 |
-| 4 | Relatórios e Exportação | ✅ COMPLETO (deps em falta) | Mar 2026 |
-| 5 | Chatbot IA (Gemini) | ✅ COMPLETO (dep em falta) | Mar 2026 |
+| 3 | Dashboard e Análise | ✅ COMPLETO | Mar 2026 |
+| 4 | Relatórios e Exportação (PDF + Excel + Word) | ✅ COMPLETO | Mar 2026 |
+| 5 | Chatbot IA (Gemini) | ✅ COMPLETO | Mar 2026 |
 | 6 | Correcções de Segurança e Polish | ✅ COMPLETO | 24 Mar 2026 |
+| 7 | Funcionalidades Avançadas + Testes | ✅ COMPLETO | 25 Mar 2026 |
 
 ---
 
@@ -56,7 +57,7 @@
 
 ---
 
-## Fase 3 — Dashboard e Análise ✅ (com bugs)
+## Fase 3 — Dashboard e Análise ✅
 
 ### O que foi feito
 - **Backend `dashboards` app**: `DashboardService` com métodos reais de agregação ORM
@@ -66,39 +67,39 @@
   - `get_trends` — evolução temporal
   - `get_growth_rates` — taxas de crescimento
   - `get_hhi` — índice de concentração
-- **7 endpoints API**: summary, indicator/{category}, market-share, trends, comparative, hhi, export
+  - `get_cagr` — **NOVO** Taxa de Crescimento Anual Composta (CAGR)
+- **8 endpoints API**: summary, indicator/{category}, market-share, trends, comparative, cagr, hhi, export
 - **Frontend charts**: Wrappers ECharts reutilizáveis (BarChart, LineChart, PieChart, ComboChart, ChartWrapper)
 - **Dashboard principal**: KPIs, gráficos de tendência e quota — dados reais da API
 - **Análise por indicador**: `/analysis/[category]` com tabela, gráficos evolução/comparação/quota
 - **Análise comparativa**: `/analysis/comparative` com HHI e crescimento
-- **Sidebar**: Sub-menu de análise com 11 categorias
-
-### 🐛 Bugs Conhecidos — Fase 3
-1. **Comparative market-share mapping**: `DashboardComparativeView` passa `cat_code` como `market` para `get_market_share`, mas o serviço espera chaves como `mobile`, `fixed_internet`, `revenue`. Resultado: quota de mercado errada na vista comparativa.
-2. **Import não usado**: `[category]/page.tsx` importa `BarChart` mas só usa `ComboChart`, `PieChart` e `LineChart`.
-3. **API call não usada**: `comparative/page.tsx` faz `api.get('/dashboard/market-share/')` mas não usa o resultado (`shareRes`).
-4. **Tratamento de erros silencioso**: Vários `catch` vazios sem feedback ao utilizador.
+- **Análise de mercado**: `/analysis/market` — **NOVO** HHI, quotas, evolução, CAGR por mercado
+- **Sidebar**: Sub-menu de análise com 11 categorias + Comparativa + Mercado
 
 ---
 
-## Fase 4 — Relatórios e Exportação ✅ (deps em falta)
+## Fase 4 — Relatórios e Exportação ✅
 
 ### O que foi feito
-- **Modelos**: `Report` (com estado, ficheiros PDF/Excel, secções JSON) + `ReportTemplate`
-- **PDF generator** (`PDFReportGenerator`): Usa WeasyPrint + templates HTML
-- **Excel generator** (`ExcelReportGenerator`): Usa openpyxl com formatação profissional
-- **Celery task**: Geração assíncrona com actualização de estado
+- **Modelos**: `Report` (com estado, ficheiros PDF/Excel/Word, secções JSON) + `ReportTemplate`
+- **PDF generator** (`PDFReportGenerator`): WeasyPrint + templates HTML + gráficos matplotlib
+- **Excel generator** (`ExcelReportGenerator`): openpyxl com formatação profissional
+- **Word generator** (`DocxReportGenerator`): **NOVO** python-docx com capa, resumo, tabelas, HHI
+- **Chart generator** (`chart_generator.py`): **NOVO** matplotlib/seaborn gráficos estáticos (quotas, tendências, HHI)
+- **Celery task**: Geração assíncrona de PDF + Excel + Word com actualização de estado
 - **Templates HTML**: `quarterly_report.html`, `annual_report.html`
-- **Frontend**: Lista de relatórios com download + formulário de geração com polling
+- **Frontend**: Lista de relatórios com download PDF/Excel/Word + formulário de geração com polling
 
-### 🐛 Bugs Conhecidos — Fase 4
-1. **Dependência WeasyPrint em falta**: `weasyprint` não está no `requirements.txt` — PDF fallback devolve HTML raw.
-2. **Dependências matplotlib/seaborn em falta**: Referenciadas no plano mas não implementadas nos geradores (gráficos estáticos).
-3. **Polling leak**: Em `reports/generate/page.tsx`, o `setInterval` de polling não é limpo correctamente no `useEffect` — pode continuar após navegação.
+### Ficheiros chave
+- `backend/apps/reports/services/pdf_generator.py`
+- `backend/apps/reports/services/excel_generator.py`
+- `backend/apps/reports/services/docx_generator.py` — **NOVO**
+- `backend/apps/reports/services/chart_generator.py` — **NOVO**
+- `frontend/src/app/(dashboard)/reports/page.tsx` — botão Word adicionado
 
 ---
 
-## Fase 5 — Chatbot IA ✅ (dep em falta)
+## Fase 5 — Chatbot IA ✅
 
 ### O que foi feito
 - **Modelos**: `ChatSession` + `ChatMessage` com FK, metadata JSON
@@ -106,14 +107,9 @@
 - **Endpoints**: POST `/assistant/query/`, GET `/assistant/sessions/` (ReadOnly)
 - **Frontend**: Chat completo com nova conversa, suggested queries, mensagens
 
-### 🐛 Bugs Conhecidos — Fase 5
-1. **Dependência google-generativeai em falta**: Não está no `requirements.txt` — fallback activo.
-2. **ChatSessionViewSet ReadOnly**: Sem CRUD de sessões via API (só criação implícita no POST query).
-3. **Import `json` não usado** no `services.py`.
-
 ---
 
-## Fase 6 — Correcções, Segurança e Polish 🔄
+## Fase 6 — Correcções, Segurança e Polish ✅
 
 ### Correcções de Segurança — 24 Mar 2026
 - [x] **GitGuardian Alert**: Removidas credenciais hardcoded (`admin`/`admin123`) do `backend/entrypoint.sh`
@@ -132,12 +128,90 @@
 - [x] Removida API call redundante (`shareRes` em comparative)
 - [x] Adicionado tratamento de erros com `toast` em páginas de análise
 
-### Dependências em Falta no `requirements.txt`
+---
+
+## Fase 7 — Funcionalidades Avançadas + Testes ✅ — 25 Mar 2026
+
+### Prioridade Alta — Implementado
+
+#### Página de Perfil (`/profile`)
+- [x] Página completa de perfil com edição inline (nome, email, telefone, cargo)
+- [x] Chamada PATCH `/auth/profile/` para actualização
+- [x] Link no avatar do header para a página de perfil
+- [x] Visualização de role, operador, informações da conta
+
+#### Gestão de Utilizadores (`/settings/users`)
+- [x] Página CRUD completa: lista, criar, editar, eliminar utilizadores
+- [x] Modal de criação/edição com todos os campos (role, operador, password)
+- [x] Pesquisa por nome/username/email
+- [x] Filtro por perfil de acesso (role)
+- [x] Protecção: só admin ARN tem acesso
+- [x] Validação: não pode eliminar a própria conta
+
+#### Página de Configurações (`/settings`)
+- [x] Visão geral com KPIs (utilizadores, operadores, categorias)
+- [x] Tab de operadores — lista com cores, códigos, estado
+- [x] Tab de categorias — lista com tipo (mensal/cumulativo), código, contagem
+- [x] Links rápidos para gestão de utilizadores e geração de relatórios
+- [x] Sidebar com sub-menu (Visão Geral + Utilizadores)
+
+#### Relatórios Word (.docx)
+- [x] `DocxReportGenerator` com python-docx: capa, resumo executivo, tabelas, HHI
+- [x] Endpoint `download_docx` no `ReportViewSet`
+- [x] Campo `docx_file` no modelo `Report` + migração
+- [x] Geração automática na task Celery (PDF + Excel + Word)
+- [x] Serializer actualizado com `docx_url`
+- [x] Botão "Word" na lista de relatórios (frontend)
+- [x] Dependência `python-docx==1.1.2` adicionada ao `requirements.txt`
+
+#### Testes Unitários e de Integração
+- [x] **accounts/tests/test_models.py** — roles, propriedades, campos User
+- [x] **accounts/tests/test_views.py** — auth (tokens, refresh), profile (get/patch), gestão users (CRUD, permissões)
+- [x] **dashboards/tests/test_services.py** — summary, market share, HHI, growth rates, CAGR
+- [x] **dashboards/tests/test_views.py** — todos os endpoints dashboard (summary, market-share, hhi, cagr, trends, export)
+- [x] **indicators/tests/test_models.py** — categorias, indicadores, períodos, hierarquia, unique constraints
+- [x] **data_entry/tests/test_models.py** — DataEntry, CumulativeData, unique constraints, history tracking
+- [x] **reports/tests/test_views.py** — lista, retrieve, generate, publish, download, permissões
+
+### Prioridade Média — Implementado
+
+#### CAGR (Crescimento Anual Composto)
+- [x] `DashboardService.get_cagr()` — fórmula `((V_end/V_start)^(1/n) - 1) × 100`
+- [x] Endpoint GET `/dashboard/cagr/` com parâmetros `category`, `start_year`, `end_year`
+- [x] CAGR por operador + total de mercado
+
+#### Análise de Mercado (`/analysis/market`)
+- [x] Página completa com HHI, quota, evolução, crescimento
+- [x] Selecção de 7 mercados (móvel, voz, SMS, dados, internet fixo, receitas, emprego)
+- [x] KPIs: HHI, classificação, líder de mercado
+- [x] Gráficos: quota (pie), evolução HHI (line), evolução operadores (combo), crescimento (bar)
+- [x] Tabela de detalhe com barras de quota visual
+
+#### Gráficos Estáticos para PDFs (Matplotlib/Seaborn)
+- [x] `chart_generator.py` — gera gráficos PNG em base64
+- [x] Quotas de mercado (pie chart) para mobile, internet fixo, receitas
+- [x] Tendências (stacked bar + line) para estações móveis, tráfego, receitas
+- [x] Indicador HHI (horizontal bar com thresholds)
+- [x] Integrados no `PDFReportGenerator._build_context()`
+
+### Prioridade Baixa — Implementado
+
+#### Rate Limiting API
+- [x] DRF throttling configurado: `anon: 30/min`, `user: 120/min`
+- [x] `AnonRateThrottle` + `UserRateThrottle` em `DEFAULT_THROTTLE_CLASSES`
+
+#### Auditoria (django-simple-history)
+- [x] `django-simple-history==3.7.0` adicionado ao `requirements.txt`
+- [x] `simple_history` em `INSTALLED_APPS`
+- [x] `HistoryRequestMiddleware` no middleware stack
+- [x] `HistoricalRecords` em `DataEntry` e `CumulativeData`
+- [x] Tracking automático de todas as alterações de dados
+
+#### Dependências Adicionadas
 ```
-weasyprint          # PDF generation
-matplotlib          # Static charts for reports
-seaborn             # Statistical charts
-google-generativeai # Gemini AI integration
+python-docx==1.1.2       # Word report generation
+reportlab==4.2.5          # Alternative PDF generation
+django-simple-history==3.7.0  # Audit trail
 ```
 
 ---
@@ -148,19 +222,36 @@ google-generativeai # Gemini AI integration
 Observatorio_ARN_2026/
 ├── backend/
 │   ├── apps/
-│   │   ├── accounts/        ✅ User, roles, auth
+│   │   ├── accounts/        ✅ User, roles, auth, profile, CRUD users
+│   │   │   └── tests/       ✅ test_models.py, test_views.py
 │   │   ├── operators/       ✅ Operator, OperatorType, seed_data
 │   │   ├── indicators/      ✅ IndicatorCategory, Indicator, Period
-│   │   ├── data_entry/      ✅ DataEntry, CumulativeData, FileUpload, ETL
-│   │   ├── dashboards/      ✅ DashboardService, views, urls (sem models)
-│   │   ├── reports/         ✅ Report, ReportTemplate, PDF/Excel generators
+│   │   │   └── tests/       ✅ test_models.py
+│   │   ├── data_entry/      ✅ DataEntry, CumulativeData, FileUpload, ETL, History
+│   │   │   └── tests/       ✅ test_models.py
+│   │   ├── dashboards/      ✅ DashboardService (+CAGR), views (+CAGR), urls
+│   │   │   └── tests/       ✅ test_services.py, test_views.py
+│   │   ├── reports/         ✅ Report (+docx), PDF/Excel/Word generators, Charts
+│   │   │   ├── services/    ✅ pdf_generator, excel_generator, docx_generator, chart_generator
+│   │   │   └── tests/       ✅ test_views.py
 │   │   ├── ai_assistant/    ✅ ChatSession, ChatMessage, GeminiAssistant
 │   │   └── api/v1/          ✅ Routers, URLs aggregation
-│   ├── config/              ✅ Settings, URLs, Celery, WSGI
+│   ├── config/              ✅ Settings (+throttling, +audit), URLs, Celery, WSGI
 │   └── templates/reports/   ✅ quarterly_report.html, annual_report.html
 ├── frontend/src/
 │   ├── app/(auth)/login/    ✅ Login page
-│   ├── app/(dashboard)/     ✅ Dashboard, Analysis, Reports, Assistant, Data-Entry
+│   ├── app/(dashboard)/
+│   │   ├── page.tsx         ✅ Dashboard principal
+│   │   ├── profile/         ✅ NOVO — Página de perfil
+│   │   ├── settings/        ✅ NOVO — Configurações admin
+│   │   │   └── users/       ✅ NOVO — Gestão de utilizadores
+│   │   ├── analysis/
+│   │   │   ├── [category]/  ✅ Análise por indicador
+│   │   │   ├── comparative/ ✅ Análise comparativa
+│   │   │   └── market/      ✅ NOVO — Análise de mercado
+│   │   ├── data-entry/      ✅ Manual, Upload, Validation, History
+│   │   ├── reports/         ✅ Lista + Geração (+Word download)
+│   │   └── assistant/       ✅ Chat IA
 │   ├── components/          ✅ Charts (ECharts), Layout, UI, Chat
 │   ├── lib/                 ✅ API client (Axios), utils, auth
 │   ├── hooks/               ✅ useApi
@@ -173,18 +264,32 @@ Observatorio_ARN_2026/
 
 ## Próximos Passos
 
-1. ~~Corrigir alerta GitGuardian (credenciais no entrypoint.sh)~~ ✅
-2. ~~Adicionar dependências em falta ao `requirements.txt`~~ ✅
-3. ~~Corrigir bug do comparative market-share mapping~~ ✅
-4. ~~Corrigir polling leak na geração de relatórios~~ ✅
-5. ~~Limpar imports não usados e API calls redundantes~~ ✅
-6. ~~Melhorar tratamento de erros (toast notifications)~~ ✅
-7. ~~Actualizar README (remover credenciais, documentar fases 2-5)~~ ✅
-8. Testar fluxo completo com Docker
-9. Preparar dados de teste / importar dados históricos 2018-2023
-10. Adicionar testes unitários (backend) e E2E (Playwright)
-11. Configurar deploy de produção (Vercel ou VPS)
+### Restantes (Prioridade Baixa)
+1. Multilíngua (PT/FR) — i18n com next-intl ou django translations
+2. Views materializadas PostgreSQL — optimização de performance para dashboards
+3. Backup automático diário — pg_dump cron job
+4. Notificações por email — prazos, submissões, publicações
+5. PWA — Progressive Web App (service worker, manifest)
+6. LangChain para RAG — optional, para melhorar assistente IA
+7. Prophet para forecasting — previsões estatísticas
+8. Gráficos específicos (34+) — configurações detalhadas por indicador
+9. Testes E2E com Playwright — fluxos completos
+
+### Concluído
+- ~~Corrigir alerta GitGuardian~~ ✅
+- ~~Adicionar dependências em falta~~ ✅
+- ~~Corrigir bugs fase 3-5~~ ✅
+- ~~Página de perfil~~ ✅
+- ~~Gestão de utilizadores~~ ✅
+- ~~Configurações/Admin~~ ✅
+- ~~Relatórios Word~~ ✅
+- ~~Testes unitários~~ ✅
+- ~~CAGR~~ ✅
+- ~~Análise de mercado~~ ✅
+- ~~Gráficos estáticos PDF~~ ✅
+- ~~Rate limiting~~ ✅
+- ~~Auditoria~~ ✅
 
 ---
 
-*Última actualização: 24 Mar 2026*
+*Última actualização: 25 Mar 2026*

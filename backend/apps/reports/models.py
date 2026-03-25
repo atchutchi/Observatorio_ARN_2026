@@ -28,6 +28,9 @@ class Report(models.Model):
     excel_file = models.FileField(
         upload_to='reports/excel/%Y/', blank=True, verbose_name='Ficheiro Excel',
     )
+    docx_file = models.FileField(
+        upload_to='reports/docx/%Y/', blank=True, verbose_name='Ficheiro Word',
+    )
     generated_by = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.SET_NULL,
         null=True, verbose_name='Gerado por',

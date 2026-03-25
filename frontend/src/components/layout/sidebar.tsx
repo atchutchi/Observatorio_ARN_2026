@@ -26,6 +26,8 @@ import {
   Building2,
   TrendingUp,
   GitCompare,
+  PieChart,
+  UserCog,
 } from 'lucide-react'
 
 type NavItem = {
@@ -62,11 +64,18 @@ const NAV_ITEMS: NavItem[] = [
       { label: 'Empregos', href: '/analysis/empregos', icon: Building2 },
       { label: 'Investimento', href: '/analysis/investimento', icon: TrendingUp },
       { label: 'Comparativa', href: '/analysis/comparative', icon: GitCompare },
+      { label: 'Análise de Mercado', href: '/analysis/market', icon: PieChart },
     ],
   },
   { label: 'Relatórios', href: '/reports', icon: FileText },
   { label: 'Assistente IA', href: '/assistant', icon: MessageSquare },
-  { label: 'Configurações', href: '/settings', icon: Settings, roles: ['admin_arn'] },
+  {
+    label: 'Configurações', href: '/settings', icon: Settings, roles: ['admin_arn'],
+    children: [
+      { label: 'Visão Geral', href: '/settings', icon: Settings },
+      { label: 'Utilizadores', href: '/settings/users', icon: UserCog },
+    ],
+  },
 ]
 
 const Sidebar = () => {

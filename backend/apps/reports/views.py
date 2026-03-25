@@ -81,6 +81,21 @@ class ReportViewSet(viewsets.ReadOnlyModelViewSet):
             filename=f"{report.title}.xlsx",
         )
 
+    @action(detail=True, methods=['get'])
+    def download_docx(self, request, pk=None):
+        report = self.get_object()
+        if not report.docx_file:
+            return Response(
+                {'error': 'Word não disponível'},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+        return FileResponse(
+            report.docx_file.open(),
+            as_attachment=True,
+            filename=f"{report.title}.docx",
+            content_type='application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        )
+
     @action(detail=True, methods=['post'], permission_classes=[IsARNStaff])
     def publish(self, request, pk=None):
         report = self.get_object()

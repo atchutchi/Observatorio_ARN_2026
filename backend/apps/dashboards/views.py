@@ -136,6 +136,23 @@ class DashboardComparativeView(APIView):
         return Response({'year': year, 'categories': results})
 
 
+class DashboardCAGRView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        category = request.query_params.get('category', 'estacoes_moveis')
+        start_year = int(request.query_params.get('start_year', 2018))
+        end_year = int(request.query_params.get('end_year', datetime.now().year))
+
+        data = DashboardService.get_cagr(category, start_year, end_year)
+        return Response({
+            'category': category,
+            'start_year': start_year,
+            'end_year': end_year,
+            'data': data,
+        })
+
+
 class DashboardHHIView(APIView):
     permission_classes = [IsAuthenticated]
 

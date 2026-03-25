@@ -7,6 +7,7 @@ urlpatterns = [
     path('market-share/', views.DashboardMarketShareView.as_view(), name='dashboard-market-share'),
     path('trends/', views.DashboardTrendsView.as_view(), name='dashboard-trends'),
     path('comparative/', views.DashboardComparativeView.as_view(), name='dashboard-comparative'),
+    path('cagr/', views.DashboardCAGRView.as_view(), name='dashboard-cagr'),
     path('hhi/', views.DashboardHHIView.as_view(), name='dashboard-hhi'),
     path('export/', views.DashboardExportView.as_view(), name='dashboard-export'),
 ]

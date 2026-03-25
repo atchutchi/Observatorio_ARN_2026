@@ -339,6 +339,65 @@ class DashboardService:
         return results
 
     @staticmethod
+    def get_cagr(category_code, start_year, end_year):
+        """Compound Annual Growth Rate (CAGR) per operator."""
+        start_data = DashboardService.get_trends(
+            category_code, start_year=start_year, end_year=start_year,
+        )
+        end_data = DashboardService.get_trends(
+            category_code, start_year=end_year, end_year=end_year,
+        )
+
+        if not start_data or not end_data:
+            return []
+
+        start = start_data[0]
+        end = end_data[0]
+        n = end_year - start_year
+        if n <= 0:
+            return []
+
+        applicable_ops = DashboardService.get_applicable_operators(category_code)
+        results = []
+
+        for op in applicable_ops:
+            v_start = start.get(op.code, 0)
+            v_end = end.get(op.code, 0)
+
+            if v_start and v_start > 0 and v_end and v_end > 0:
+                cagr = ((v_end / v_start) ** (1 / n) - 1) * 100
+            else:
+                cagr = 0
+
+            results.append({
+                'operator_code': op.code,
+                'operator_name': op.name,
+                'operator_color': op.brand_color,
+                'start_value': v_start,
+                'end_value': v_end,
+                'years': n,
+                'cagr': round(cagr, 2),
+            })
+
+        total_start = start.get('total', 0)
+        total_end = end.get('total', 0)
+        total_cagr = 0
+        if total_start and total_start > 0 and total_end and total_end > 0 and n > 0:
+            total_cagr = ((total_end / total_start) ** (1 / n) - 1) * 100
+
+        results.append({
+            'operator_code': 'TOTAL',
+            'operator_name': 'Total Mercado',
+            'operator_color': '#1B2A4A',
+            'start_value': total_start,
+            'end_value': total_end,
+            'years': n,
+            'cagr': round(total_cagr, 2),
+        })
+
+        return results
+
+    @staticmethod
     def get_hhi(year, market='mobile'):
         shares = DashboardService.get_market_share(year, market=market)
         if not shares:
