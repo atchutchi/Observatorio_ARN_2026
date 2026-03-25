@@ -58,3 +58,9 @@ htmlcov/
 # Temporary scripts with secrets
 scripts/temp/
 *.secret.*
+
+# Local dev PIDs
+.pids/
+
+
+start.sh

@@ -16,6 +16,7 @@
 | 5 | Chatbot IA (Gemini) | ✅ COMPLETO | Mar 2026 |
 | 6 | Correcções de Segurança e Polish | ✅ COMPLETO | 24 Mar 2026 |
 | 7 | Funcionalidades Avançadas + Testes | ✅ COMPLETO | 25 Mar 2026 |
+| 8 | Desenvolvimento local + estabilização de login | ✅ COMPLETO | 25 Mar 2026 |
 
 ---
 
@@ -216,6 +217,31 @@ django-simple-history==3.7.0  # Audit trail
 
 ---
 
+## Fase 8 — Desenvolvimento local + estabilização de login ✅ — 25 Mar 2026
+
+### Dados reais e identidade visual (continuação)
+- [x] Logos ARN, Orange e Telecel em `frontend/public/logos/` e `backend/static/logos/`
+- [x] Ficheiros JSON KPI 2024 (`backend/data/kpi_2024/`) — Orange e Telecel
+- [x] Comando `import_kpi_json` — importação para `DataEntry` / `CumulativeData` + totais raiz para o dashboard
+- [x] `entrypoint.sh` — `seed_data` e `import_kpi_json` no arranque Docker (quando aplicável)
+
+### Arranque local sem Docker
+- [x] Script `start.sh` na raiz: `./start.sh setup` (venv, pip, migrate, seed, KPI, superuser, npm), `./start.sh` (backend + frontend), `./start.sh backend|frontend|stop`
+- [x] Backend: `USE_SQLITE=true` + `DJANGO_SETTINGS_MODULE=config.settings.development` para SQLite em `backend/db.sqlite3`
+- [x] **Importante**: `npm run dev` corre em `frontend/`; `manage.py` corre em `backend/` — na raiz do repo não existe `package.json` nem `manage.py`
+- [x] `.gitignore` — pasta `.pids/` (PIDs do script de arranque)
+
+### Correcções de autenticação (login → dashboard)
+- [x] **Axios** (`frontend/src/lib/api.ts`): não enviar header `Authorization` nos pedidos a `/auth/token` (tokens antigos no `localStorage` causavam 401 no login)
+- [x] **Login** (`login/page.tsx`): `trim()` em utilizador e palavra-passe; mensagem de erro mais clara
+- [x] **Perfil 403**: `UserViewSet` usa `IsARNAdmin` a nível de classe; o URL manual `auth/profile/` não aplicava `permission_classes=[IsAuthenticated]` da action — o utilizador criado com `role='ADMIN_ARN'` não correspondia a `'admin_arn'` nas `ROLE_CHOICES`, logo `is_arn_admin` era falso e `/auth/profile/` devolvia 403; `fetchProfile()` limpava os tokens e o utilizador ficava preso no login
+- [x] **Superuser**: corrigido `start.sh` para definir `role = 'admin_arn'` ao criar admin; utilizadores existentes devem ter `role` exactamente `admin_arn` (minúsculas, conforme modelo)
+
+### Ficheiros tocados (referência)
+- `start.sh`, `.gitignore`, `frontend/src/lib/api.ts`, `frontend/src/app/(auth)/login/page.tsx`
+
+---
+
 ## Arquitectura do Projecto
 
 ```
@@ -257,6 +283,8 @@ Observatorio_ARN_2026/
 │   ├── hooks/               ✅ useApi
 │   └── types/               ✅ TypeScript interfaces
 ├── nginx/                   ✅ Reverse proxy config
+├── start.sh                 ✅ Arranque local (backend + frontend + setup)
+├── backend/data/kpi_2024/   ✅ JSON KPI reais (Orange, Telecel)
 └── docker-compose.yml       ✅ Full stack orchestration
 ```
 
@@ -289,7 +317,9 @@ Observatorio_ARN_2026/
 - ~~Gráficos estáticos PDF~~ ✅
 - ~~Rate limiting~~ ✅
 - ~~Auditoria~~ ✅
+- ~~Desenvolvimento local (`start.sh`, SQLite)~~ ✅
+- ~~Login e redireccionamento pós-perfil (Axios + role `admin_arn`)~~ ✅
 
 ---
 
-*Última actualização: 25 Mar 2026*
+*Última actualização: 25 Mar 2026 (Fase 8 — dev local + auth)*

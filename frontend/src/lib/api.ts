@@ -12,9 +12,12 @@ const api = axios.create({
 
 api.interceptors.request.use((config) => {
   if (typeof window !== 'undefined') {
-    const tokens = useAuthStore.getState().tokens
-    if (tokens?.access) {
-      config.headers.Authorization = `Bearer ${tokens.access}`
+    const isAuthEndpoint = config.url?.includes('/auth/token')
+    if (!isAuthEndpoint) {
+      const tokens = useAuthStore.getState().tokens
+      if (tokens?.access) {
+        config.headers.Authorization = `Bearer ${tokens.access}`
+      }
     }
   }
   return config

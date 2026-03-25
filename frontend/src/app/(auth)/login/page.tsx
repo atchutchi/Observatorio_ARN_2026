@@ -13,12 +13,18 @@ const LoginPage = () => {
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
+    const trimmedUser = username.trim()
+    const trimmedPass = password.trim()
+    if (!trimmedUser || !trimmedPass) {
+      toast.error('Preencha o utilizador e a palavra-passe')
+      return
+    }
     try {
-      await login(username, password)
+      await login(trimmedUser, trimmedPass)
       toast.success('Login efectuado com sucesso')
       router.push('/')
     } catch {
-      toast.error('Credenciais inválidas')
+      toast.error('Credenciais inválidas. Utilize: admin / admin123')
     }
   }
 
