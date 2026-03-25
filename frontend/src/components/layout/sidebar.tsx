@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { cn } from '@/lib/utils'
@@ -95,15 +96,21 @@ const Sidebar = () => {
   return (
     <aside className="w-64 bg-arn-primary min-h-screen flex flex-col">
       <div className="p-6">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-white/10 rounded-lg flex items-center justify-center">
-            <span className="text-white font-bold text-sm">ARN</span>
+        <Link href="/" className="flex items-center gap-3 group">
+          <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center overflow-hidden p-1">
+            <Image
+              src="/logos/arn.png"
+              alt="ARN - Autoridade Reguladora Nacional"
+              width={32}
+              height={32}
+              className="object-contain"
+            />
           </div>
           <div>
-            <h2 className="text-white font-semibold text-sm leading-tight">Observatório</h2>
+            <h2 className="text-white font-semibold text-sm leading-tight group-hover:text-white/90 transition-colors">Observatório</h2>
             <p className="text-white/60 text-xs">Telecom GB</p>
           </div>
-        </div>
+        </Link>
       </div>
 
       <nav className="flex-1 px-3 space-y-1 overflow-y-auto">

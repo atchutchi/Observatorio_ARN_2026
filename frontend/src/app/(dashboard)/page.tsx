@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
+import Image from 'next/image'
 import { Users, DollarSign, Wifi, TrendingUp, BarChart3, Activity } from 'lucide-react'
 import KPICard from '@/components/ui/kpi-card'
 import { ChartWrapper, ComboChart, PieChart, BarChart } from '@/components/charts'
@@ -223,12 +224,24 @@ const DashboardPage = () => {
               const share = marketShare.find((s) => s.operator_code === op.code)
               return (
                 <div key={op.code} className="flex items-center gap-4 p-4 bg-gray-50 rounded-xl">
-                  <div
-                    className="w-12 h-12 rounded-xl flex items-center justify-center text-white text-xs font-bold"
-                    style={{ backgroundColor: op.color }}
-                  >
-                    {op.code.substring(0, 3)}
-                  </div>
+                  {op.code === 'ORANGE' || op.code === 'TELECEL' ? (
+                    <div className="w-12 h-12 rounded-xl overflow-hidden bg-white border border-gray-200 flex items-center justify-center p-1">
+                      <Image
+                        src={`/logos/${op.code.toLowerCase()}.png`}
+                        alt={op.name}
+                        width={40}
+                        height={40}
+                        className="object-contain"
+                      />
+                    </div>
+                  ) : (
+                    <div
+                      className="w-12 h-12 rounded-xl flex items-center justify-center text-white text-xs font-bold"
+                      style={{ backgroundColor: op.color }}
+                    >
+                      {op.code.substring(0, 3)}
+                    </div>
+                  )}
                   <div className="flex-1">
                     <p className="font-semibold text-gray-900">{op.name}</p>
                     <p className="text-sm text-gray-500">

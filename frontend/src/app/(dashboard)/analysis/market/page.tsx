@@ -1,12 +1,38 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
+import Image from 'next/image'
 import { TrendingUp, BarChart3, PieChart as PieChartIcon, Activity } from 'lucide-react'
 import { ChartWrapper, PieChart, BarChart, LineChart, ComboChart } from '@/components/charts'
 import KPICard from '@/components/ui/kpi-card'
 import api from '@/lib/api'
 import { formatNumber } from '@/lib/utils'
 import toast from 'react-hot-toast'
+
+const OPERATOR_LOGOS: Record<string, string> = {
+  ORANGE: '/logos/orange.png',
+  TELECEL: '/logos/telecel.png',
+}
+
+const OperatorLogo = ({ code, color }: { code: string; color: string }) => {
+  const logo = OPERATOR_LOGOS[code]
+  if (logo) {
+    return (
+      <Image
+        src={logo}
+        alt={code}
+        width={28}
+        height={28}
+        className="rounded-md object-contain"
+      />
+    )
+  }
+  return (
+    <div className="w-7 h-7 rounded-md flex items-center justify-center text-white text-[10px] font-bold" style={{ backgroundColor: color }}>
+      {code.slice(0, 2)}
+    </div>
+  )
+}
 
 type MarketShareItem = {
   operator_code: string
@@ -268,10 +294,7 @@ const MarketAnalysisPage = () => {
                   <tr key={op.operator_code} className="border-b border-gray-50">
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-3">
-                        <div
-                          className="w-3 h-3 rounded-full"
-                          style={{ backgroundColor: op.operator_color }}
-                        />
+                        <OperatorLogo code={op.operator_code} color={op.operator_color} />
                         <span className="font-medium text-gray-900">{op.operator_name}</span>
                       </div>
                     </td>

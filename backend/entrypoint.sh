@@ -30,4 +30,10 @@ else:
     print(f'Superuser {username} already exists.')
 " 2>/dev/null || true
 
+echo "Seeding reference data..."
+python manage.py seed_data 2>/dev/null || true
+
+echo "Importing KPI data if available..."
+python manage.py import_kpi_json 2>/dev/null || true
+
 echo "Entrypoint complete."
