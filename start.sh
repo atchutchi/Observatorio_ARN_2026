@@ -57,8 +57,9 @@ setup() {
     echo -e "${YELLOW}Carregando dados de referência...${NC}"
     cd "$BACKEND_DIR" && "$VENV_PYTHON" manage.py seed_data 2>&1 | tail -3
 
-    echo -e "${YELLOW}Importando dados KPI (2024, 2019, 2018)...${NC}"
+    echo -e "${YELLOW}Importando dados KPI (2024, 2020, 2019, 2018)...${NC}"
     cd "$BACKEND_DIR" && "$VENV_PYTHON" manage.py import_kpi_json --data-dir data/kpi_2024 2>&1 | tail -3
+    cd "$BACKEND_DIR" && "$VENV_PYTHON" manage.py import_kpi_json --data-dir data/kpi_2020 2>&1 | tail -3
     cd "$BACKEND_DIR" && "$VENV_PYTHON" manage.py import_kpi_json --data-dir data/kpi_2019 2>&1 | tail -3
     cd "$BACKEND_DIR" && "$VENV_PYTHON" manage.py import_kpi_json --data-dir data/kpi_2018 2>&1 | tail -3
 
