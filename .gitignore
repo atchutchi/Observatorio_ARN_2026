@@ -61,6 +61,3 @@ scripts/temp/
 
 # Local dev PIDs
 .pids/
-
-
-start.sh

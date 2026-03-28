@@ -1,0 +1,2238 @@
+{
+  "operadora": "Orange",
+  "pais": "Guiné-Bissau",
+  "ano": 2018,
+  "fonte": "ARN - Autoridade Reguladora Nacional",
+  "categorias": [
+    {
+      "id": "estacoes_moveis",
+      "nome": "Estações Móveis e Utilizadores",
+      "indicadores": [
+        {
+          "codigo": "1.1",
+          "id": "pos_pago",
+          "nome": "Afectos a planos Pós-pagos",
+          "unidade": "estacoes_moveis",
+          "mensal": {
+            "janeiro": null,
+            "fevereiro": null,
+            "marco": null,
+            "abril": null,
+            "maio": null,
+            "junho": null,
+            "julho": null,
+            "agosto": null,
+            "setembro": null,
+            "outubro": null,
+            "novembro": null,
+            "dezembro": null
+          }
+        },
+        {
+          "codigo": "1.1.a",
+          "id": "pos_pago_uso_efetivo",
+          "nome": "Pós-pago com utilização efectiva",
+          "unidade": "estacoes_moveis",
+          "mensal": {
+            "janeiro": null,
+            "fevereiro": null,
+            "marco": null,
+            "abril": null,
+            "maio": null,
+            "junho": null,
+            "julho": null,
+            "agosto": null,
+            "setembro": null,
+            "outubro": null,
+            "novembro": null,
+            "dezembro": null
+          }
+        },
+        {
+          "codigo": "1.2",
+          "id": "pre_pago",
+          "nome": "Afectos a planos Pré-pagos",
+          "unidade": "estacoes_moveis",
+          "mensal": {
+            "janeiro": 646371.0,
+            "fevereiro": 646128.0,
+            "marco": 648562.0,
+            "abril": 664704.0,
+            "maio": 680733.0,
+            "junho": 693737.0,
+            "julho": 702959.0,
+            "agosto": 703990.0,
+            "setembro": 696278.0,
+            "outubro": 684198.0,
+            "novembro": 679745.0,
+            "dezembro": 682701.0
+          }
+        },
+        {
+          "codigo": "1.2.a",
+          "id": "pre_pago_uso_efetivo",
+          "nome": "Pré-pago com utilização efectiva",
+          "unidade": "estacoes_moveis",
+          "mensal": {
+            "janeiro": 646371.0,
+            "fevereiro": 646128.0,
+            "marco": 648562.0,
+            "abril": 664704.0,
+            "maio": 680733.0,
+            "junho": 693737.0,
+            "julho": 702959.0,
+            "agosto": 703990.0,
+            "setembro": 696278.0,
+            "outubro": 684198.0,
+            "novembro": 679745.0,
+            "dezembro": 682701.0
+          }
+        },
+        {
+          "codigo": "2.1.1",
+          "id": "utilizadores_sms",
+          "nome": "Utilizadores de SMS",
+          "unidade": "estacoes_moveis",
+          "mensal": {
+            "janeiro": 349276.0,
+            "fevereiro": 345278.0,
+            "marco": 361024.0,
+            "abril": 380745.0,
+            "maio": 409620.0,
+            "junho": 432397.0,
+            "julho": 441381.0,
+            "agosto": 438507.0,
+            "setembro": 431034.0,
+            "outubro": 437269.0,
+            "novembro": 423999.0,
+            "dezembro": 442008.0
+          }
+        },
+        {
+          "codigo": "2.1.4.",
+          "id": "roaming_out_parceiros",
+          "nome": "Roaming Internacional OUT - Parceiros",
+          "unidade": "estacoes_moveis",
+          "mensal": {
+            "janeiro": 46763.0,
+            "fevereiro": 44515.0,
+            "marco": 41696.0,
+            "abril": 49417.0,
+            "maio": 51022.0,
+            "junho": 55105.0,
+            "julho": 54979.0,
+            "agosto": 56459.0,
+            "setembro": 52333.0,
+            "outubro": 49667.0,
+            "novembro": 50351.0,
+            "dezembro": 54922.0
+          }
+        },
+        {
+          "codigo": "2.1.5",
+          "id": "banda_larga_3g_4g",
+          "nome": "Banda larga (3G + 4G)",
+          "unidade": "estacoes_moveis",
+          "mensal": {
+            "janeiro": 99545.0,
+            "fevereiro": 100866.0,
+            "marco": 108125.0,
+            "abril": 113580.0,
+            "maio": 118952.0,
+            "junho": 126033.0,
+            "julho": 127531.0,
+            "agosto": 128884.0,
+            "setembro": 129164.0,
+            "outubro": 141414.0,
+            "novembro": 143777.0,
+            "dezembro": 156270.0
+          }
+        },
+        {
+          "codigo": "2.1.5.1",
+          "id": "utilizadores_3g",
+          "nome": "Utilizadores de serviço 3G e upgrades",
+          "unidade": "estacoes_moveis",
+          "mensal": {
+            "janeiro": 92374.0,
+            "fevereiro": 92716.0,
+            "marco": 98281.0,
+            "abril": 103032.0,
+            "maio": 107762.0,
+            "junho": 114439.0,
+            "julho": 114255.0,
+            "agosto": 114467.0,
+            "setembro": 113998.0,
+            "outubro": 120037.0,
+            "novembro": 120662.0,
+            "dezembro": 129440.0
+          }
+        },
+        {
+          "codigo": "2.1.5.1.1.p",
+          "id": "internet_3g_box",
+          "nome": "Internet 3G através de Placas (Box)",
+          "unidade": "estacoes_moveis",
+          "mensal": {
+            "janeiro": 650.5015219247576,
+            "fevereiro": 621.3790177066603,
+            "marco": 759.8882404624277,
+            "abril": 760.888240462428,
+            "maio": 761.888240462428,
+            "junho": 762.888240462428,
+            "julho": 955.9251084050153,
+            "agosto": 992.9402098010614,
+            "setembro": 1047.6264748691585,
+            "outubro": 1050.3,
+            "novembro": 1069.2,
+            "dezembro": 1249.2
+          }
+        },
+        {
+          "codigo": "2.1.5.1.1.q",
+          "id": "internet_3g_usb",
+          "nome": "Internet 3G através de Placas (USB)",
+          "unidade": "estacoes_moveis",
+          "mensal": {
+            "janeiro": 1736.2173288462504,
+            "fevereiro": 1691.3275038169452,
+            "marco": 1848.8189965317918,
+            "abril": 1797.0275752773377,
+            "maio": 1858.9651624184544,
+            "junho": 2106.5790705608847,
+            "julho": 1932.4559126800543,
+            "agosto": 1973.4464634865462,
+            "setembro": 1939.0356910594285,
+            "outubro": 2007.9,
+            "novembro": 2041.2,
+            "dezembro": 2131.2000000000003
+          }
+        },
+        {
+          "codigo": "2.1.5.2",
+          "id": "utilizadores_4g",
+          "nome": "Utilizadores de serviço 4G",
+          "unidade": "estacoes_moveis",
+          "mensal": {
+            "janeiro": 7171.0,
+            "fevereiro": 8150.0,
+            "marco": 9844.0,
+            "abril": 10548.0,
+            "maio": 11190.0,
+            "junho": 11594.0,
+            "julho": 13276.0,
+            "agosto": 14417.0,
+            "setembro": 15166.0,
+            "outubro": 21377.0,
+            "novembro": 23115.0,
+            "dezembro": 26830.0
+          }
+        },
+        {
+          "codigo": "2.1.5.2.1.p",
+          "id": "internet_4g_box",
+          "nome": "Internet 4G através de Placas (Box)",
+          "unidade": "estacoes_moveis",
+          "mensal": {
+            "janeiro": 50.498478075242346,
+            "fevereiro": 54.62098229333967,
+            "marco": 76.11175953757225,
+            "abril": 77.1117595375723,
+            "maio": 78.1117595375723,
+            "junho": 79.1117595375723,
+            "julho": 111.0748915949847,
+            "agosto": 125.05979019893857,
+            "setembro": 139.37352513084147,
+            "outubro": 116.7,
+            "novembro": 118.80000000000001,
+            "dezembro": 138.8
+          }
+        },
+        {
+          "codigo": "2.1.5.2.1.q",
+          "id": "internet_4g_usb",
+          "nome": "Internet 4G através de Placas (USB)",
+          "unidade": "estacoes_moveis",
+          "mensal": {
+            "janeiro": 134.78267115374956,
+            "fevereiro": 148.67249618305473,
+            "marco": 185.18100346820808,
+            "abril": 183.97242472266245,
+            "maio": 193.0348375815455,
+            "junho": 213.42092943911513,
+            "julho": 224.54408731994567,
+            "agosto": 248.55353651345376,
+            "setembro": 257.9643089405715,
+            "outubro": 223.10000000000002,
+            "novembro": 226.8,
+            "dezembro": 236.8
+          }
+        }
+      ]
+    },
+    {
+      "id": "mobile_money",
+      "nome": "Serviços de Mobile Money",
+      "indicadores": [
+        {
+          "codigo": "3.1",
+          "id": "mobile_money_utilizadores",
+          "nome": "Utilizadores Mobile Money",
+          "unidade": "numero",
+          "mensal": {
+            "janeiro": 4872.0,
+            "fevereiro": 6063.0,
+            "marco": 6635.0,
+            "abril": 7456.0,
+            "maio": 8551.0,
+            "junho": 7570.0,
+            "julho": 9520.0,
+            "agosto": 10185.0,
+            "setembro": 12243.0,
+            "outubro": 13827.0,
+            "novembro": 18549.0,
+            "dezembro": 22200.0
+          }
+        },
+        {
+          "codigo": "3.1.1",
+          "id": "mobile_money_mulher",
+          "nome": "Utilizadores Mobile Money - Mulher",
+          "unidade": "numero",
+          "mensal": {
+            "janeiro": null,
+            "fevereiro": null,
+            "marco": null,
+            "abril": null,
+            "maio": null,
+            "junho": null,
+            "julho": null,
+            "agosto": null,
+            "setembro": null,
+            "outubro": null,
+            "novembro": null,
+            "dezembro": null
+          }
+        },
+        {
+          "codigo": "3.1.2",
+          "id": "mobile_money_homem",
+          "nome": "Utilizadores Mobile Money - Homem",
+          "unidade": "numero",
+          "mensal": {
+            "janeiro": null,
+            "fevereiro": null,
+            "marco": null,
+            "abril": null,
+            "maio": null,
+            "junho": null,
+            "julho": null,
+            "agosto": null,
+            "setembro": null,
+            "outubro": null,
+            "novembro": null,
+            "dezembro": null
+          }
+        },
+        {
+          "codigo": "3.2",
+          "id": "mobile_money_carregamentos",
+          "nome": "Total de carregamentos efectuados",
+          "unidade": "fcfa",
+          "mensal": {
+            "janeiro": 80435070.0,
+            "fevereiro": 96286875.0,
+            "marco": 120412045.0,
+            "abril": 135012440.0,
+            "maio": 180768105.0,
+            "junho": 202927560.0,
+            "julho": 191401935.0,
+            "agosto": 207825635.0,
+            "setembro": 207122970.0,
+            "outubro": 229312110.0,
+            "novembro": 272207130.0,
+            "dezembro": 357283835.0
+          }
+        },
+        {
+          "codigo": "3.3",
+          "id": "mobile_money_levantamentos",
+          "nome": "Total de levantamentos efectuados",
+          "unidade": "fcfa",
+          "mensal": {
+            "janeiro": 42157484.0,
+            "fevereiro": 54416850.0,
+            "marco": 70137575.0,
+            "abril": 82535635.0,
+            "maio": 96157750.0,
+            "junho": 124085765.0,
+            "julho": 126644100.0,
+            "agosto": 132055235.0,
+            "setembro": 136421025.0,
+            "outubro": 141344100.0,
+            "novembro": 168134800.0,
+            "dezembro": 260344715.0
+          }
+        },
+        {
+          "codigo": "3.4",
+          "id": "mobile_money_transferencias",
+          "nome": "Total de transferências",
+          "unidade": "fcfa",
+          "mensal": {
+            "janeiro": 34240261.0,
+            "fevereiro": 42128942.0,
+            "marco": 51941492.0,
+            "abril": 59769077.0,
+            "maio": 86211058.0,
+            "junho": 85740019.0,
+            "julho": 91593240.0,
+            "agosto": 107514557.0,
+            "setembro": 105923174.0,
+            "outubro": 87712311.0,
+            "novembro": 110223708.0,
+            "dezembro": 132919196.0
+          }
+        }
+      ]
+    },
+    {
+      "id": "trafego_originado",
+      "nome": "Tráfego Originado",
+      "indicadores": [
+        {
+          "codigo": "1.1",
+          "id": "chamadas_originadas",
+          "nome": "Chamadas de voz originadas com resposta",
+          "unidade": "chamadas",
+          "mensal": {
+            "janeiro": 76926289.0,
+            "fevereiro": 67788414.0,
+            "marco": 76713377.0,
+            "abril": 85385944.0,
+            "maio": 90836569.0,
+            "junho": 74838883.0,
+            "julho": 78480579.0,
+            "agosto": 78718764.0,
+            "setembro": 69854462.0,
+            "outubro": 69769271.0,
+            "novembro": 91181780.0,
+            "dezembro": 97121151.0
+          }
+        },
+        {
+          "codigo": "1.1.1",
+          "id": "chamadas_on_net",
+          "nome": "Chamadas On-net",
+          "unidade": "chamadas",
+          "mensal": {
+            "janeiro": 73337967.0,
+            "fevereiro": 64440902.0,
+            "marco": 72851519.0,
+            "abril": 81568329.0,
+            "maio": 86560545.0,
+            "junho": 70199390.0,
+            "julho": 74254006.0,
+            "agosto": 74719221.0,
+            "setembro": 66338026.0,
+            "outubro": 66338026.0,
+            "novembro": 87994267.0,
+            "dezembro": 93407812.0
+          }
+        },
+        {
+          "codigo": "1.1.2",
+          "id": "chamadas_off_net",
+          "nome": "Chamadas Off-net (MTN)",
+          "unidade": "chamadas",
+          "mensal": {
+            "janeiro": 2028996.0,
+            "fevereiro": 1966763.0,
+            "marco": 2245051.0,
+            "abril": 2165726.0,
+            "maio": 2399207.0,
+            "junho": 2614029.0,
+            "julho": 2383744.0,
+            "agosto": 2172670.0,
+            "setembro": 1948306.0,
+            "outubro": 1874955.0,
+            "novembro": 1815300.0,
+            "dezembro": 2170839.0
+          }
+        },
+        {
+          "codigo": "1.1.5",
+          "id": "chamadas_internacional",
+          "nome": "Chamadas para redes internacionais",
+          "unidade": "chamadas",
+          "mensal": {
+            "janeiro": 1559326.0,
+            "fevereiro": 1380749.0,
+            "marco": 1616807.0,
+            "abril": 1651889.0,
+            "maio": 1876817.0,
+            "junho": 2025464.0,
+            "julho": 1842829.0,
+            "agosto": 1826873.0,
+            "setembro": 1568130.0,
+            "outubro": 1556290.0,
+            "novembro": 1372213.0,
+            "dezembro": 1542500.0
+          }
+        },
+        {
+          "codigo": "2.1",
+          "id": "minutos_originados",
+          "nome": "Minutos de voz originados",
+          "unidade": "minutos",
+          "mensal": {
+            "janeiro": 49783465.8474,
+            "fevereiro": 45149732.520899996,
+            "marco": 51743025.0497,
+            "abril": 59853376.9322,
+            "maio": 63226348.520799994,
+            "junho": 63307044.0948,
+            "julho": 58160783.327700004,
+            "agosto": 53952123.2314,
+            "setembro": 49819289.867800005,
+            "outubro": 47855832.1297,
+            "novembro": 54797674.8461,
+            "dezembro": 62435082.1401
+          }
+        },
+        {
+          "codigo": "2.1.1",
+          "id": "minutos_on_net",
+          "nome": "Minutos On-net",
+          "unidade": "minutos",
+          "mensal": {
+            "janeiro": 46599187.0,
+            "fevereiro": 42214485.0,
+            "marco": 48279982.0,
+            "abril": 52950139.0,
+            "maio": 55518020.0,
+            "junho": 54680949.0,
+            "julho": 54357610.0,
+            "agosto": 50412883.0,
+            "setembro": 46716948.0,
+            "outubro": 45013927.0,
+            "novembro": 52095686.0,
+            "dezembro": 59242544.0
+          }
+        },
+        {
+          "codigo": "2.1.2",
+          "id": "minutos_off_net",
+          "nome": "Minutos Off-net (MTN)",
+          "unidade": "minutos",
+          "mensal": {
+            "janeiro": 1313492.63,
+            "fevereiro": 1265506.47,
+            "marco": 1475545.75,
+            "abril": 1455058.2831,
+            "maio": 1642037.11,
+            "junho": 1772072.4299999995,
+            "julho": 1590564.87,
+            "agosto": 1415194.3,
+            "setembro": 1253249.78,
+            "outubro": 1207535.1800000002,
+            "novembro": 1167489.28,
+            "dezembro": 1413773.4900000002
+          }
+        },
+        {
+          "codigo": "2.1.5",
+          "id": "minutos_internacional",
+          "nome": "Minutos para redes internacionais",
+          "unidade": "minutos",
+          "mensal": {
+            "janeiro": 1870786.2174,
+            "fevereiro": 1669741.0508999997,
+            "marco": 1987497.2996999999,
+            "abril": 1996560.683,
+            "maio": 2212127.1504,
+            "junho": 2540975.1174000003,
+            "julho": 2212608.457700003,
+            "agosto": 2124045.931400001,
+            "setembro": 1849092.0878,
+            "outubro": 1634369.9497,
+            "novembro": 1534499.5661000002,
+            "dezembro": 1778764.6501000004
+          }
+        },
+        {
+          "codigo": "3.1",
+          "id": "sms_enviadas",
+          "nome": "SMS enviadas",
+          "unidade": "mensagens",
+          "mensal": {
+            "janeiro": 4822126.0,
+            "fevereiro": 4521580.0,
+            "marco": 5198600.0,
+            "abril": 5391665.0,
+            "maio": 6175304.0,
+            "junho": 6691942.0,
+            "julho": 7414443.265134774,
+            "agosto": 7366477.322277637,
+            "setembro": 7243042.0,
+            "outubro": 7265388.54,
+            "novembro": 7179367.8546,
+            "dezembro": 7415691.690238
+          }
+        },
+        {
+          "codigo": "3.1.1",
+          "id": "sms_on_net",
+          "nome": "SMS On-net",
+          "unidade": "mensagens",
+          "mensal": {
+            "janeiro": 4662612.0,
+            "fevereiro": 4379112.0,
+            "marco": 5046757.0,
+            "abril": 5220672.0,
+            "maio": 5992862.0,
+            "junho": 6510264.0,
+            "julho": 7118518.265134774,
+            "agosto": 7084394.322277637,
+            "setembro": 6974577.0,
+            "outubro": 7114068.54,
+            "novembro": 7042927.8546,
+            "dezembro": 7254215.690238
+          }
+        },
+        {
+          "codigo": "3.1.2",
+          "id": "sms_off_net",
+          "nome": "SMS Off-net",
+          "unidade": "mensagens",
+          "mensal": {
+            "janeiro": 104282.0,
+            "fevereiro": 99805.0,
+            "marco": 97794.0,
+            "abril": 98620.0,
+            "maio": 103655.0,
+            "junho": 105527.0,
+            "julho": 112225.0,
+            "agosto": 105737.0,
+            "setembro": 100602.0,
+            "outubro": 96088.0,
+            "novembro": 93777.0,
+            "dezembro": 107427.0
+          }
+        },
+        {
+          "codigo": "3.1.3",
+          "id": "sms_internacional",
+          "nome": "SMS para redes internacionais",
+          "unidade": "mensagens",
+          "mensal": {
+            "janeiro": 55232.0,
+            "fevereiro": 42663.0,
+            "marco": 54049.0,
+            "abril": 72373.0,
+            "maio": 78787.0,
+            "junho": 76151.0,
+            "julho": 183700.0,
+            "agosto": 176346.0,
+            "setembro": 167863.0,
+            "outubro": 55232.0,
+            "novembro": 42663.0,
+            "dezembro": 54049.0
+          }
+        },
+        {
+          "codigo": "4.A.1",
+          "id": "sessoes_dados_2g",
+          "nome": "Sessões de dados 2G (EDGE/GPRS)",
+          "unidade": "sessoes",
+          "mensal": {
+            "janeiro": null,
+            "fevereiro": null,
+            "marco": null,
+            "abril": null,
+            "maio": null,
+            "junho": null,
+            "julho": null,
+            "agosto": null,
+            "setembro": null,
+            "outubro": null,
+            "novembro": null,
+            "dezembro": null
+          }
+        },
+        {
+          "codigo": "6A.1",
+          "id": "trafego_dados_2g_mbit",
+          "nome": "Tráfego dados 2G (Mbit)",
+          "unidade": "mbit",
+          "mensal": {
+            "janeiro": 16562467.6352,
+            "fevereiro": 15082413.843546111,
+            "marco": 14342580.2338304,
+            "abril": 28887010.5088,
+            "maio": 31255953.408,
+            "junho": 32984593.85856,
+            "julho": 32984593.85856,
+            "agosto": 35985189.7126912,
+            "setembro": 51384935.07735443,
+            "outubro": 56091349.013412476,
+            "novembro": 52166909.082862854,
+            "dezembro": 51169608.34685516
+          }
+        },
+        {
+          "codigo": "6.1",
+          "id": "trafego_dados_3g_mbit",
+          "nome": "Tráfego dados 3G Internet (Mbit)",
+          "unidade": "mbit",
+          "mensal": {
+            "janeiro": 547764835.77856,
+            "fevereiro": 511463802.3214595,
+            "marco": 681099679.992329,
+            "abril": 833014177.5781534,
+            "maio": 879838264.4387014,
+            "junho": 985684901.5963281,
+            "julho": 985684901.5963281,
+            "agosto": 1005907177.6358399,
+            "setembro": 1051995055.0869477,
+            "outubro": 1117887977.1431928,
+            "novembro": 1067013737.7124935,
+            "dezembro": 1124578676.4518256
+          }
+        },
+        {
+          "codigo": "6.1.1",
+          "id": "trafego_dados_3g_box_mbit",
+          "nome": "Tráfego dados 3G Box (Mbit)",
+          "unidade": "mbit",
+          "mensal": {
+            "janeiro": 467869.2758049123,
+            "fevereiro": 5460046.398191661,
+            "marco": 7735225.988439306,
+            "abril": 7139125.198098257,
+            "maio": 9476011.500437152,
+            "junho": 9152722.858299017,
+            "julho": 9666759.062502451,
+            "agosto": 9272178.703330128,
+            "setembro": 9249473.847202007,
+            "outubro": 7020000.0,
+            "novembro": 5022000.0,
+            "dezembro": 9540000.0
+          }
+        },
+        {
+          "codigo": "6.1.2",
+          "id": "trafego_dados_3g_usb_mbit",
+          "nome": "Tráfego dados 3G USB (Mbit)",
+          "unidade": "mbit",
+          "mensal": {
+            "janeiro": 247079.22286403133,
+            "fevereiro": 1231727.6386492972,
+            "marco": 1863362.3121387283,
+            "abril": 1614694.1362916008,
+            "maio": 1884331.1587867376,
+            "junho": 1834176.6045400808,
+            "julho": 1988897.6013675106,
+            "agosto": 2353570.2647341797,
+            "setembro": 2321194.2956241677,
+            "outubro": 1800000.0,
+            "novembro": 981000.0,
+            "dezembro": 2025000.0
+          }
+        },
+        {
+          "codigo": "7.1",
+          "id": "trafego_dados_4g_mbit",
+          "nome": "Tráfego dados 4G Internet (Mbit)",
+          "unidade": "mbit",
+          "mensal": {
+            "janeiro": 95203790.37718119,
+            "fevereiro": 127592985.11989146,
+            "marco": 163414393.76148707,
+            "abril": null,
+            "maio": null,
+            "junho": null,
+            "julho": 195163710.9837426,
+            "agosto": 173055698.664464,
+            "setembro": 253591509.921112,
+            "outubro": 334517301.07492,
+            "novembro": 363382521.278024,
+            "dezembro": 396077561.820168
+          }
+        },
+        {
+          "codigo": "7.1.1",
+          "id": "trafego_dados_4g_box_mbit",
+          "nome": "Tráfego dados 4G Box (Mbit)",
+          "unidade": "mbit",
+          "mensal": {
+            "janeiro": 36320.72419508765,
+            "fevereiro": 479953.60180833976,
+            "marco": 774774.0115606936,
+            "abril": 730874.8019017433,
+            "maio": 983988.4995628488,
+            "junho": 927277.141700983,
+            "julho": 1123240.9374975488,
+            "agosto": 1167821.2966698725,
+            "setembro": 1230526.1527979933,
+            "outubro": 780000.0,
+            "novembro": 558000.0,
+            "dezembro": 1060000.0
+          }
+        },
+        {
+          "codigo": "7.1.2",
+          "id": "trafego_dados_4g_usb_mbit",
+          "nome": "Tráfego dados 4G USB (Mbit)",
+          "unidade": "mbit",
+          "mensal": {
+            "janeiro": 19180.777135968656,
+            "fevereiro": 108272.36135070291,
+            "marco": 186637.68786127167,
+            "abril": 165305.86370839935,
+            "maio": 195668.8412132625,
+            "junho": 185823.3954599192,
+            "julho": 231102.39863248938,
+            "agosto": 296429.7352658203,
+            "setembro": 308805.70437583234,
+            "outubro": 200000.0,
+            "novembro": 109000.0,
+            "dezembro": 225000.0
+          }
+        }
+      ]
+    },
+    {
+      "id": "trafego_terminado",
+      "nome": "Tráfego Terminado",
+      "indicadores": [
+        {
+          "codigo": "1.1",
+          "id": "chamadas_terminadas",
+          "nome": "Chamadas de voz terminadas (entrada)",
+          "unidade": "chamadas",
+          "mensal": {
+            "janeiro": 2359778.0,
+            "fevereiro": 2174551.0,
+            "marco": 2411282.0,
+            "abril": 2408694.0,
+            "maio": 2662221.0,
+            "junho": 2645045.0,
+            "julho": 3307809.0,
+            "agosto": 2354812.0,
+            "setembro": 2043967.0,
+            "outubro": 2056940.0,
+            "novembro": 1974566.0,
+            "dezembro": 2229109.0
+          }
+        },
+        {
+          "codigo": "1.1.1",
+          "id": "chamadas_term_off_net",
+          "nome": "Chamadas terminadas Off-net (de MTN)",
+          "unidade": "chamadas",
+          "mensal": {
+            "janeiro": 1258842.0,
+            "fevereiro": 1162727.0,
+            "marco": 1267402.0,
+            "abril": 1217426.0,
+            "maio": 1416373.0,
+            "junho": 1425037.0,
+            "julho": 1298976.0,
+            "agosto": 1143572.0,
+            "setembro": 1019868.0,
+            "outubro": 995981.0,
+            "novembro": 958257.0,
+            "dezembro": 1108902.0
+          }
+        },
+        {
+          "codigo": "1.1.4",
+          "id": "chamadas_term_internacional",
+          "nome": "Chamadas terminadas internacionais",
+          "unidade": "chamadas",
+          "mensal": {
+            "janeiro": 1100936.0,
+            "fevereiro": 1011824.0,
+            "marco": 1143880.0,
+            "abril": 1191268.0,
+            "maio": 1245848.0,
+            "junho": 1220008.0,
+            "julho": 2008833.0,
+            "agosto": 1211240.0,
+            "setembro": 1024099.0,
+            "outubro": 1060959.0,
+            "novembro": 1016309.0,
+            "dezembro": 1120207.0
+          }
+        },
+        {
+          "codigo": "2.1",
+          "id": "minutos_terminados",
+          "nome": "Minutos de voz terminados (entrada)",
+          "unidade": "minutos",
+          "mensal": {
+            "janeiro": 2486869.9329999993,
+            "fevereiro": 2267544.6631000005,
+            "marco": 2550861.3361,
+            "abril": 3633194.0052000014,
+            "maio": 2436721.9290999994,
+            "junho": 2142057.4389,
+            "julho": 3633194.0052000014,
+            "agosto": 2436721.9290999994,
+            "setembro": 2142057.4389,
+            "outubro": 2140777.5471,
+            "novembro": 2131522.0301,
+            "dezembro": 2440083.4667999996
+          }
+        },
+        {
+          "codigo": "2.1.1",
+          "id": "minutos_term_off_net",
+          "nome": "Minutos terminados Off-net (de MTN)",
+          "unidade": "minutos",
+          "mensal": {
+            "janeiro": 731241.5,
+            "fevereiro": 662003.58,
+            "marco": 730423.87,
+            "abril": 702765.9001,
+            "maio": 830836.1799999998,
+            "junho": 806563.4399999998,
+            "julho": 751118.43,
+            "agosto": 669585.83,
+            "setembro": 593025.18,
+            "outubro": 588089.13,
+            "novembro": 563687.2799999999,
+            "dezembro": 636371.5999999999
+          }
+        },
+        {
+          "codigo": "2.1.3",
+          "id": "minutos_term_internacional",
+          "nome": "Minutos terminados internacionais",
+          "unidade": "minutos",
+          "mensal": {
+            "janeiro": 1755628.4329999995,
+            "fevereiro": 1605541.0831000004,
+            "marco": 1820437.4660999998,
+            "abril": 1866123.5165,
+            "maio": 1841135.3830000001,
+            "junho": 1750275.3339000002,
+            "julho": 2882075.575200001,
+            "agosto": 1767136.0990999998,
+            "setembro": 1549032.2589000002,
+            "outubro": 1552688.4171,
+            "novembro": 1567834.7501000003,
+            "dezembro": 1803711.8668
+          }
+        },
+        {
+          "codigo": "3.1",
+          "id": "sms_terminadas",
+          "nome": "SMS terminadas (recebidas)",
+          "unidade": "mensagens",
+          "mensal": {
+            "janeiro": 91237.0,
+            "fevereiro": 81079.0,
+            "marco": 89655.0,
+            "abril": 90468.0,
+            "maio": 98013.0,
+            "junho": 96023.0,
+            "julho": 99659.0,
+            "agosto": 95394.0,
+            "setembro": 88047.0,
+            "outubro": 88154.0,
+            "novembro": 85255.0,
+            "dezembro": 93338.0
+          }
+        },
+        {
+          "codigo": "3.1.1",
+          "id": "sms_term_off_net",
+          "nome": "SMS terminadas Off-net",
+          "unidade": "mensagens",
+          "mensal": {
+            "janeiro": 48124.0,
+            "fevereiro": 43585.0,
+            "marco": 46365.0,
+            "abril": 49065.0,
+            "maio": 55107.0,
+            "junho": 55497.0,
+            "julho": 60204.0,
+            "agosto": 53344.0,
+            "setembro": 51294.0,
+            "outubro": 51080.0,
+            "novembro": 48246.0,
+            "dezembro": 53453.0
+          }
+        },
+        {
+          "codigo": "3.1.2",
+          "id": "sms_term_internacional",
+          "nome": "SMS terminadas internacionais",
+          "unidade": "mensagens",
+          "mensal": {
+            "janeiro": 43113.0,
+            "fevereiro": 37494.0,
+            "marco": 43290.0,
+            "abril": 41403.0,
+            "maio": 42906.0,
+            "junho": 40526.0,
+            "julho": 39455.0,
+            "agosto": 42050.0,
+            "setembro": 36753.0,
+            "outubro": 37074.0,
+            "novembro": 37009.0,
+            "dezembro": 39885.0
+          }
+        }
+      ]
+    },
+    {
+      "id": "roaming_internacional",
+      "nome": "Tráfego de Roaming Internacional",
+      "indicadores": [
+        {
+          "codigo": "1.1",
+          "id": "roaming_in_chamadas_orig",
+          "nome": "Roaming IN - Chamadas originadas na rede",
+          "unidade": "chamadas",
+          "mensal": {
+            "janeiro": 18443.0,
+            "fevereiro": 18414.0,
+            "marco": 20237.0,
+            "abril": 26452.0,
+            "maio": 25724.0,
+            "junho": 20889.0,
+            "julho": 31383.0,
+            "agosto": 27253.0,
+            "setembro": 24785.0,
+            "outubro": 26996.0,
+            "novembro": 46386.0,
+            "dezembro": 89921.0
+          }
+        },
+        {
+          "codigo": "1.2",
+          "id": "roaming_in_chamadas_term",
+          "nome": "Roaming IN - Chamadas terminadas na rede",
+          "unidade": "chamadas",
+          "mensal": {
+            "janeiro": 29296.0,
+            "fevereiro": 28702.0,
+            "marco": 32475.0,
+            "abril": 39489.0,
+            "maio": 34841.0,
+            "junho": 29935.0,
+            "julho": 471939.0,
+            "agosto": 394111.0,
+            "setembro": 364699.0,
+            "outubro": 346659.0,
+            "novembro": 397816.0,
+            "dezembro": 489611.0
+          }
+        },
+        {
+          "codigo": "2.1",
+          "id": "roaming_in_minutos_orig",
+          "nome": "Roaming IN - Minutos originados",
+          "unidade": "minutos",
+          "mensal": {
+            "janeiro": 34075.066666666666,
+            "fevereiro": 33750.45,
+            "marco": 29630.483333333366,
+            "abril": 37976.633333333375,
+            "maio": 34606.31666666663,
+            "junho": 27759.233333333363,
+            "julho": 26470.91666666663,
+            "agosto": 22486.216666666634,
+            "setembro": 20474.266666666703,
+            "outubro": 23990.616666666658,
+            "novembro": 24073.30000000004,
+            "dezembro": 27096.766666666663
+          }
+        },
+        {
+          "codigo": "2.2",
+          "id": "roaming_in_minutos_term",
+          "nome": "Roaming IN - Minutos terminados",
+          "unidade": "minutos",
+          "mensal": {
+            "janeiro": 34447.41666666671,
+            "fevereiro": 34677.766666666714,
+            "marco": 39860.73333333336,
+            "abril": 47578.79999999998,
+            "maio": 41983.35,
+            "junho": 35304.749999999985,
+            "julho": 32929.06666666663,
+            "agosto": 27991.80000000003,
+            "setembro": 27033.516666666663,
+            "outubro": 26366.249999999996,
+            "novembro": 26444.3,
+            "dezembro": 32102.683333333294
+          }
+        },
+        {
+          "codigo": "3.1",
+          "id": "roaming_in_sms_enviadas",
+          "nome": "Roaming IN - SMS enviadas",
+          "unidade": "mensagens",
+          "mensal": {
+            "janeiro": 12062.0,
+            "fevereiro": 12453.0,
+            "marco": 11774.0,
+            "abril": 12559.0,
+            "maio": 12429.0,
+            "junho": 10616.0,
+            "julho": 10269.0,
+            "agosto": 9653.0,
+            "setembro": 8538.0,
+            "outubro": 9353.0,
+            "novembro": 28122.0,
+            "dezembro": 68521.0
+          }
+        },
+        {
+          "codigo": "3.2",
+          "id": "roaming_in_sms_recebidas",
+          "nome": "Roaming IN - SMS recebidas",
+          "unidade": "mensagens",
+          "mensal": {
+            "janeiro": 491677.0,
+            "fevereiro": 518910.0,
+            "marco": 604032.0,
+            "abril": 722796.0,
+            "maio": 723294.0,
+            "junho": 582743.0,
+            "julho": 444766.0,
+            "agosto": 371137.0,
+            "setembro": 342386.0,
+            "outubro": 324769.0,
+            "novembro": 375359.0,
+            "dezembro": 460803.0
+          }
+        },
+        {
+          "codigo": "3.3",
+          "id": "roaming_in_internet_sessoes",
+          "nome": "Roaming IN - Sessões Internet",
+          "unidade": "sessoes",
+          "mensal": {
+            "janeiro": 27861.0,
+            "fevereiro": 34072.0,
+            "marco": 33856.0,
+            "abril": 35778.0,
+            "maio": 31711.0,
+            "junho": 24554.0,
+            "julho": 28355.0,
+            "agosto": 41063.0,
+            "setembro": 39386.0,
+            "outubro": 38626.0,
+            "novembro": 36511.0,
+            "dezembro": 49598.0
+          }
+        },
+        {
+          "codigo": "3.4",
+          "id": "roaming_in_internet_volume",
+          "nome": "Roaming IN - Volume Internet (Mbit)",
+          "unidade": "mbit",
+          "mensal": {
+            "janeiro": 6871165.0,
+            "fevereiro": 6381558.0,
+            "marco": 5831568.0,
+            "abril": 7599652.0,
+            "maio": 6763339.0,
+            "junho": 6528939.0,
+            "julho": 4626199.0,
+            "agosto": 10926314.0,
+            "setembro": 6923351.0,
+            "outubro": 7424067.0,
+            "novembro": 9539419.0,
+            "dezembro": 13539532.0
+          }
+        },
+        {
+          "codigo": "4.1",
+          "id": "roaming_out_chamadas_orig",
+          "nome": "Roaming OUT - Chamadas originadas",
+          "unidade": "chamadas",
+          "mensal": {
+            "janeiro": 41051.0,
+            "fevereiro": 38977.0,
+            "marco": 49099.0,
+            "abril": 47440.0,
+            "maio": 46486.0,
+            "junho": 50329.0,
+            "julho": 53190.0,
+            "agosto": 70710.0,
+            "setembro": 51418.0,
+            "outubro": 43910.0,
+            "novembro": 42059.0,
+            "dezembro": 49085.0
+          }
+        },
+        {
+          "codigo": "4.2",
+          "id": "roaming_out_chamadas_term",
+          "nome": "Roaming OUT - Chamadas terminadas",
+          "unidade": "chamadas",
+          "mensal": {
+            "janeiro": 119720.0,
+            "fevereiro": 112900.0,
+            "marco": 134098.0,
+            "abril": 143990.0,
+            "maio": 152564.0,
+            "junho": 149152.0,
+            "julho": 158995.0,
+            "agosto": 189056.0,
+            "setembro": 148700.0,
+            "outubro": 1085227.0,
+            "novembro": 976289.0,
+            "dezembro": 1043964.0
+          }
+        },
+        {
+          "codigo": "5.1",
+          "id": "roaming_out_minutos_orig",
+          "nome": "Roaming OUT - Minutos originados",
+          "unidade": "minutos",
+          "mensal": {
+            "janeiro": 65119.76666666663,
+            "fevereiro": 60599.99999999996,
+            "marco": 54414.016666666634,
+            "abril": 51084.566666666666,
+            "maio": 48995.75000000003,
+            "junho": 52880.0,
+            "julho": 57549.70000000003,
+            "agosto": 81453.88333333335,
+            "setembro": 57971.43333333332,
+            "outubro": 46950.40000000003,
+            "novembro": 45602.46666666667,
+            "dezembro": 51866.66666666663
+          }
+        },
+        {
+          "codigo": "5.2",
+          "id": "roaming_out_minutos_term",
+          "nome": "Roaming OUT - Minutos terminados",
+          "unidade": "minutos",
+          "mensal": {
+            "janeiro": 158841.36666666632,
+            "fevereiro": 147643.28333333303,
+            "marco": 174742.43333333338,
+            "abril": 187738.483333333,
+            "maio": 205554.85000000003,
+            "junho": 198276.1166666663,
+            "julho": 214211.48333333334,
+            "agosto": 262787.13333333307,
+            "setembro": 206961.09999999971,
+            "outubro": 179013.1666666663,
+            "novembro": 174051.31666666697,
+            "dezembro": 196392.34999999998
+          }
+        },
+        {
+          "codigo": "6.1",
+          "id": "roaming_out_sms_enviadas",
+          "nome": "Roaming OUT - SMS enviadas fora GB",
+          "unidade": "mensagens",
+          "mensal": {
+            "janeiro": null,
+            "fevereiro": null,
+            "marco": null,
+            "abril": null,
+            "maio": null,
+            "junho": null,
+            "julho": null,
+            "agosto": null,
+            "setembro": null,
+            "outubro": null,
+            "novembro": null,
+            "dezembro": null
+          }
+        },
+        {
+          "codigo": "6.2",
+          "id": "roaming_out_internet_sessoes",
+          "nome": "Roaming OUT - Sessões Internet fora GB",
+          "unidade": "sessoes",
+          "mensal": {
+            "janeiro": 35826.0,
+            "fevereiro": 7658.0,
+            "marco": 2023.0,
+            "abril": 27943.0,
+            "maio": 39635.0,
+            "junho": 46932.0,
+            "julho": 51182.0,
+            "agosto": 50670.0,
+            "setembro": 42021.0,
+            "outubro": 51608.0,
+            "novembro": 112299.0,
+            "dezembro": 97261.0
+          }
+        },
+        {
+          "codigo": "6.3",
+          "id": "roaming_out_internet_volume",
+          "nome": "Roaming OUT - Volume Internet fora GB (Mbit)",
+          "unidade": "mbit",
+          "mensal": {
+            "janeiro": 5448973.0,
+            "fevereiro": 604205.0,
+            "marco": 166704.0,
+            "abril": 3340549.0,
+            "maio": 3499327.0,
+            "junho": 3517149.0,
+            "julho": 4919057.0,
+            "agosto": 5105618.0,
+            "setembro": 4121146.0,
+            "outubro": 5058418.0,
+            "novembro": 5034982.0,
+            "dezembro": 6793380.0
+          }
+        },
+        {
+          "codigo": "7.1",
+          "id": "acordos_roaming",
+          "nome": "Acordos de roaming internacional assinados",
+          "unidade": "paises",
+          "mensal": {
+            "janeiro": 76.0,
+            "fevereiro": 76.0,
+            "marco": 78.0,
+            "abril": 79.0,
+            "maio": 79.0,
+            "junho": 80.0,
+            "julho": 80.0,
+            "agosto": 85.0,
+            "setembro": 92.0,
+            "outubro": 93.0,
+            "novembro": 93.0,
+            "dezembro": 93.0
+          }
+        }
+      ]
+    },
+    {
+      "id": "largura_banda_internacional",
+      "nome": "Largura de Banda Internacional",
+      "indicadores": [
+        {
+          "codigo": "1.2.1",
+          "id": "lbi_downlink_disponivel",
+          "nome": "Downlink Disponível (Nominal)",
+          "unidade": "mbps",
+          "mensal": {
+            "janeiro": 1500.0,
+            "fevereiro": 1500.0,
+            "marco": 1500.0,
+            "abril": 1500.0,
+            "maio": 1500.0,
+            "junho": 1500.0,
+            "julho": 1500.0,
+            "agosto": 1500.0,
+            "setembro": 1500.0,
+            "outubro": 1500.0,
+            "novembro": 1500.0,
+            "dezembro": 1800.0
+          }
+        },
+        {
+          "codigo": "1.2.1.1",
+          "id": "lbi_downlink_instalada",
+          "nome": "Downlink Instalada/Equipada",
+          "unidade": "mbps",
+          "mensal": {
+            "janeiro": 0.0,
+            "fevereiro": 0.0,
+            "marco": 0.0,
+            "abril": 0.0,
+            "maio": 0.0,
+            "junho": 0.0,
+            "julho": 0.0,
+            "agosto": 0.0,
+            "setembro": 0.0,
+            "outubro": 0.0,
+            "novembro": 0.0,
+            "dezembro": 0.0
+          }
+        },
+        {
+          "codigo": "1.2.1.1.1",
+          "id": "lbi_downlink_contratada",
+          "nome": "Downlink Contratada",
+          "unidade": "mbps",
+          "mensal": {
+            "janeiro": 0.0,
+            "fevereiro": 0.0,
+            "marco": 0.0,
+            "abril": 0.0,
+            "maio": 0.0,
+            "junho": 0.0,
+            "julho": 0.0,
+            "agosto": 0.0,
+            "setembro": 0.0,
+            "outubro": 0.0,
+            "novembro": 0.0,
+            "dezembro": 0.0
+          }
+        },
+        {
+          "codigo": "1.2.1.1.1.1",
+          "id": "lbi_downlink_utilizada",
+          "nome": "Downlink Utilizada",
+          "unidade": "mbps",
+          "mensal": {
+            "janeiro": 1200.0,
+            "fevereiro": 1200.0,
+            "marco": 1200.0,
+            "abril": 1200.0,
+            "maio": 1200.0,
+            "junho": 1200.0,
+            "julho": 1200.0,
+            "agosto": 1200.0,
+            "setembro": 1200.0,
+            "outubro": 1200.0,
+            "novembro": 1200.0,
+            "dezembro": 1200.0
+          }
+        },
+        {
+          "codigo": "1.3.1",
+          "id": "lbi_uplink_disponivel",
+          "nome": "Uplink Disponível (Nominal)",
+          "unidade": "mbps",
+          "mensal": {
+            "janeiro": 1500.0,
+            "fevereiro": 1500.0,
+            "marco": 1500.0,
+            "abril": 1500.0,
+            "maio": 1500.0,
+            "junho": 1500.0,
+            "julho": 1500.0,
+            "agosto": 1500.0,
+            "setembro": 1500.0,
+            "outubro": 1500.0,
+            "novembro": 1500.0,
+            "dezembro": 1800.0
+          }
+        },
+        {
+          "codigo": "1.3.1.1.1.1",
+          "id": "lbi_uplink_utilizada",
+          "nome": "Uplink Utilizada",
+          "unidade": "mbps",
+          "mensal": {
+            "janeiro": 1200.0,
+            "fevereiro": 1200.0,
+            "marco": 1200.0,
+            "abril": 1200.0,
+            "maio": 1200.0,
+            "junho": 1200.0,
+            "julho": 1200.0,
+            "agosto": 1200.0,
+            "setembro": 1200.0,
+            "outubro": 1200.0,
+            "novembro": 1200.0,
+            "dezembro": 1200.0
+          }
+        }
+      ]
+    },
+    {
+      "id": "internet_fixo",
+      "nome": "Internet Fixo via Rádio",
+      "indicadores": [
+        {
+          "codigo": "1.2",
+          "id": "assinantes_hertziano",
+          "nome": "Sistema Hertziano Fixo de Terra",
+          "unidade": "numero",
+          "mensal": {
+            "janeiro": 79.0,
+            "fevereiro": 76.0,
+            "marco": 74.0,
+            "abril": 75.0,
+            "maio": 77.0,
+            "junho": 78.0,
+            "julho": 75.0,
+            "agosto": 78.0,
+            "setembro": 80.0,
+            "outubro": 80.0,
+            "novembro": 78.0,
+            "dezembro": 74.0
+          }
+        },
+        {
+          "codigo": "1.3",
+          "id": "assinantes_proxim",
+          "nome": "Outros (PROXIM)",
+          "unidade": "numero",
+          "mensal": {
+            "janeiro": 1069.0,
+            "fevereiro": 738.0,
+            "marco": 705.0,
+            "abril": 610.0,
+            "maio": 586.0,
+            "junho": 518.0,
+            "julho": 747.0,
+            "agosto": 761.0,
+            "setembro": 767.0,
+            "outubro": 674.0,
+            "novembro": 662.0,
+            "dezembro": 642.0
+          }
+        },
+        {
+          "codigo": "2.2.1",
+          "id": "debito_256k_2m",
+          "nome": "256 Kbit/s - 2 Mbit/s",
+          "unidade": "numero",
+          "mensal": {
+            "janeiro": 1131.0,
+            "fevereiro": 799.0,
+            "marco": 765.0,
+            "abril": 669.0,
+            "maio": 649.0,
+            "junho": 583.0,
+            "julho": 809.0,
+            "agosto": 824.0,
+            "setembro": 832.0,
+            "outubro": 736.0,
+            "novembro": 719.0,
+            "dezembro": 695.0
+          }
+        },
+        {
+          "codigo": "2.2.2",
+          "id": "debito_3_4m",
+          "nome": "3 - 4 Mbit/s",
+          "unidade": "numero",
+          "mensal": {
+            "janeiro": 17.0,
+            "fevereiro": 15.0,
+            "marco": 14.0,
+            "abril": 16.0,
+            "maio": 14.0,
+            "junho": 13.0,
+            "julho": 13.0,
+            "agosto": 15.0,
+            "setembro": 15.0,
+            "outubro": 17.0,
+            "novembro": 17.0,
+            "dezembro": 17.0
+          }
+        },
+        {
+          "codigo": "3.1",
+          "id": "cat_residencial",
+          "nome": "Residencial",
+          "unidade": "numero",
+          "mensal": {
+            "janeiro": 708.0,
+            "fevereiro": 364.0,
+            "marco": 329.0,
+            "abril": 231.0,
+            "maio": 204.0,
+            "junho": 138.0,
+            "julho": 361.0,
+            "agosto": 347.0,
+            "setembro": 355.0,
+            "outubro": 448.0,
+            "novembro": 448.0,
+            "dezembro": 431.0
+          }
+        },
+        {
+          "codigo": "3.2",
+          "id": "cat_corporativo",
+          "nome": "Corporativo / empresarial",
+          "unidade": "numero",
+          "mensal": {
+            "janeiro": 268.0,
+            "fevereiro": 278.0,
+            "marco": 278.0,
+            "abril": 279.0,
+            "maio": 280.0,
+            "junho": 280.0,
+            "julho": 280.0,
+            "agosto": 311.0,
+            "setembro": 311.0,
+            "outubro": 128.0,
+            "novembro": 133.0,
+            "dezembro": 123.0
+          }
+        },
+        {
+          "codigo": "3.3",
+          "id": "cat_publicas",
+          "nome": "Instituições Públicas",
+          "unidade": "numero",
+          "mensal": {
+            "janeiro": 50.0,
+            "fevereiro": 50.0,
+            "marco": 50.0,
+            "abril": 55.0,
+            "maio": 57.0,
+            "junho": 56.0,
+            "julho": 59.0,
+            "agosto": 59.0,
+            "setembro": 59.0,
+            "outubro": 53.0,
+            "novembro": 38.0,
+            "dezembro": 35.0
+          }
+        },
+        {
+          "codigo": "3.3.1",
+          "id": "cat_ensino",
+          "nome": "Instituições de Ensino",
+          "unidade": "numero",
+          "mensal": {
+            "janeiro": 17.0,
+            "fevereiro": 17.0,
+            "marco": 18.0,
+            "abril": 16.0,
+            "maio": 19.0,
+            "junho": 19.0,
+            "julho": 20.0,
+            "agosto": 20.0,
+            "setembro": 20.0,
+            "outubro": 12.0,
+            "novembro": 17.0,
+            "dezembro": 17.0
+          }
+        },
+        {
+          "codigo": "3.3.2",
+          "id": "cat_saude",
+          "nome": "Instituições de Saúde",
+          "unidade": "numero",
+          "mensal": {
+            "janeiro": 10.0,
+            "fevereiro": 10.0,
+            "marco": 9.0,
+            "abril": 9.0,
+            "maio": 10.0,
+            "junho": 10.0,
+            "julho": 10.0,
+            "agosto": 10.0,
+            "setembro": 10.0,
+            "outubro": 24.0,
+            "novembro": 27.0,
+            "dezembro": 23.0
+          }
+        },
+        {
+          "codigo": "4",
+          "id": "cat_ong",
+          "nome": "ONG e outros (embaixadas)",
+          "unidade": "numero",
+          "mensal": {
+            "janeiro": 95.0,
+            "fevereiro": 95.0,
+            "marco": 95.0,
+            "abril": 95.0,
+            "maio": 93.0,
+            "junho": 93.0,
+            "julho": 92.0,
+            "agosto": 92.0,
+            "setembro": 92.0,
+            "outubro": 89.0,
+            "novembro": 77.0,
+            "dezembro": 87.0
+          }
+        },
+        {
+          "codigo": "5.1",
+          "id": "regiao_bissau",
+          "nome": "Internet Fixo - Cidade de Bissau",
+          "unidade": "numero",
+          "mensal": {
+            "janeiro": 1034.0,
+            "fevereiro": 727.0,
+            "marco": 703.0,
+            "abril": 613.0,
+            "maio": 589.0,
+            "junho": 524.0,
+            "julho": 666.0,
+            "agosto": 680.0,
+            "setembro": 685.0,
+            "outubro": 683.0,
+            "novembro": 672.0,
+            "dezembro": 651.0
+          }
+        },
+        {
+          "codigo": "5.2",
+          "id": "regiao_bafata",
+          "nome": "Internet Fixo - Bafatá",
+          "unidade": "numero",
+          "mensal": {
+            "janeiro": 40.0,
+            "fevereiro": 31.0,
+            "marco": 22.0,
+            "abril": 23.0,
+            "maio": 23.0,
+            "junho": 23.0,
+            "julho": 23.0,
+            "agosto": 23.0,
+            "setembro": 23.0,
+            "outubro": 18.0,
+            "novembro": 18.0,
+            "dezembro": 17.0
+          }
+        },
+        {
+          "codigo": "5.3",
+          "id": "regiao_biombo",
+          "nome": "Internet Fixo - Biombo",
+          "unidade": "numero",
+          "mensal": {
+            "janeiro": 28.0,
+            "fevereiro": 15.0,
+            "marco": 15.0,
+            "abril": 11.0,
+            "maio": 12.0,
+            "junho": 12.0,
+            "julho": 11.0,
+            "agosto": 12.0,
+            "setembro": 12.0,
+            "outubro": 12.0,
+            "novembro": 12.0,
+            "dezembro": 12.0
+          }
+        },
+        {
+          "codigo": "5.4",
+          "id": "regiao_bolama",
+          "nome": "Internet Fixo - Bolama Bijagós",
+          "unidade": "numero",
+          "mensal": {
+            "janeiro": 11.0,
+            "fevereiro": 10.0,
+            "marco": 9.0,
+            "abril": 9.0,
+            "maio": 9.0,
+            "junho": 9.0,
+            "julho": 9.0,
+            "agosto": 9.0,
+            "setembro": 9.0,
+            "outubro": 8.0,
+            "novembro": 8.0,
+            "dezembro": 7.0
+          }
+        },
+        {
+          "codigo": "5.5",
+          "id": "regiao_cacheu",
+          "nome": "Internet Fixo - Cacheu",
+          "unidade": "numero",
+          "mensal": {
+            "janeiro": 15.0,
+            "fevereiro": 15.0,
+            "marco": 15.0,
+            "abril": 15.0,
+            "maio": 15.0,
+            "junho": 15.0,
+            "julho": 15.0,
+            "agosto": 15.0,
+            "setembro": 15.0,
+            "outubro": 13.0,
+            "novembro": 11.0,
+            "dezembro": 11.0
+          }
+        },
+        {
+          "codigo": "5.6",
+          "id": "regiao_gabu",
+          "nome": "Internet Fixo - Gabú",
+          "unidade": "numero",
+          "mensal": {
+            "janeiro": 20.0,
+            "fevereiro": 16.0,
+            "marco": 15.0,
+            "abril": 13.0,
+            "maio": 14.0,
+            "junho": 12.0,
+            "julho": 15.0,
+            "agosto": 16.0,
+            "setembro": 16.0,
+            "outubro": 14.0,
+            "novembro": 12.0,
+            "dezembro": 12.0
+          }
+        },
+        {
+          "codigo": "5.7",
+          "id": "regiao_oio",
+          "nome": "Internet Fixo - Oio",
+          "unidade": "numero",
+          "mensal": {
+            "janeiro": null,
+            "fevereiro": null,
+            "marco": null,
+            "abril": 1.0,
+            "maio": 1.0,
+            "junho": 1.0,
+            "julho": 5.0,
+            "agosto": 5.0,
+            "setembro": 5.0,
+            "outubro": 4.0,
+            "novembro": 4.0,
+            "dezembro": 4.0
+          }
+        },
+        {
+          "codigo": "5.8",
+          "id": "regiao_quinara",
+          "nome": "Internet Fixo - Quinara",
+          "unidade": "numero",
+          "mensal": {
+            "janeiro": null,
+            "fevereiro": null,
+            "marco": null,
+            "abril": null,
+            "maio": null,
+            "junho": null,
+            "julho": 1.0,
+            "agosto": 1.0,
+            "setembro": 1.0,
+            "outubro": 2.0,
+            "novembro": 3.0,
+            "dezembro": 2.0
+          }
+        },
+        {
+          "codigo": "5.9",
+          "id": "regiao_tombali",
+          "nome": "Internet Fixo - Tombali",
+          "unidade": "numero",
+          "mensal": {
+            "janeiro": null,
+            "fevereiro": null,
+            "marco": null,
+            "abril": null,
+            "maio": null,
+            "junho": null,
+            "julho": null,
+            "agosto": null,
+            "setembro": null,
+            "outubro": 0.0,
+            "novembro": 0.0,
+            "dezembro": 0.0
+          }
+        }
+      ]
+    },
+    {
+      "id": "trafego_internet_fixo",
+      "nome": "Tráfego de Internet Fixo",
+      "indicadores": [
+        {
+          "codigo": "1",
+          "id": "trafego_internet_fixo_total",
+          "nome": "Tráfego total Internet Fixo",
+          "unidade": "kbps",
+          "mensal": {
+            "janeiro": 1258291.2,
+            "fevereiro": 1258291.2,
+            "marco": 1258291.2,
+            "abril": 1258291.2,
+            "maio": 1258291.2,
+            "junho": 1719091.2,
+            "julho": 600000.0,
+            "agosto": 600000.0,
+            "setembro": 600000.0,
+            "outubro": 1858291.0,
+            "novembro": 1858291.0,
+            "dezembro": 2487437.0
+          }
+        },
+        {
+          "codigo": "1.2",
+          "id": "trafego_hertziano_proxim",
+          "nome": "Por Sistema Hertziano + PROXIM",
+          "unidade": "kbps",
+          "mensal": {
+            "janeiro": 1258291.2,
+            "fevereiro": 1258291.2,
+            "marco": 1258291.2,
+            "abril": 1258291.2,
+            "maio": 1258291.2,
+            "junho": 1258291.2,
+            "julho": null,
+            "agosto": null,
+            "setembro": null,
+            "outubro": 1258291.0,
+            "novembro": 1258291.0,
+            "dezembro": 1887437.0
+          }
+        }
+      ]
+    },
+    {
+      "id": "receitas",
+      "nome": "Receitas",
+      "indicadores": [
+        {
+          "codigo": "1",
+          "id": "receita_total",
+          "nome": "Receitas totais do serviço",
+          "unidade": "milhoes_fcfa",
+          "acumulado": {
+            "t1_acumulado": 5314333004.469597,
+            "t2_acumulado": 11714823047.804699,
+            "t3_acumulado": 17420590454.3661,
+            "t4_acumulado": 21768223690.0
+          }
+        },
+        {
+          "codigo": "1.1.2",
+          "id": "receita_voz",
+          "nome": "Receitas de serviços de voz",
+          "unidade": "milhoes_fcfa",
+          "acumulado": {
+            "t1_acumulado": 3213324801.472341,
+            "t2_acumulado": 7222786587.801232,
+            "t3_acumulado": 10691109424.577646,
+            "t4_acumulado": 13963431575.0
+          }
+        },
+        {
+          "codigo": "1.1.3",
+          "id": "receita_voz_roaming_out",
+          "nome": "Receitas de voz em Roaming-out",
+          "unidade": "milhoes_fcfa",
+          "acumulado": {
+            "t1_acumulado": 25126900.905473337,
+            "t2_acumulado": 83396103.05307744,
+            "t3_acumulado": 101325847.872474,
+            "t4_acumulado": 141417614.0
+          }
+        },
+        {
+          "codigo": "1.1.4",
+          "id": "receita_mensagens",
+          "nome": "Receitas de serviços de mensagens",
+          "unidade": "milhoes_fcfa",
+          "acumulado": {
+            "t1_acumulado": 16384920.0,
+            "t2_acumulado": 31716175.0,
+            "t3_acumulado": 49089673.0,
+            "t4_acumulado": 151768483.0
+          }
+        },
+        {
+          "codigo": "1.1.5",
+          "id": "receita_dados_moveis",
+          "nome": "Receitas de dados móveis",
+          "unidade": "milhoes_fcfa",
+          "acumulado": {
+            "t1_acumulado": 716537884.401709,
+            "t2_acumulado": 1473352398.71795,
+            "t3_acumulado": 2239056755.98291,
+            "t4_acumulado": 3091877562.0
+          }
+        },
+        {
+          "codigo": "1.2.1",
+          "id": "receita_terminacao_voz",
+          "nome": "Receitas terminação de voz",
+          "unidade": "milhoes_fcfa",
+          "acumulado": {
+            "t1_acumulado": 961689775.6900736,
+            "t2_acumulado": 2030488012.335003,
+            "t3_acumulado": 2982984118.5570035,
+            "t4_acumulado": 3938080279.0
+          }
+        },
+        {
+          "codigo": "1.1.2.1",
+          "id": "receita_chamadas_on_net",
+          "nome": "Receitas chamadas On-net",
+          "unidade": "milhoes_fcfa",
+          "acumulado": {
+            "t1_acumulado": null,
+            "t2_acumulado": null,
+            "t3_acumulado": 5367932683.077584,
+            "t4_acumulado": 7439369825.076815
+          }
+        },
+        {
+          "codigo": "1.1.2.2.1",
+          "id": "receita_chamadas_off_net_mtn",
+          "nome": "Receitas chamadas Off-net (MTN)",
+          "unidade": "milhoes_fcfa",
+          "acumulado": {
+            "t1_acumulado": 464669947.1889741,
+            "t2_acumulado": 1021710259.4917758,
+            "t3_acumulado": 1547672393.1644468,
+            "t4_acumulado": 1981222817.1845286
+          }
+        },
+        {
+          "codigo": "1.1.2.4",
+          "id": "receita_chamadas_internacional",
+          "nome": "Receitas chamadas Internacional",
+          "unidade": "milhoes_fcfa",
+          "acumulado": {
+            "t1_acumulado": 1183393866.0364728,
+            "t2_acumulado": 2627485945.100115,
+            "t3_acumulado": 3775504348.3355703,
+            "t4_acumulado": 4542838932.738657
+          }
+        },
+        {
+          "codigo": "1.2.1.1.1",
+          "id": "receita_term_off_net_mtn",
+          "nome": "Receitas terminação Off-net (de MTN)",
+          "unidade": "milhoes_fcfa",
+          "acumulado": {
+            "t1_acumulado": null,
+            "t2_acumulado": null,
+            "t3_acumulado": null,
+            "t4_acumulado": null
+          }
+        },
+        {
+          "codigo": "1.2.1.3",
+          "id": "receita_term_internacional",
+          "nome": "Receitas terminação de origem internacional",
+          "unidade": "milhoes_fcfa",
+          "acumulado": {
+            "t1_acumulado": null,
+            "t2_acumulado": null,
+            "t3_acumulado": null,
+            "t4_acumulado": null
+          }
+        },
+        {
+          "codigo": "1.1.1",
+          "id": "receita_internet_fixo",
+          "nome": "Receitas Internet Fixo (mensalidades)",
+          "unidade": "milhoes_fcfa",
+          "acumulado": {
+            "t1_acumulado": 271015437.0,
+            "t2_acumulado": 555001785.0,
+            "t3_acumulado": 838164766.0,
+            "t4_acumulado": 1081225551.0
+          }
+        }
+      ]
+    },
+    {
+      "id": "emprego",
+      "nome": "Emprego no Sector",
+      "indicadores": [
+        {
+          "codigo": "1.1",
+          "id": "emprego_directo_total",
+          "nome": "Total emprego directo",
+          "unidade": "numero",
+          "mensal": {
+            "janeiro": 92.0,
+            "fevereiro": 91.0,
+            "marco": 91.0,
+            "abril": 90.0,
+            "maio": 89.0,
+            "junho": 89.0,
+            "julho": 89.0,
+            "agosto": 89.0,
+            "setembro": 89.0,
+            "outubro": 91.0,
+            "novembro": 90.0,
+            "dezembro": 89.0
+          }
+        },
+        {
+          "codigo": "1.1.1",
+          "id": "emprego_nacionais",
+          "nome": "Empregados nacionais",
+          "unidade": "numero",
+          "mensal": {
+            "janeiro": 73.0,
+            "fevereiro": 72.0,
+            "marco": 71.0,
+            "abril": 71.0,
+            "maio": 71.0,
+            "junho": 71.0,
+            "julho": 71.0,
+            "agosto": 71.0,
+            "setembro": 71.0,
+            "outubro": 76.0,
+            "novembro": 75.0,
+            "dezembro": 74.0
+          }
+        },
+        {
+          "codigo": "1.1.1.1",
+          "id": "emprego_homens",
+          "nome": "Empregados homens",
+          "unidade": "numero",
+          "mensal": {
+            "janeiro": 47.0,
+            "fevereiro": 46.0,
+            "marco": 45.0,
+            "abril": 45.0,
+            "maio": 45.0,
+            "junho": 45.0,
+            "julho": 45.0,
+            "agosto": 45.0,
+            "setembro": 45.0,
+            "outubro": 50.0,
+            "novembro": 49.0,
+            "dezembro": 48.0
+          }
+        },
+        {
+          "codigo": "1.1.1.2",
+          "id": "emprego_mulheres",
+          "nome": "Empregadas mulheres",
+          "unidade": "numero",
+          "mensal": {
+            "janeiro": 26.0,
+            "fevereiro": 26.0,
+            "marco": 26.0,
+            "abril": 26.0,
+            "maio": 26.0,
+            "junho": 26.0,
+            "julho": 26.0,
+            "agosto": 26.0,
+            "setembro": 26.0,
+            "outubro": 26.0,
+            "novembro": 26.0,
+            "dezembro": 26.0
+          }
+        },
+        {
+          "codigo": "1.2",
+          "id": "emprego_indirecto",
+          "nome": "Emprego indirecto (agentes, distribuidores)",
+          "unidade": "numero",
+          "mensal": {
+            "janeiro": 6649.0,
+            "fevereiro": 6652.0,
+            "marco": 6766.0,
+            "abril": 6713.0,
+            "maio": 6938.0,
+            "junho": 7015.0,
+            "julho": 7080.0,
+            "agosto": 7113.0,
+            "setembro": 6936.0,
+            "outubro": 6939.0,
+            "novembro": 6891.0,
+            "dezembro": 6858.0
+          }
+        }
+      ]
+    },
+    {
+      "id": "investimento",
+      "nome": "Investimento no Sector",
+      "indicadores": [
+        {
+          "codigo": "",
+          "id": "investimento_total",
+          "nome": "Investimento total (imobilizado acumulado)",
+          "unidade": "milhoes_fcfa",
+          "mensal": {
+            "janeiro": 84592596.0,
+            "fevereiro": 144188963.5787705,
+            "marco": 682303367.5787705,
+            "abril": 1504508472.578771,
+            "maio": 1695256605.578771,
+            "junho": 2809703143.57877,
+            "julho": 3020943911.57877,
+            "agosto": 3134122168.57877,
+            "setembro": 3346759940.57877,
+            "outubro": 3539259489.57877,
+            "novembro": 4450726716.601521,
+            "dezembro": 5307948333.62427
+          }
+        },
+        {
+          "codigo": "1",
+          "id": "investimento_corporeo",
+          "nome": "Investimento corpóreo",
+          "unidade": "milhoes_fcfa",
+          "mensal": {
+            "janeiro": 84592596.0,
+            "fevereiro": 134680866.5787705,
+            "marco": 670113845.5787705,
+            "abril": 1430361384.578771,
+            "maio": 1505181165.578771,
+            "junho": 2757899893.57877,
+            "julho": 2929527418.57877,
+            "agosto": 3042615675.57877,
+            "setembro": 3249095310.57877,
+            "outubro": 3285582782.57877,
+            "novembro": 4196082147.6015205,
+            "dezembro": 4979328563.62427
+          }
+        },
+        {
+          "codigo": "1.1",
+          "id": "investimento_telecom",
+          "nome": "Investimento em telecomunicações",
+          "unidade": "milhoes_fcfa",
+          "mensal": {
+            "janeiro": 84592596.0,
+            "fevereiro": 134680866.5787705,
+            "marco": 649933950.5787705,
+            "abril": 1410181489.578771,
+            "maio": 1485001270.578771,
+            "junho": 2737719998.57877,
+            "julho": 2909347523.57877,
+            "agosto": 3022435780.57877,
+            "setembro": 3228915415.57877,
+            "outubro": 3265402887.57877,
+            "novembro": 4175902252.6015205,
+            "dezembro": 4959148668.62427
+          }
+        },
+        {
+          "codigo": "1.2",
+          "id": "investimento_internet",
+          "nome": "Investimento em Internet",
+          "unidade": "milhoes_fcfa",
+          "mensal": {
+            "janeiro": 0.0,
+            "fevereiro": 0.0,
+            "marco": 20179895.0,
+            "abril": 20179895.0,
+            "maio": 20179895.0,
+            "junho": 20179895.0,
+            "julho": 20179895.0,
+            "agosto": 20179895.0,
+            "setembro": 20179895.0,
+            "outubro": 20179895.0,
+            "novembro": 20179895.0,
+            "dezembro": 20179895.0
+          }
+        },
+        {
+          "codigo": "2",
+          "id": "investimento_incorporeo",
+          "nome": "Investimento incorpóreo",
+          "unidade": "milhoes_fcfa",
+          "mensal": {
+            "janeiro": 0.0,
+            "fevereiro": 9508097.0,
+            "marco": 12189522.0,
+            "abril": 74147088.0,
+            "maio": 190075440.0,
+            "junho": 51803250.0,
+            "julho": 91416493.0,
+            "agosto": 91506493.0,
+            "setembro": 97664630.0,
+            "outubro": 253676707.0,
+            "novembro": 254644569.0,
+            "dezembro": 328619770.0
+          }
+        }
+      ]
+    }
+  ]
+}

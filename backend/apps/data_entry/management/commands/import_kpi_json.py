@@ -6,6 +6,7 @@ indicator hierarchy. Handles both monthly and cumulative data.
 
 Usage:
     python manage.py import_kpi_json
+    python manage.py import_kpi_json --data-dir data/kpi_2018
     python manage.py import_kpi_json --file orange_kpi_2024.json
     python manage.py import_kpi_json --operator ORANGE --year 2024
     python manage.py import_kpi_json --dry-run
@@ -210,7 +211,7 @@ INDICATOR_MAP = {
 
 
 class Command(BaseCommand):
-    help = 'Importa dados KPI de ficheiros JSON (ARN 2024) para a base de dados'
+    help = 'Importa dados KPI de ficheiros JSON (ARN, vários anos) para a base de dados'
 
     def add_arguments(self, parser):
         parser.add_argument(
@@ -485,7 +486,7 @@ class Command(BaseCommand):
             return
 
         operators = Operator.objects.filter(is_active=True)
-        periods = Period.objects.filter(year=2024)
+        periods = Period.objects.all().order_by('year', 'month')
         count = 0
 
         for period in periods:
@@ -504,7 +505,7 @@ class Command(BaseCommand):
                     total_val += pos_entry.value
 
                 if total_val > 0 and not dry_run:
-                    _, created = DataEntry.objects.update_or_create(
+                    DataEntry.objects.update_or_create(
                         indicator=root, operator=op, period=period,
                         defaults={
                             'value': total_val,
@@ -513,10 +514,9 @@ class Command(BaseCommand):
                             'observation': 'Total assinantes = Pré + Pós',
                         },
                     )
-                    if created:
-                        count += 1
+                    count += 1
 
-        self.stdout.write(f'  Total assinantes (code 1): {count} entradas criadas/actualizadas')
+        self.stdout.write(f'  Total assinantes (code 1): {count} entradas gravadas')
 
     def _compute_data_traffic_total(self, dry_run):
         """trafego_originado code '4' = sum of data traffic sub-indicators."""
@@ -529,13 +529,17 @@ class Command(BaseCommand):
         if not root:
             return
 
-        sub_codes = ['4.1', '4.2', '4.3']
-        subs = Indicator.objects.filter(category=cat, code__in=sub_codes)
-        if not subs.exists():
+        volume_codes = ['4.1.1', '4.2.1', '4.3.1']
+        subs = list(Indicator.objects.filter(category=cat, code__in=volume_codes))
+        if not subs:
+            subs = list(Indicator.objects.filter(
+                category=cat, code__in=['4.1', '4.2', '4.3'],
+            ))
+        if not subs:
             return
 
         operators = Operator.objects.filter(is_active=True)
-        periods = Period.objects.filter(year=2024)
+        periods = Period.objects.all().order_by('year', 'month')
         count = 0
 
         for period in periods:
@@ -549,16 +553,15 @@ class Command(BaseCommand):
                         total_val += entry.value
 
                 if total_val > 0 and not dry_run:
-                    _, created = DataEntry.objects.update_or_create(
+                    DataEntry.objects.update_or_create(
                         indicator=root, operator=op, period=period,
                         defaults={
                             'value': total_val,
                             'source': 'calculated',
                             'is_validated': True,
-                            'observation': 'Total dados = 2G + 3G + 4G',
+                            'observation': 'Total dados = 2G + 3G + 4G (Mbit)',
                         },
                     )
-                    if created:
-                        count += 1
+                    count += 1
 
-        self.stdout.write(f'  Total dados (code 4): {count} entradas criadas/actualizadas')
+        self.stdout.write(f'  Total dados (code 4): {count} entradas gravadas')

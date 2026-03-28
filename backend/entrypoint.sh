@@ -34,6 +34,7 @@ echo "Seeding reference data..."
 python manage.py seed_data 2>/dev/null || true
 
 echo "Importing KPI data if available..."
-python manage.py import_kpi_json 2>/dev/null || true
+python manage.py import_kpi_json --data-dir data/kpi_2024 2>/dev/null || true
+python manage.py import_kpi_json --data-dir data/kpi_2018 2>/dev/null || true
 
 echo "Entrypoint complete."
