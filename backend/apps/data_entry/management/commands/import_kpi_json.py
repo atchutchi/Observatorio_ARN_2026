@@ -280,8 +280,10 @@ class Command(BaseCommand):
             name_map = {
                 'orange': 'ORANGE', 'orange bissau': 'ORANGE',
                 'telecel': 'TELECEL', 'mtn': 'TELECEL',
+                'telecel/mtn': 'TELECEL',
             }
-            operator_code = name_map.get(operator_name.lower(), operator_name.upper())
+            op_key = operator_name.lower().strip()
+            operator_code = name_map.get(op_key, operator_name.upper())
 
         try:
             operator = Operator.objects.get(code=operator_code)
