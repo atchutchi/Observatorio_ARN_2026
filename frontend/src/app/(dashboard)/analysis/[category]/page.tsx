@@ -133,7 +133,7 @@ const CategoryAnalysisPage = () => {
     }
   }
 
-  const operatorCodes = [...new Set(data.map((d) => d.operator_code))]
+  const operatorCodes = Array.from(new Set(data.map((d) => d.operator_code)))
   const operators = operatorCodes.map((code) => {
     const item = data.find((d) => d.operator_code === code)
     return { code, name: item?.operator_name || code, color: item?.operator_color || '#6B7280' }

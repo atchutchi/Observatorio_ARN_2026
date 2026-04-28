@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useMemo } from 'react'
 import api from '@/lib/api'
 
 type UseApiOptions<T> = {
@@ -14,14 +14,20 @@ export const useApi = <T>({ url, params, enabled = true, initialData }: UseApiOp
   const [data, setData] = useState<T | undefined>(initialData)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const paramsKey = JSON.stringify(params ?? {})
+  const filteredParams = useMemo(
+    () => {
+      const parsedParams = JSON.parse(paramsKey) as Record<string, string | number | boolean>
+      const entries = Object.entries(parsedParams).filter(([, v]) => v !== undefined)
+      return entries.length > 0 ? Object.fromEntries(entries) : undefined
+    },
+    [paramsKey]
+  )
 
   const fetchData = useCallback(async () => {
     setIsLoading(true)
     setError(null)
     try {
-      const filteredParams = params
-        ? Object.fromEntries(Object.entries(params).filter(([, v]) => v !== undefined))
-        : undefined
       const response = await api.get(url, { params: filteredParams })
       setData(response.data.results ?? response.data)
     } catch (err: unknown) {
@@ -30,7 +36,7 @@ export const useApi = <T>({ url, params, enabled = true, initialData }: UseApiOp
     } finally {
       setIsLoading(false)
     }
-  }, [url, JSON.stringify(params)])
+  }, [url, filteredParams])
 
   useEffect(() => {
     if (enabled) {

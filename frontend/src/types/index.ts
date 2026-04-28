@@ -20,6 +20,11 @@ export type User = {
   operator_type: string | null
   phone: string
   position: string
+  is_active?: boolean
+  date_joined?: string
+  is_arn_admin: boolean
+  is_arn_staff: boolean
+  is_operator_user: boolean
 }
 
 export type Operator = {
@@ -90,14 +95,21 @@ export type Period = {
 export type DataEntry = {
   id: number
   indicator: number
+  indicator_code: string
+  indicator_name: string
   operator: number
+  operator_code: string
   period: number
+  period_display: string
   value: string | null
   observation: string
   source: string
   is_validated: boolean
+  submitted_by?: number
   submitted_at: string
   updated_at: string
+  validated_by?: number | null
+  validated_at?: string | null
 }
 
 export type CumulativeData = {

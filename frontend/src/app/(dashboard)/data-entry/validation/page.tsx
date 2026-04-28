@@ -133,16 +133,16 @@ const ValidationPage = () => {
                   <td className="py-3 px-4">
                     <span
                       className="inline-block w-2 h-2 rounded-full mr-2"
-                      style={{ backgroundColor: getOperatorColor((entry as any).operator_code || '') }}
+                      style={{ backgroundColor: getOperatorColor(entry.operator_code || '') }}
                     />
-                    {(entry as any).operator_code}
+                    {entry.operator_code}
                   </td>
                   <td className="py-3 px-4">
-                    <span className="text-gray-400 mr-1">{(entry as any).indicator_code}</span>
-                    {(entry as any).indicator_name}
+                    <span className="text-gray-400 mr-1">{entry.indicator_code}</span>
+                    {entry.indicator_name}
                   </td>
                   <td className="py-3 px-4 text-gray-600">
-                    {(entry as any).period_display}
+                    {entry.period_display}
                   </td>
                   <td className="py-3 px-4 text-right font-mono">
                     {formatNumber(entry.value)}

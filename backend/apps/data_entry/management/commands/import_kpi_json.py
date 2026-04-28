@@ -281,6 +281,7 @@ class Command(BaseCommand):
                 'orange': 'ORANGE', 'orange bissau': 'ORANGE',
                 'telecel': 'TELECEL', 'mtn': 'TELECEL',
                 'telecel/mtn': 'TELECEL',
+                'telecel guiné-bissau (mtn)': 'TELECEL',
             }
             op_key = operator_name.lower().strip()
             operator_code = name_map.get(op_key, operator_name.upper())

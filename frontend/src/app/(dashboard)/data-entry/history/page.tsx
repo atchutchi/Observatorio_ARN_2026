@@ -140,16 +140,16 @@ const HistoryPage = () => {
                   <td className="py-3 px-4">
                     <span
                       className="inline-block w-2 h-2 rounded-full mr-2"
-                      style={{ backgroundColor: getOperatorColor((entry as any).operator_code || '') }}
+                      style={{ backgroundColor: getOperatorColor(entry.operator_code || '') }}
                     />
-                    {(entry as any).operator_code}
+                    {entry.operator_code}
                   </td>
                   <td className="py-3 px-4">
-                    <span className="text-gray-400 mr-1 text-xs">{(entry as any).indicator_code}</span>
-                    <span className="text-gray-700">{(entry as any).indicator_name}</span>
+                    <span className="text-gray-400 mr-1 text-xs">{entry.indicator_code}</span>
+                    <span className="text-gray-700">{entry.indicator_name}</span>
                   </td>
                   <td className="py-3 px-4 text-gray-600 text-xs">
-                    {(entry as any).period_display}
+                    {entry.period_display}
                   </td>
                   <td className="py-3 px-4 text-right font-mono">
                     {formatNumber(entry.value)}

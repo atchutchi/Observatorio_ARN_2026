@@ -18,7 +18,7 @@ class IndicatorCategory(models.Model):
         ordering = ['order']
 
     def __str__(self):
-        return f"{self.order}. {self.name}"
+        return self.name
 
 
 class Indicator(models.Model):

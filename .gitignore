@@ -26,6 +26,7 @@ backend/static/collected/
 frontend/.next/
 frontend/out/
 frontend/node_modules/
+*.tsbuildinfo
 
 # Python virtual env
 venv/

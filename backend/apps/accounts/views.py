@@ -14,6 +14,11 @@ class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.select_related('operator').all()
     permission_classes = [IsARNAdmin]
 
+    def get_permissions(self):
+        if self.action == 'profile':
+            return [IsAuthenticated()]
+        return super().get_permissions()
+
     def get_serializer_class(self):
         if self.action == 'create':
             return UserCreateSerializer

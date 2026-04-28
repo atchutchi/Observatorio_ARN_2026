@@ -76,6 +76,16 @@ const MARKETS = [
   { key: 'employment', label: 'Emprego' },
 ]
 
+const MARKET_CATEGORY_MAP: Record<string, string> = {
+  mobile: 'estacoes_moveis',
+  voice: 'trafego_originado',
+  sms: 'trafego_originado',
+  data: 'trafego_originado',
+  fixed_internet: 'internet_fixo',
+  revenue: 'receitas',
+  employment: 'empregos',
+}
+
 const CURRENT_YEAR = new Date().getFullYear()
 const YEARS = Array.from({ length: CURRENT_YEAR - 2017 }, (_, i) => 2018 + i).reverse()
 
@@ -89,20 +99,10 @@ const MarketAnalysisPage = () => {
   const [trendOperators, setTrendOperators] = useState<OperatorInfo[]>([])
   const [hhiHistory, setHhiHistory] = useState<{ year: number; hhi: number }[]>([])
 
-  const marketCatMap: Record<string, string> = {
-    mobile: 'estacoes_moveis',
-    voice: 'trafego_originado',
-    sms: 'trafego_originado',
-    data: 'trafego_originado',
-    fixed_internet: 'internet_fixo',
-    revenue: 'receitas',
-    employment: 'empregos',
-  }
-
   const fetchData = useCallback(async () => {
     setIsLoading(true)
     try {
-      const catCode = marketCatMap[market] || 'estacoes_moveis'
+      const catCode = MARKET_CATEGORY_MAP[market] || 'estacoes_moveis'
 
       const [hhiRes, growthRes, trendRes] = await Promise.all([
         api.get('/dashboard/hhi/', { params: { year, market } }),

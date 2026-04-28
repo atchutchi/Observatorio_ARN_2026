@@ -7,6 +7,9 @@ User = get_user_model()
 class UserSerializer(serializers.ModelSerializer):
     operator_name = serializers.CharField(source='operator.name', read_only=True, default=None)
     role_display = serializers.CharField(source='get_role_display', read_only=True)
+    is_arn_admin = serializers.BooleanField(read_only=True)
+    is_arn_staff = serializers.BooleanField(read_only=True)
+    is_operator_user = serializers.BooleanField(read_only=True)
 
     class Meta:
         model = User
@@ -14,6 +17,7 @@ class UserSerializer(serializers.ModelSerializer):
             'id', 'username', 'email', 'first_name', 'last_name',
             'role', 'role_display', 'operator', 'operator_name',
             'phone', 'position', 'is_active', 'date_joined',
+            'is_arn_admin', 'is_arn_staff', 'is_operator_user',
         ]
         read_only_fields = ['id', 'date_joined']
 
@@ -43,6 +47,9 @@ class ProfileSerializer(serializers.ModelSerializer):
         source='operator.operator_type.code', read_only=True, default=None
     )
     role_display = serializers.CharField(source='get_role_display', read_only=True)
+    is_arn_admin = serializers.BooleanField(read_only=True)
+    is_arn_staff = serializers.BooleanField(read_only=True)
+    is_operator_user = serializers.BooleanField(read_only=True)
 
     class Meta:
         model = User
@@ -50,6 +57,7 @@ class ProfileSerializer(serializers.ModelSerializer):
             'id', 'username', 'email', 'first_name', 'last_name',
             'role', 'role_display', 'operator', 'operator_name',
             'operator_code', 'operator_type', 'phone', 'position',
+            'is_arn_admin', 'is_arn_staff', 'is_operator_user',
         ]
         read_only_fields = [
             'id', 'username', 'role', 'operator',

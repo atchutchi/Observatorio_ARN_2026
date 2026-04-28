@@ -1,0 +1,2238 @@
+{
+  "operadora": "Orange",
+  "pais": "Guiné-Bissau",
+  "ano": 2022,
+  "fonte": "ARN — Autoridade Reguladora Nacional",
+  "categorias": [
+    {
+      "id": "estacoes_moveis",
+      "nome": "Estações Móveis",
+      "indicadores": [
+        {
+          "codigo": "1",
+          "id": "pos_pago",
+          "nome": "Assinantes pós-pago",
+          "unidade": "numero",
+          "mensal": {
+            "janeiro": 80,
+            "fevereiro": 78,
+            "marco": 78,
+            "abril": null,
+            "maio": null,
+            "junho": null,
+            "julho": 72,
+            "agosto": 70,
+            "setembro": 70,
+            "outubro": 71,
+            "novembro": 71,
+            "dezembro": 71
+          }
+        },
+        {
+          "codigo": "1.1",
+          "id": "pos_pago_uso_efetivo",
+          "nome": "Pós-pago com uso efetivo",
+          "unidade": "numero",
+          "mensal": {
+            "janeiro": 80,
+            "fevereiro": 78,
+            "marco": 78,
+            "abril": 72,
+            "maio": 70,
+            "junho": 71,
+            "julho": 72,
+            "agosto": 70,
+            "setembro": 70,
+            "outubro": 71,
+            "novembro": 71,
+            "dezembro": 71
+          }
+        },
+        {
+          "codigo": "2",
+          "id": "pre_pago",
+          "nome": "Assinantes pré-pago",
+          "unidade": "numero",
+          "mensal": {
+            "janeiro": 1433503,
+            "fevereiro": 1476059,
+            "marco": 1527388,
+            "abril": 72,
+            "maio": 70,
+            "junho": 71,
+            "julho": 1805860,
+            "agosto": 1861665,
+            "setembro": 1869205,
+            "outubro": 1779381,
+            "novembro": 1755103,
+            "dezembro": 1755592
+          }
+        },
+        {
+          "codigo": "2.1",
+          "id": "pre_pago_uso_efetivo",
+          "nome": "Pré-pago com uso efetivo",
+          "unidade": "numero",
+          "mensal": {
+            "janeiro": 1041949,
+            "fevereiro": 1055713,
+            "marco": 1098085,
+            "abril": 1598030,
+            "maio": 1669117,
+            "junho": 1742162,
+            "julho": 1203997,
+            "agosto": 1190166,
+            "setembro": 1178380,
+            "outubro": 1168184,
+            "novembro": 1168173,
+            "dezembro": 1185375
+          }
+        },
+        {
+          "codigo": "3",
+          "id": "utilizadores_sms",
+          "nome": "Utilizadores SMS",
+          "unidade": "numero",
+          "mensal": {
+            "janeiro": 652569,
+            "fevereiro": 641638,
+            "marco": 684488,
+            "abril": null,
+            "maio": null,
+            "junho": null,
+            "julho": 777835,
+            "agosto": 754884,
+            "setembro": 730464,
+            "outubro": 719003,
+            "novembro": 692667,
+            "dezembro": 719633
+          }
+        },
+        {
+          "codigo": "4",
+          "id": "roaming_out_parceiros",
+          "nome": "Roaming OUT parceiros",
+          "unidade": "numero",
+          "mensal": {
+            "janeiro": 83268,
+            "fevereiro": 82382,
+            "marco": 85416,
+            "abril": null,
+            "maio": null,
+            "junho": null,
+            "julho": 103533,
+            "agosto": 93388,
+            "setembro": 90803,
+            "outubro": 91836,
+            "novembro": 99513,
+            "dezembro": 104747
+          }
+        },
+        {
+          "codigo": "5",
+          "id": "banda_larga_3g_4g",
+          "nome": "Banda larga 3G+4G",
+          "unidade": "numero",
+          "mensal": {
+            "janeiro": 602649,
+            "fevereiro": 614083,
+            "marco": 650893,
+            "abril": 82420,
+            "maio": 93102,
+            "junho": 102025,
+            "julho": null,
+            "agosto": null,
+            "setembro": null,
+            "outubro": 751460,
+            "novembro": 749267,
+            "dezembro": 769508
+          }
+        },
+        {
+          "codigo": "6",
+          "id": "utilizadores_3g",
+          "nome": "Utilizadores 3G",
+          "unidade": "numero",
+          "mensal": {
+            "janeiro": 393854,
+            "fevereiro": 401156,
+            "marco": 418503,
+            "abril": 479564,
+            "maio": 502790,
+            "junho": 527487,
+            "julho": 483969,
+            "agosto": 471850,
+            "setembro": 457650,
+            "outubro": 452679,
+            "novembro": 448217,
+            "dezembro": 458000
+          }
+        },
+        {
+          "codigo": "6.1",
+          "id": "internet_3g_box",
+          "nome": "Internet 3G Box",
+          "unidade": "numero",
+          "mensal": {
+            "janeiro": 1813,
+            "fevereiro": 1859,
+            "marco": 1993,
+            "abril": 438279,
+            "maio": 454945,
+            "junho": 471211,
+            "julho": 1815,
+            "agosto": 1665,
+            "setembro": 1302,
+            "outubro": 1443,
+            "novembro": 2001,
+            "dezembro": 1620
+          }
+        },
+        {
+          "codigo": "6.2",
+          "id": "internet_3g_usb",
+          "nome": "Internet 3G USB",
+          "unidade": "numero",
+          "mensal": {
+            "janeiro": 2148,
+            "fevereiro": 2353,
+            "marco": 2432,
+            "abril": 1996,
+            "maio": 1659,
+            "junho": 1611,
+            "julho": 2187,
+            "agosto": 2339,
+            "setembro": 2347,
+            "outubro": 2461,
+            "novembro": 2627,
+            "dezembro": 2329
+          }
+        },
+        {
+          "codigo": "7",
+          "id": "utilizadores_4g",
+          "nome": "Utilizadores 4G",
+          "unidade": "numero",
+          "mensal": {
+            "janeiro": 208795,
+            "fevereiro": 212927,
+            "marco": 232390,
+            "abril": 2437,
+            "maio": 2280,
+            "junho": 2132,
+            "julho": 277274,
+            "agosto": 269349,
+            "setembro": 281124,
+            "outubro": 298781,
+            "novembro": 301050,
+            "dezembro": 311508
+          }
+        },
+        {
+          "codigo": "7.1",
+          "id": "internet_4g_box",
+          "nome": "Internet 4G Box",
+          "unidade": "numero",
+          "mensal": {
+            "janeiro": 2214,
+            "fevereiro": 2201,
+            "marco": 2247,
+            "abril": 238051,
+            "maio": 245105,
+            "junho": 262715,
+            "julho": 2367,
+            "agosto": 2461,
+            "setembro": 2349,
+            "outubro": 2482,
+            "novembro": 2821,
+            "dezembro": 3315
+          }
+        },
+        {
+          "codigo": "7.2",
+          "id": "internet_4g_usb",
+          "nome": "Internet 4G USB",
+          "unidade": "numero",
+          "mensal": {
+            "janeiro": 575,
+            "fevereiro": 712,
+            "marco": 720,
+            "abril": 2238,
+            "maio": 2188,
+            "junho": 2156,
+            "julho": 709,
+            "agosto": 850,
+            "setembro": 938,
+            "outubro": 996,
+            "novembro": 1071,
+            "dezembro": 1083
+          }
+        }
+      ]
+    },
+    {
+      "id": "mobile_money",
+      "nome": "Mobile Money",
+      "indicadores": [
+        {
+          "codigo": "1",
+          "id": "mobile_money_utilizadores",
+          "nome": "Utilizadores Mobile Money",
+          "unidade": "numero",
+          "mensal": {
+            "janeiro": null,
+            "fevereiro": null,
+            "marco": null,
+            "abril": null,
+            "maio": null,
+            "junho": null,
+            "julho": null,
+            "agosto": null,
+            "setembro": null,
+            "outubro": null,
+            "novembro": null,
+            "dezembro": null
+          }
+        },
+        {
+          "codigo": "1.1",
+          "id": "mobile_money_mulher",
+          "nome": "Mobile Money Mulher",
+          "unidade": "numero",
+          "mensal": {
+            "janeiro": null,
+            "fevereiro": null,
+            "marco": null,
+            "abril": null,
+            "maio": null,
+            "junho": null,
+            "julho": null,
+            "agosto": null,
+            "setembro": null,
+            "outubro": null,
+            "novembro": null,
+            "dezembro": null
+          }
+        },
+        {
+          "codigo": "1.2",
+          "id": "mobile_money_homem",
+          "nome": "Mobile Money Homem",
+          "unidade": "numero",
+          "mensal": {
+            "janeiro": null,
+            "fevereiro": null,
+            "marco": null,
+            "abril": null,
+            "maio": null,
+            "junho": null,
+            "julho": null,
+            "agosto": null,
+            "setembro": null,
+            "outubro": null,
+            "novembro": null,
+            "dezembro": null
+          }
+        },
+        {
+          "codigo": "2",
+          "id": "mobile_money_carregamentos",
+          "nome": "Carregamentos Mobile Money",
+          "unidade": "fcfa",
+          "mensal": {
+            "janeiro": null,
+            "fevereiro": null,
+            "marco": null,
+            "abril": null,
+            "maio": null,
+            "junho": null,
+            "julho": null,
+            "agosto": null,
+            "setembro": null,
+            "outubro": null,
+            "novembro": null,
+            "dezembro": null
+          }
+        },
+        {
+          "codigo": "3",
+          "id": "mobile_money_levantamentos",
+          "nome": "Levantamentos Mobile Money",
+          "unidade": "fcfa",
+          "mensal": {
+            "janeiro": null,
+            "fevereiro": null,
+            "marco": null,
+            "abril": null,
+            "maio": null,
+            "junho": null,
+            "julho": null,
+            "agosto": null,
+            "setembro": null,
+            "outubro": null,
+            "novembro": null,
+            "dezembro": null
+          }
+        },
+        {
+          "codigo": "4",
+          "id": "mobile_money_transferencias",
+          "nome": "Transferências Mobile Money",
+          "unidade": "fcfa",
+          "mensal": {
+            "janeiro": null,
+            "fevereiro": null,
+            "marco": null,
+            "abril": null,
+            "maio": null,
+            "junho": null,
+            "julho": null,
+            "agosto": null,
+            "setembro": null,
+            "outubro": null,
+            "novembro": null,
+            "dezembro": null
+          }
+        }
+      ]
+    },
+    {
+      "id": "trafego_originado",
+      "nome": "Tráfego Originado",
+      "indicadores": [
+        {
+          "codigo": "1",
+          "id": "chamadas_originadas",
+          "nome": "Chamadas originadas total",
+          "unidade": "chamadas",
+          "mensal": {
+            "janeiro": null,
+            "fevereiro": null,
+            "marco": null,
+            "abril": null,
+            "maio": null,
+            "junho": null,
+            "julho": null,
+            "agosto": null,
+            "setembro": null,
+            "outubro": null,
+            "novembro": null,
+            "dezembro": null
+          }
+        },
+        {
+          "codigo": "1.1",
+          "id": "chamadas_on_net",
+          "nome": "Chamadas On-net",
+          "unidade": "chamadas",
+          "mensal": {
+            "janeiro": null,
+            "fevereiro": null,
+            "marco": null,
+            "abril": null,
+            "maio": null,
+            "junho": null,
+            "julho": null,
+            "agosto": null,
+            "setembro": null,
+            "outubro": null,
+            "novembro": null,
+            "dezembro": null
+          }
+        },
+        {
+          "codigo": "1.2",
+          "id": "chamadas_off_net",
+          "nome": "Chamadas Off-net",
+          "unidade": "chamadas",
+          "mensal": {
+            "janeiro": null,
+            "fevereiro": null,
+            "marco": null,
+            "abril": null,
+            "maio": null,
+            "junho": null,
+            "julho": null,
+            "agosto": null,
+            "setembro": null,
+            "outubro": null,
+            "novembro": null,
+            "dezembro": null
+          }
+        },
+        {
+          "codigo": "1.3",
+          "id": "chamadas_internacional",
+          "nome": "Chamadas internacionais",
+          "unidade": "chamadas",
+          "mensal": {
+            "janeiro": null,
+            "fevereiro": null,
+            "marco": null,
+            "abril": null,
+            "maio": null,
+            "junho": null,
+            "julho": null,
+            "agosto": null,
+            "setembro": null,
+            "outubro": null,
+            "novembro": null,
+            "dezembro": null
+          }
+        },
+        {
+          "codigo": "2",
+          "id": "minutos_originados",
+          "nome": "Minutos originados total",
+          "unidade": "minutos",
+          "mensal": {
+            "janeiro": null,
+            "fevereiro": null,
+            "marco": null,
+            "abril": null,
+            "maio": null,
+            "junho": null,
+            "julho": null,
+            "agosto": null,
+            "setembro": null,
+            "outubro": null,
+            "novembro": null,
+            "dezembro": null
+          }
+        },
+        {
+          "codigo": "2.1",
+          "id": "minutos_on_net",
+          "nome": "Minutos On-net",
+          "unidade": "minutos",
+          "mensal": {
+            "janeiro": null,
+            "fevereiro": null,
+            "marco": null,
+            "abril": null,
+            "maio": null,
+            "junho": null,
+            "julho": null,
+            "agosto": null,
+            "setembro": null,
+            "outubro": null,
+            "novembro": null,
+            "dezembro": null
+          }
+        },
+        {
+          "codigo": "2.2",
+          "id": "minutos_off_net",
+          "nome": "Minutos Off-net",
+          "unidade": "minutos",
+          "mensal": {
+            "janeiro": null,
+            "fevereiro": null,
+            "marco": null,
+            "abril": null,
+            "maio": null,
+            "junho": null,
+            "julho": null,
+            "agosto": null,
+            "setembro": null,
+            "outubro": null,
+            "novembro": null,
+            "dezembro": null
+          }
+        },
+        {
+          "codigo": "2.3",
+          "id": "minutos_internacional",
+          "nome": "Minutos internacionais",
+          "unidade": "minutos",
+          "mensal": {
+            "janeiro": null,
+            "fevereiro": null,
+            "marco": null,
+            "abril": null,
+            "maio": null,
+            "junho": null,
+            "julho": null,
+            "agosto": null,
+            "setembro": null,
+            "outubro": null,
+            "novembro": null,
+            "dezembro": null
+          }
+        },
+        {
+          "codigo": "3",
+          "id": "sms_enviadas",
+          "nome": "SMS enviadas total",
+          "unidade": "mensagens",
+          "mensal": {
+            "janeiro": null,
+            "fevereiro": null,
+            "marco": null,
+            "abril": null,
+            "maio": null,
+            "junho": null,
+            "julho": null,
+            "agosto": null,
+            "setembro": null,
+            "outubro": null,
+            "novembro": null,
+            "dezembro": null
+          }
+        },
+        {
+          "codigo": "3.1",
+          "id": "sms_on_net",
+          "nome": "SMS On-net",
+          "unidade": "mensagens",
+          "mensal": {
+            "janeiro": null,
+            "fevereiro": null,
+            "marco": null,
+            "abril": null,
+            "maio": null,
+            "junho": null,
+            "julho": null,
+            "agosto": null,
+            "setembro": null,
+            "outubro": null,
+            "novembro": null,
+            "dezembro": null
+          }
+        },
+        {
+          "codigo": "3.2",
+          "id": "sms_off_net",
+          "nome": "SMS Off-net",
+          "unidade": "mensagens",
+          "mensal": {
+            "janeiro": null,
+            "fevereiro": null,
+            "marco": null,
+            "abril": null,
+            "maio": null,
+            "junho": null,
+            "julho": null,
+            "agosto": null,
+            "setembro": null,
+            "outubro": null,
+            "novembro": null,
+            "dezembro": null
+          }
+        },
+        {
+          "codigo": "3.3",
+          "id": "sms_internacional",
+          "nome": "SMS internacionais",
+          "unidade": "mensagens",
+          "mensal": {
+            "janeiro": null,
+            "fevereiro": null,
+            "marco": null,
+            "abril": null,
+            "maio": null,
+            "junho": null,
+            "julho": null,
+            "agosto": null,
+            "setembro": null,
+            "outubro": null,
+            "novembro": null,
+            "dezembro": null
+          }
+        },
+        {
+          "codigo": "4A",
+          "id": "sessoes_dados_2g",
+          "nome": "Sessões dados 2G",
+          "unidade": "sessoes",
+          "mensal": {
+            "janeiro": null,
+            "fevereiro": null,
+            "marco": null,
+            "abril": null,
+            "maio": null,
+            "junho": null,
+            "julho": null,
+            "agosto": null,
+            "setembro": null,
+            "outubro": null,
+            "novembro": null,
+            "dezembro": null
+          }
+        },
+        {
+          "codigo": "5",
+          "id": "trafego_dados_2g_mbit",
+          "nome": "Tráfego dados 2G",
+          "unidade": "mbit",
+          "mensal": {
+            "janeiro": null,
+            "fevereiro": null,
+            "marco": null,
+            "abril": null,
+            "maio": null,
+            "junho": null,
+            "julho": null,
+            "agosto": null,
+            "setembro": null,
+            "outubro": null,
+            "novembro": null,
+            "dezembro": null
+          }
+        },
+        {
+          "codigo": "6",
+          "id": "trafego_dados_3g_mbit",
+          "nome": "Tráfego dados 3G",
+          "unidade": "mbit",
+          "mensal": {
+            "janeiro": null,
+            "fevereiro": null,
+            "marco": null,
+            "abril": null,
+            "maio": null,
+            "junho": null,
+            "julho": null,
+            "agosto": null,
+            "setembro": null,
+            "outubro": null,
+            "novembro": null,
+            "dezembro": null
+          }
+        },
+        {
+          "codigo": "6.1",
+          "id": "trafego_dados_3g_box_mbit",
+          "nome": "Tráfego 3G Box",
+          "unidade": "mbit",
+          "mensal": {
+            "janeiro": null,
+            "fevereiro": null,
+            "marco": null,
+            "abril": null,
+            "maio": null,
+            "junho": null,
+            "julho": null,
+            "agosto": null,
+            "setembro": null,
+            "outubro": null,
+            "novembro": null,
+            "dezembro": null
+          }
+        },
+        {
+          "codigo": "6.2",
+          "id": "trafego_dados_3g_usb_mbit",
+          "nome": "Tráfego 3G USB",
+          "unidade": "mbit",
+          "mensal": {
+            "janeiro": null,
+            "fevereiro": null,
+            "marco": null,
+            "abril": null,
+            "maio": null,
+            "junho": null,
+            "julho": null,
+            "agosto": null,
+            "setembro": null,
+            "outubro": null,
+            "novembro": null,
+            "dezembro": null
+          }
+        },
+        {
+          "codigo": "7",
+          "id": "trafego_dados_4g_mbit",
+          "nome": "Tráfego dados 4G",
+          "unidade": "mbit",
+          "mensal": {
+            "janeiro": null,
+            "fevereiro": null,
+            "marco": null,
+            "abril": null,
+            "maio": null,
+            "junho": null,
+            "julho": null,
+            "agosto": null,
+            "setembro": null,
+            "outubro": null,
+            "novembro": null,
+            "dezembro": null
+          }
+        },
+        {
+          "codigo": "7.1",
+          "id": "trafego_dados_4g_box_mbit",
+          "nome": "Tráfego 4G Box",
+          "unidade": "mbit",
+          "mensal": {
+            "janeiro": null,
+            "fevereiro": null,
+            "marco": null,
+            "abril": null,
+            "maio": null,
+            "junho": null,
+            "julho": null,
+            "agosto": null,
+            "setembro": null,
+            "outubro": null,
+            "novembro": null,
+            "dezembro": null
+          }
+        },
+        {
+          "codigo": "7.2",
+          "id": "trafego_dados_4g_usb_mbit",
+          "nome": "Tráfego 4G USB",
+          "unidade": "mbit",
+          "mensal": {
+            "janeiro": null,
+            "fevereiro": null,
+            "marco": null,
+            "abril": null,
+            "maio": null,
+            "junho": null,
+            "julho": null,
+            "agosto": null,
+            "setembro": null,
+            "outubro": null,
+            "novembro": null,
+            "dezembro": null
+          }
+        }
+      ]
+    },
+    {
+      "id": "trafego_terminado",
+      "nome": "Tráfego Terminado",
+      "indicadores": [
+        {
+          "codigo": "1",
+          "id": "chamadas_terminadas",
+          "nome": "Chamadas terminadas total",
+          "unidade": "chamadas",
+          "mensal": {
+            "janeiro": null,
+            "fevereiro": null,
+            "marco": null,
+            "abril": null,
+            "maio": null,
+            "junho": null,
+            "julho": null,
+            "agosto": null,
+            "setembro": null,
+            "outubro": null,
+            "novembro": null,
+            "dezembro": null
+          }
+        },
+        {
+          "codigo": "1.1",
+          "id": "chamadas_term_off_net",
+          "nome": "Chamadas terminadas Off-net",
+          "unidade": "chamadas",
+          "mensal": {
+            "janeiro": null,
+            "fevereiro": null,
+            "marco": null,
+            "abril": null,
+            "maio": null,
+            "junho": null,
+            "julho": null,
+            "agosto": null,
+            "setembro": null,
+            "outubro": null,
+            "novembro": null,
+            "dezembro": null
+          }
+        },
+        {
+          "codigo": "1.2",
+          "id": "chamadas_term_internacional",
+          "nome": "Chamadas terminadas internacionais",
+          "unidade": "chamadas",
+          "mensal": {
+            "janeiro": null,
+            "fevereiro": null,
+            "marco": null,
+            "abril": null,
+            "maio": null,
+            "junho": null,
+            "julho": null,
+            "agosto": null,
+            "setembro": null,
+            "outubro": null,
+            "novembro": null,
+            "dezembro": null
+          }
+        },
+        {
+          "codigo": "2",
+          "id": "minutos_terminados",
+          "nome": "Minutos terminados total",
+          "unidade": "minutos",
+          "mensal": {
+            "janeiro": null,
+            "fevereiro": null,
+            "marco": null,
+            "abril": null,
+            "maio": null,
+            "junho": null,
+            "julho": null,
+            "agosto": null,
+            "setembro": null,
+            "outubro": null,
+            "novembro": null,
+            "dezembro": null
+          }
+        },
+        {
+          "codigo": "2.1",
+          "id": "minutos_term_off_net",
+          "nome": "Minutos terminados Off-net",
+          "unidade": "minutos",
+          "mensal": {
+            "janeiro": null,
+            "fevereiro": null,
+            "marco": null,
+            "abril": null,
+            "maio": null,
+            "junho": null,
+            "julho": null,
+            "agosto": null,
+            "setembro": null,
+            "outubro": null,
+            "novembro": null,
+            "dezembro": null
+          }
+        },
+        {
+          "codigo": "2.2",
+          "id": "minutos_term_internacional",
+          "nome": "Minutos terminados internacionais",
+          "unidade": "minutos",
+          "mensal": {
+            "janeiro": null,
+            "fevereiro": null,
+            "marco": null,
+            "abril": null,
+            "maio": null,
+            "junho": null,
+            "julho": null,
+            "agosto": null,
+            "setembro": null,
+            "outubro": null,
+            "novembro": null,
+            "dezembro": null
+          }
+        },
+        {
+          "codigo": "3",
+          "id": "sms_terminadas",
+          "nome": "SMS terminadas total",
+          "unidade": "mensagens",
+          "mensal": {
+            "janeiro": null,
+            "fevereiro": null,
+            "marco": null,
+            "abril": null,
+            "maio": null,
+            "junho": null,
+            "julho": null,
+            "agosto": null,
+            "setembro": null,
+            "outubro": null,
+            "novembro": null,
+            "dezembro": null
+          }
+        },
+        {
+          "codigo": "3.1",
+          "id": "sms_term_off_net",
+          "nome": "SMS terminadas Off-net",
+          "unidade": "mensagens",
+          "mensal": {
+            "janeiro": null,
+            "fevereiro": null,
+            "marco": null,
+            "abril": null,
+            "maio": null,
+            "junho": null,
+            "julho": null,
+            "agosto": null,
+            "setembro": null,
+            "outubro": null,
+            "novembro": null,
+            "dezembro": null
+          }
+        },
+        {
+          "codigo": "3.2",
+          "id": "sms_term_internacional",
+          "nome": "SMS terminadas internacionais",
+          "unidade": "mensagens",
+          "mensal": {
+            "janeiro": null,
+            "fevereiro": null,
+            "marco": null,
+            "abril": null,
+            "maio": null,
+            "junho": null,
+            "julho": null,
+            "agosto": null,
+            "setembro": null,
+            "outubro": null,
+            "novembro": null,
+            "dezembro": null
+          }
+        }
+      ]
+    },
+    {
+      "id": "roaming_internacional",
+      "nome": "Roaming Internacional",
+      "indicadores": [
+        {
+          "codigo": "1",
+          "id": "roaming_in_chamadas_orig",
+          "nome": "Chamadas Roaming IN originadas",
+          "unidade": "chamadas",
+          "mensal": {
+            "janeiro": null,
+            "fevereiro": null,
+            "marco": null,
+            "abril": null,
+            "maio": null,
+            "junho": null,
+            "julho": null,
+            "agosto": null,
+            "setembro": null,
+            "outubro": null,
+            "novembro": null,
+            "dezembro": null
+          }
+        },
+        {
+          "codigo": "2",
+          "id": "roaming_in_chamadas_term",
+          "nome": "Chamadas Roaming IN terminadas",
+          "unidade": "chamadas",
+          "mensal": {
+            "janeiro": null,
+            "fevereiro": null,
+            "marco": null,
+            "abril": null,
+            "maio": null,
+            "junho": null,
+            "julho": null,
+            "agosto": null,
+            "setembro": null,
+            "outubro": null,
+            "novembro": null,
+            "dezembro": null
+          }
+        },
+        {
+          "codigo": "3",
+          "id": "roaming_in_minutos_orig",
+          "nome": "Minutos Roaming IN originados",
+          "unidade": "minutos",
+          "mensal": {
+            "janeiro": null,
+            "fevereiro": null,
+            "marco": null,
+            "abril": null,
+            "maio": null,
+            "junho": null,
+            "julho": null,
+            "agosto": null,
+            "setembro": null,
+            "outubro": null,
+            "novembro": null,
+            "dezembro": null
+          }
+        },
+        {
+          "codigo": "4",
+          "id": "roaming_in_minutos_term",
+          "nome": "Minutos Roaming IN terminados",
+          "unidade": "minutos",
+          "mensal": {
+            "janeiro": null,
+            "fevereiro": null,
+            "marco": null,
+            "abril": null,
+            "maio": null,
+            "junho": null,
+            "julho": null,
+            "agosto": null,
+            "setembro": null,
+            "outubro": null,
+            "novembro": null,
+            "dezembro": null
+          }
+        },
+        {
+          "codigo": "5",
+          "id": "roaming_in_sms_enviadas",
+          "nome": "SMS Roaming IN enviadas",
+          "unidade": "mensagens",
+          "mensal": {
+            "janeiro": null,
+            "fevereiro": null,
+            "marco": null,
+            "abril": null,
+            "maio": null,
+            "junho": null,
+            "julho": null,
+            "agosto": null,
+            "setembro": null,
+            "outubro": null,
+            "novembro": null,
+            "dezembro": null
+          }
+        },
+        {
+          "codigo": "6",
+          "id": "roaming_in_sms_recebidas",
+          "nome": "SMS Roaming IN recebidas",
+          "unidade": "mensagens",
+          "mensal": {
+            "janeiro": null,
+            "fevereiro": null,
+            "marco": null,
+            "abril": null,
+            "maio": null,
+            "junho": null,
+            "julho": null,
+            "agosto": null,
+            "setembro": null,
+            "outubro": null,
+            "novembro": null,
+            "dezembro": null
+          }
+        },
+        {
+          "codigo": "7",
+          "id": "roaming_in_internet_sessoes",
+          "nome": "Sessões Internet Roaming IN",
+          "unidade": "sessoes",
+          "mensal": {
+            "janeiro": null,
+            "fevereiro": null,
+            "marco": null,
+            "abril": null,
+            "maio": null,
+            "junho": null,
+            "julho": null,
+            "agosto": null,
+            "setembro": null,
+            "outubro": null,
+            "novembro": null,
+            "dezembro": null
+          }
+        },
+        {
+          "codigo": "8",
+          "id": "roaming_in_internet_volume",
+          "nome": "Volume Internet Roaming IN",
+          "unidade": "mbit",
+          "mensal": {
+            "janeiro": null,
+            "fevereiro": null,
+            "marco": null,
+            "abril": null,
+            "maio": null,
+            "junho": null,
+            "julho": null,
+            "agosto": null,
+            "setembro": null,
+            "outubro": null,
+            "novembro": null,
+            "dezembro": null
+          }
+        },
+        {
+          "codigo": "9",
+          "id": "roaming_out_chamadas_orig",
+          "nome": "Chamadas Roaming OUT originadas",
+          "unidade": "chamadas",
+          "mensal": {
+            "janeiro": null,
+            "fevereiro": null,
+            "marco": null,
+            "abril": null,
+            "maio": null,
+            "junho": null,
+            "julho": null,
+            "agosto": null,
+            "setembro": null,
+            "outubro": null,
+            "novembro": null,
+            "dezembro": null
+          }
+        },
+        {
+          "codigo": "10",
+          "id": "roaming_out_chamadas_term",
+          "nome": "Chamadas Roaming OUT terminadas",
+          "unidade": "chamadas",
+          "mensal": {
+            "janeiro": null,
+            "fevereiro": null,
+            "marco": null,
+            "abril": null,
+            "maio": null,
+            "junho": null,
+            "julho": null,
+            "agosto": null,
+            "setembro": null,
+            "outubro": null,
+            "novembro": null,
+            "dezembro": null
+          }
+        },
+        {
+          "codigo": "11",
+          "id": "roaming_out_minutos_orig",
+          "nome": "Minutos Roaming OUT originados",
+          "unidade": "minutos",
+          "mensal": {
+            "janeiro": null,
+            "fevereiro": null,
+            "marco": null,
+            "abril": null,
+            "maio": null,
+            "junho": null,
+            "julho": null,
+            "agosto": null,
+            "setembro": null,
+            "outubro": null,
+            "novembro": null,
+            "dezembro": null
+          }
+        },
+        {
+          "codigo": "12",
+          "id": "roaming_out_minutos_term",
+          "nome": "Minutos Roaming OUT terminados",
+          "unidade": "minutos",
+          "mensal": {
+            "janeiro": null,
+            "fevereiro": null,
+            "marco": null,
+            "abril": null,
+            "maio": null,
+            "junho": null,
+            "julho": null,
+            "agosto": null,
+            "setembro": null,
+            "outubro": null,
+            "novembro": null,
+            "dezembro": null
+          }
+        },
+        {
+          "codigo": "13",
+          "id": "roaming_out_sms_enviadas",
+          "nome": "SMS Roaming OUT enviadas",
+          "unidade": "mensagens",
+          "mensal": {
+            "janeiro": null,
+            "fevereiro": null,
+            "marco": null,
+            "abril": null,
+            "maio": null,
+            "junho": null,
+            "julho": null,
+            "agosto": null,
+            "setembro": null,
+            "outubro": null,
+            "novembro": null,
+            "dezembro": null
+          }
+        },
+        {
+          "codigo": "14",
+          "id": "roaming_out_internet_sessoes",
+          "nome": "Sessões Internet Roaming OUT",
+          "unidade": "sessoes",
+          "mensal": {
+            "janeiro": null,
+            "fevereiro": null,
+            "marco": null,
+            "abril": null,
+            "maio": null,
+            "junho": null,
+            "julho": null,
+            "agosto": null,
+            "setembro": null,
+            "outubro": null,
+            "novembro": null,
+            "dezembro": null
+          }
+        },
+        {
+          "codigo": "15",
+          "id": "roaming_out_internet_volume",
+          "nome": "Volume Internet Roaming OUT",
+          "unidade": "mbit",
+          "mensal": {
+            "janeiro": null,
+            "fevereiro": null,
+            "marco": null,
+            "abril": null,
+            "maio": null,
+            "junho": null,
+            "julho": null,
+            "agosto": null,
+            "setembro": null,
+            "outubro": null,
+            "novembro": null,
+            "dezembro": null
+          }
+        },
+        {
+          "codigo": "16",
+          "id": "acordos_roaming",
+          "nome": "Acordos de Roaming Internacional",
+          "unidade": "paises",
+          "mensal": {
+            "janeiro": null,
+            "fevereiro": null,
+            "marco": null,
+            "abril": null,
+            "maio": null,
+            "junho": null,
+            "julho": null,
+            "agosto": null,
+            "setembro": null,
+            "outubro": null,
+            "novembro": null,
+            "dezembro": null
+          }
+        }
+      ]
+    },
+    {
+      "id": "largura_banda_internacional",
+      "nome": "Largura de Banda Internacional",
+      "indicadores": [
+        {
+          "codigo": "1",
+          "id": "lbi_downlink_disponivel",
+          "nome": "LBI Downlink Disponível",
+          "unidade": "mbit",
+          "mensal": {
+            "janeiro": null,
+            "fevereiro": null,
+            "marco": null,
+            "abril": null,
+            "maio": null,
+            "junho": null,
+            "julho": null,
+            "agosto": null,
+            "setembro": null,
+            "outubro": null,
+            "novembro": null,
+            "dezembro": null
+          }
+        },
+        {
+          "codigo": "2",
+          "id": "lbi_downlink_instalada",
+          "nome": "LBI Downlink Instalada",
+          "unidade": "mbit",
+          "mensal": {
+            "janeiro": null,
+            "fevereiro": null,
+            "marco": null,
+            "abril": null,
+            "maio": null,
+            "junho": null,
+            "julho": null,
+            "agosto": null,
+            "setembro": null,
+            "outubro": null,
+            "novembro": null,
+            "dezembro": null
+          }
+        },
+        {
+          "codigo": "3",
+          "id": "lbi_downlink_contratada",
+          "nome": "LBI Downlink Contratada",
+          "unidade": "mbit",
+          "mensal": {
+            "janeiro": null,
+            "fevereiro": null,
+            "marco": null,
+            "abril": null,
+            "maio": null,
+            "junho": null,
+            "julho": null,
+            "agosto": null,
+            "setembro": null,
+            "outubro": null,
+            "novembro": null,
+            "dezembro": null
+          }
+        },
+        {
+          "codigo": "4",
+          "id": "lbi_downlink_utilizada",
+          "nome": "LBI Downlink Utilizada",
+          "unidade": "mbit",
+          "mensal": {
+            "janeiro": null,
+            "fevereiro": null,
+            "marco": null,
+            "abril": null,
+            "maio": null,
+            "junho": null,
+            "julho": null,
+            "agosto": null,
+            "setembro": null,
+            "outubro": null,
+            "novembro": null,
+            "dezembro": null
+          }
+        },
+        {
+          "codigo": "5",
+          "id": "lbi_uplink_disponivel",
+          "nome": "LBI Uplink Disponível",
+          "unidade": "mbit",
+          "mensal": {
+            "janeiro": null,
+            "fevereiro": null,
+            "marco": null,
+            "abril": null,
+            "maio": null,
+            "junho": null,
+            "julho": null,
+            "agosto": null,
+            "setembro": null,
+            "outubro": null,
+            "novembro": null,
+            "dezembro": null
+          }
+        },
+        {
+          "codigo": "6",
+          "id": "lbi_uplink_utilizada",
+          "nome": "LBI Uplink Utilizada",
+          "unidade": "mbit",
+          "mensal": {
+            "janeiro": null,
+            "fevereiro": null,
+            "marco": null,
+            "abril": null,
+            "maio": null,
+            "junho": null,
+            "julho": null,
+            "agosto": null,
+            "setembro": null,
+            "outubro": null,
+            "novembro": null,
+            "dezembro": null
+          }
+        }
+      ]
+    },
+    {
+      "id": "internet_fixo",
+      "nome": "Internet Fixo",
+      "indicadores": [
+        {
+          "codigo": "1",
+          "id": "assinantes_hertziano",
+          "nome": "Sistema Hertziano Fixo de Terra",
+          "unidade": "numero",
+          "mensal": {
+            "janeiro": null,
+            "fevereiro": null,
+            "marco": null,
+            "abril": null,
+            "maio": null,
+            "junho": null,
+            "julho": null,
+            "agosto": null,
+            "setembro": null,
+            "outubro": null,
+            "novembro": null,
+            "dezembro": null
+          }
+        },
+        {
+          "codigo": "2",
+          "id": "assinantes_proxim",
+          "nome": "Outros (PROXIM)",
+          "unidade": "numero",
+          "mensal": {
+            "janeiro": null,
+            "fevereiro": null,
+            "marco": null,
+            "abril": null,
+            "maio": null,
+            "junho": null,
+            "julho": null,
+            "agosto": null,
+            "setembro": null,
+            "outubro": null,
+            "novembro": null,
+            "dezembro": null
+          }
+        },
+        {
+          "codigo": "3",
+          "id": "debito_256k_2m",
+          "nome": "256 Kbit/s - 2 Mbit/s",
+          "unidade": "numero",
+          "mensal": {
+            "janeiro": null,
+            "fevereiro": null,
+            "marco": null,
+            "abril": null,
+            "maio": null,
+            "junho": null,
+            "julho": null,
+            "agosto": null,
+            "setembro": null,
+            "outubro": null,
+            "novembro": null,
+            "dezembro": null
+          }
+        },
+        {
+          "codigo": "4",
+          "id": "debito_3_4m",
+          "nome": "2 - 4 Mbit/s",
+          "unidade": "numero",
+          "mensal": {
+            "janeiro": null,
+            "fevereiro": null,
+            "marco": null,
+            "abril": null,
+            "maio": null,
+            "junho": null,
+            "julho": null,
+            "agosto": null,
+            "setembro": null,
+            "outubro": null,
+            "novembro": null,
+            "dezembro": null
+          }
+        },
+        {
+          "codigo": "5",
+          "id": "cat_residencial",
+          "nome": "Residencial",
+          "unidade": "numero",
+          "mensal": {
+            "janeiro": null,
+            "fevereiro": null,
+            "marco": null,
+            "abril": null,
+            "maio": null,
+            "junho": null,
+            "julho": null,
+            "agosto": null,
+            "setembro": null,
+            "outubro": null,
+            "novembro": null,
+            "dezembro": null
+          }
+        },
+        {
+          "codigo": "6",
+          "id": "cat_corporativo",
+          "nome": "Corporativo / empresarial",
+          "unidade": "numero",
+          "mensal": {
+            "janeiro": null,
+            "fevereiro": null,
+            "marco": null,
+            "abril": null,
+            "maio": null,
+            "junho": null,
+            "julho": null,
+            "agosto": null,
+            "setembro": null,
+            "outubro": null,
+            "novembro": null,
+            "dezembro": null
+          }
+        },
+        {
+          "codigo": "7",
+          "id": "cat_publicas",
+          "nome": "Instituições Públicas",
+          "unidade": "numero",
+          "mensal": {
+            "janeiro": null,
+            "fevereiro": null,
+            "marco": null,
+            "abril": null,
+            "maio": null,
+            "junho": null,
+            "julho": null,
+            "agosto": null,
+            "setembro": null,
+            "outubro": null,
+            "novembro": null,
+            "dezembro": null
+          }
+        },
+        {
+          "codigo": "8",
+          "id": "cat_ensino",
+          "nome": "Instituições de Ensino",
+          "unidade": "numero",
+          "mensal": {
+            "janeiro": null,
+            "fevereiro": null,
+            "marco": null,
+            "abril": null,
+            "maio": null,
+            "junho": null,
+            "julho": null,
+            "agosto": null,
+            "setembro": null,
+            "outubro": null,
+            "novembro": null,
+            "dezembro": null
+          }
+        },
+        {
+          "codigo": "9",
+          "id": "cat_saude",
+          "nome": "Instituições de Saúde",
+          "unidade": "numero",
+          "mensal": {
+            "janeiro": null,
+            "fevereiro": null,
+            "marco": null,
+            "abril": null,
+            "maio": null,
+            "junho": null,
+            "julho": null,
+            "agosto": null,
+            "setembro": null,
+            "outubro": null,
+            "novembro": null,
+            "dezembro": null
+          }
+        },
+        {
+          "codigo": "10",
+          "id": "cat_ong",
+          "nome": "ONG e outros",
+          "unidade": "numero",
+          "mensal": {
+            "janeiro": null,
+            "fevereiro": null,
+            "marco": null,
+            "abril": null,
+            "maio": null,
+            "junho": null,
+            "julho": null,
+            "agosto": null,
+            "setembro": null,
+            "outubro": null,
+            "novembro": null,
+            "dezembro": null
+          }
+        },
+        {
+          "codigo": "11",
+          "id": "regiao_bissau",
+          "nome": "Cidade de Bissau",
+          "unidade": "numero",
+          "mensal": {
+            "janeiro": null,
+            "fevereiro": null,
+            "marco": null,
+            "abril": null,
+            "maio": null,
+            "junho": null,
+            "julho": null,
+            "agosto": null,
+            "setembro": null,
+            "outubro": null,
+            "novembro": null,
+            "dezembro": null
+          }
+        },
+        {
+          "codigo": "12",
+          "id": "regiao_bafata",
+          "nome": "Bafatá",
+          "unidade": "numero",
+          "mensal": {
+            "janeiro": null,
+            "fevereiro": null,
+            "marco": null,
+            "abril": null,
+            "maio": null,
+            "junho": null,
+            "julho": null,
+            "agosto": null,
+            "setembro": null,
+            "outubro": null,
+            "novembro": null,
+            "dezembro": null
+          }
+        },
+        {
+          "codigo": "13",
+          "id": "regiao_biombo",
+          "nome": "Biombo",
+          "unidade": "numero",
+          "mensal": {
+            "janeiro": null,
+            "fevereiro": null,
+            "marco": null,
+            "abril": null,
+            "maio": null,
+            "junho": null,
+            "julho": null,
+            "agosto": null,
+            "setembro": null,
+            "outubro": null,
+            "novembro": null,
+            "dezembro": null
+          }
+        },
+        {
+          "codigo": "14",
+          "id": "regiao_bolama",
+          "nome": "Bolama Bijagós",
+          "unidade": "numero",
+          "mensal": {
+            "janeiro": null,
+            "fevereiro": null,
+            "marco": null,
+            "abril": null,
+            "maio": null,
+            "junho": null,
+            "julho": null,
+            "agosto": null,
+            "setembro": null,
+            "outubro": null,
+            "novembro": null,
+            "dezembro": null
+          }
+        },
+        {
+          "codigo": "15",
+          "id": "regiao_cacheu",
+          "nome": "Cacheu",
+          "unidade": "numero",
+          "mensal": {
+            "janeiro": null,
+            "fevereiro": null,
+            "marco": null,
+            "abril": null,
+            "maio": null,
+            "junho": null,
+            "julho": null,
+            "agosto": null,
+            "setembro": null,
+            "outubro": null,
+            "novembro": null,
+            "dezembro": null
+          }
+        },
+        {
+          "codigo": "16",
+          "id": "regiao_gabu",
+          "nome": "Gabú",
+          "unidade": "numero",
+          "mensal": {
+            "janeiro": null,
+            "fevereiro": null,
+            "marco": null,
+            "abril": null,
+            "maio": null,
+            "junho": null,
+            "julho": null,
+            "agosto": null,
+            "setembro": null,
+            "outubro": null,
+            "novembro": null,
+            "dezembro": null
+          }
+        },
+        {
+          "codigo": "17",
+          "id": "regiao_oio",
+          "nome": "Oio",
+          "unidade": "numero",
+          "mensal": {
+            "janeiro": null,
+            "fevereiro": null,
+            "marco": null,
+            "abril": null,
+            "maio": null,
+            "junho": null,
+            "julho": null,
+            "agosto": null,
+            "setembro": null,
+            "outubro": null,
+            "novembro": null,
+            "dezembro": null
+          }
+        },
+        {
+          "codigo": "18",
+          "id": "regiao_quinara",
+          "nome": "Quinará",
+          "unidade": "numero",
+          "mensal": {
+            "janeiro": null,
+            "fevereiro": null,
+            "marco": null,
+            "abril": null,
+            "maio": null,
+            "junho": null,
+            "julho": null,
+            "agosto": null,
+            "setembro": null,
+            "outubro": null,
+            "novembro": null,
+            "dezembro": null
+          }
+        },
+        {
+          "codigo": "19",
+          "id": "regiao_tombali",
+          "nome": "Tombali",
+          "unidade": "numero",
+          "mensal": {
+            "janeiro": null,
+            "fevereiro": null,
+            "marco": null,
+            "abril": null,
+            "maio": null,
+            "junho": null,
+            "julho": null,
+            "agosto": null,
+            "setembro": null,
+            "outubro": null,
+            "novembro": null,
+            "dezembro": null
+          }
+        }
+      ]
+    },
+    {
+      "id": "trafego_internet_fixo",
+      "nome": "Tráfego de Internet Fixo",
+      "indicadores": [
+        {
+          "codigo": "1",
+          "id": "trafego_internet_fixo_total",
+          "nome": "Tráfego total Internet Fixo",
+          "unidade": "mbit",
+          "mensal": {
+            "janeiro": null,
+            "fevereiro": null,
+            "marco": null,
+            "abril": null,
+            "maio": null,
+            "junho": null,
+            "julho": null,
+            "agosto": null,
+            "setembro": null,
+            "outubro": null,
+            "novembro": null,
+            "dezembro": null
+          }
+        },
+        {
+          "codigo": "1.2",
+          "id": "trafego_hertziano_proxim",
+          "nome": "Por Sistema Hertziano + PROXIM",
+          "unidade": "mbit",
+          "mensal": {
+            "janeiro": null,
+            "fevereiro": null,
+            "marco": null,
+            "abril": null,
+            "maio": null,
+            "junho": null,
+            "julho": null,
+            "agosto": null,
+            "setembro": null,
+            "outubro": null,
+            "novembro": null,
+            "dezembro": null
+          }
+        }
+      ]
+    },
+    {
+      "id": "receitas",
+      "nome": "Receitas",
+      "indicadores": [
+        {
+          "codigo": "1",
+          "id": "receita_total",
+          "nome": "Receitas totais do serviço",
+          "unidade": "fcfa",
+          "acumulado": {
+            "t1_acumulado": null,
+            "t2_acumulado": null,
+            "t3_acumulado": null,
+            "t4_acumulado": null
+          }
+        },
+        {
+          "codigo": "2",
+          "id": "receita_voz",
+          "nome": "Receitas de serviços de voz",
+          "unidade": "fcfa",
+          "acumulado": {
+            "t1_acumulado": null,
+            "t2_acumulado": null,
+            "t3_acumulado": null,
+            "t4_acumulado": null
+          }
+        },
+        {
+          "codigo": "3",
+          "id": "receita_voz_roaming_out",
+          "nome": "Receitas de voz Roaming-out",
+          "unidade": "fcfa",
+          "acumulado": {
+            "t1_acumulado": null,
+            "t2_acumulado": null,
+            "t3_acumulado": null,
+            "t4_acumulado": null
+          }
+        },
+        {
+          "codigo": "4",
+          "id": "receita_mensagens",
+          "nome": "Receitas de mensagens",
+          "unidade": "fcfa",
+          "acumulado": {
+            "t1_acumulado": null,
+            "t2_acumulado": null,
+            "t3_acumulado": null,
+            "t4_acumulado": null
+          }
+        },
+        {
+          "codigo": "5",
+          "id": "receita_dados_moveis",
+          "nome": "Receitas de dados móveis",
+          "unidade": "fcfa",
+          "acumulado": {
+            "t1_acumulado": null,
+            "t2_acumulado": null,
+            "t3_acumulado": null,
+            "t4_acumulado": null
+          }
+        },
+        {
+          "codigo": "6",
+          "id": "receita_terminacao_voz",
+          "nome": "Receitas de terminação de voz",
+          "unidade": "fcfa",
+          "acumulado": {
+            "t1_acumulado": null,
+            "t2_acumulado": null,
+            "t3_acumulado": null,
+            "t4_acumulado": null
+          }
+        },
+        {
+          "codigo": "7",
+          "id": "receita_chamadas_on_net",
+          "nome": "Receitas chamadas On-net",
+          "unidade": "fcfa",
+          "acumulado": {
+            "t1_acumulado": null,
+            "t2_acumulado": null,
+            "t3_acumulado": null,
+            "t4_acumulado": null
+          }
+        },
+        {
+          "codigo": "8",
+          "id": "receita_chamadas_off_net_mtn",
+          "nome": "Receitas chamadas Off-net MTN",
+          "unidade": "fcfa",
+          "acumulado": {
+            "t1_acumulado": null,
+            "t2_acumulado": null,
+            "t3_acumulado": null,
+            "t4_acumulado": null
+          }
+        },
+        {
+          "codigo": "9",
+          "id": "receita_chamadas_internacional",
+          "nome": "Receitas chamadas internacionais",
+          "unidade": "fcfa",
+          "acumulado": {
+            "t1_acumulado": null,
+            "t2_acumulado": null,
+            "t3_acumulado": null,
+            "t4_acumulado": null
+          }
+        },
+        {
+          "codigo": "10",
+          "id": "receita_term_off_net_mtn",
+          "nome": "Receitas terminação Off-net MTN",
+          "unidade": "fcfa",
+          "acumulado": {
+            "t1_acumulado": null,
+            "t2_acumulado": null,
+            "t3_acumulado": null,
+            "t4_acumulado": null
+          }
+        },
+        {
+          "codigo": "11",
+          "id": "receita_term_internacional",
+          "nome": "Receitas terminação internacional",
+          "unidade": "fcfa",
+          "acumulado": {
+            "t1_acumulado": null,
+            "t2_acumulado": null,
+            "t3_acumulado": null,
+            "t4_acumulado": null
+          }
+        },
+        {
+          "codigo": "12",
+          "id": "receita_internet_fixo",
+          "nome": "Receita Internet Fixo",
+          "unidade": "fcfa",
+          "acumulado": {
+            "t1_acumulado": null,
+            "t2_acumulado": null,
+            "t3_acumulado": null,
+            "t4_acumulado": null
+          }
+        }
+      ]
+    },
+    {
+      "id": "emprego",
+      "nome": "Emprego",
+      "indicadores": [
+        {
+          "codigo": "1",
+          "id": "emprego_directo_total",
+          "nome": "Emprego directo total",
+          "unidade": "numero",
+          "mensal": {
+            "janeiro": null,
+            "fevereiro": null,
+            "marco": null,
+            "abril": null,
+            "maio": null,
+            "junho": null,
+            "julho": null,
+            "agosto": null,
+            "setembro": null,
+            "outubro": null,
+            "novembro": null,
+            "dezembro": null
+          }
+        },
+        {
+          "codigo": "2",
+          "id": "emprego_nacionais",
+          "nome": "Emprego nacionais",
+          "unidade": "numero",
+          "mensal": {
+            "janeiro": null,
+            "fevereiro": null,
+            "marco": null,
+            "abril": null,
+            "maio": null,
+            "junho": null,
+            "julho": null,
+            "agosto": null,
+            "setembro": null,
+            "outubro": null,
+            "novembro": null,
+            "dezembro": null
+          }
+        },
+        {
+          "codigo": "3",
+          "id": "emprego_homens",
+          "nome": "Emprego homens",
+          "unidade": "numero",
+          "mensal": {
+            "janeiro": null,
+            "fevereiro": null,
+            "marco": null,
+            "abril": null,
+            "maio": null,
+            "junho": null,
+            "julho": null,
+            "agosto": null,
+            "setembro": null,
+            "outubro": null,
+            "novembro": null,
+            "dezembro": null
+          }
+        },
+        {
+          "codigo": "4",
+          "id": "emprego_mulheres",
+          "nome": "Emprego mulheres",
+          "unidade": "numero",
+          "mensal": {
+            "janeiro": null,
+            "fevereiro": null,
+            "marco": null,
+            "abril": null,
+            "maio": null,
+            "junho": null,
+            "julho": null,
+            "agosto": null,
+            "setembro": null,
+            "outubro": null,
+            "novembro": null,
+            "dezembro": null
+          }
+        },
+        {
+          "codigo": "5",
+          "id": "emprego_indirecto",
+          "nome": "Emprego indirecto",
+          "unidade": "numero",
+          "mensal": {
+            "janeiro": null,
+            "fevereiro": null,
+            "marco": null,
+            "abril": null,
+            "maio": null,
+            "junho": null,
+            "julho": null,
+            "agosto": null,
+            "setembro": null,
+            "outubro": null,
+            "novembro": null,
+            "dezembro": null
+          }
+        }
+      ]
+    },
+    {
+      "id": "investimento",
+      "nome": "Investimento",
+      "indicadores": [
+        {
+          "codigo": "1",
+          "id": "investimento_total",
+          "nome": "Investimento total",
+          "unidade": "fcfa",
+          "mensal": {
+            "janeiro": null,
+            "fevereiro": null,
+            "marco": null,
+            "abril": null,
+            "maio": null,
+            "junho": null,
+            "julho": null,
+            "agosto": null,
+            "setembro": null,
+            "outubro": null,
+            "novembro": null,
+            "dezembro": null
+          }
+        },
+        {
+          "codigo": "2",
+          "id": "investimento_corporeo",
+          "nome": "Investimento corpóreo",
+          "unidade": "fcfa",
+          "mensal": {
+            "janeiro": null,
+            "fevereiro": null,
+            "marco": null,
+            "abril": null,
+            "maio": null,
+            "junho": null,
+            "julho": null,
+            "agosto": null,
+            "setembro": null,
+            "outubro": null,
+            "novembro": null,
+            "dezembro": null
+          }
+        },
+        {
+          "codigo": "3",
+          "id": "investimento_telecom",
+          "nome": "Investimento telecomunicações",
+          "unidade": "fcfa",
+          "mensal": {
+            "janeiro": null,
+            "fevereiro": null,
+            "marco": null,
+            "abril": null,
+            "maio": null,
+            "junho": null,
+            "julho": null,
+            "agosto": null,
+            "setembro": null,
+            "outubro": null,
+            "novembro": null,
+            "dezembro": null
+          }
+        },
+        {
+          "codigo": "4",
+          "id": "investimento_internet",
+          "nome": "Investimento internet",
+          "unidade": "fcfa",
+          "mensal": {
+            "janeiro": null,
+            "fevereiro": null,
+            "marco": null,
+            "abril": null,
+            "maio": null,
+            "junho": null,
+            "julho": null,
+            "agosto": null,
+            "setembro": null,
+            "outubro": null,
+            "novembro": null,
+            "dezembro": null
+          }
+        },
+        {
+          "codigo": "5",
+          "id": "investimento_incorporeo",
+          "nome": "Investimento incorpóreo",
+          "unidade": "fcfa",
+          "mensal": {
+            "janeiro": null,
+            "fevereiro": null,
+            "marco": null,
+            "abril": null,
+            "maio": null,
+            "junho": null,
+            "julho": null,
+            "agosto": null,
+            "setembro": null,
+            "outubro": null,
+            "novembro": null,
+            "dezembro": null
+          }
+        }
+      ]
+    }
+  ]
+}
