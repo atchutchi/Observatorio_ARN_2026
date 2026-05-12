@@ -30,6 +30,8 @@ import {
   PieChart,
   UserCog,
   X,
+  PanelLeftClose,
+  PanelLeftOpen,
 } from 'lucide-react'
 
 type NavItem = {
@@ -82,10 +84,17 @@ const NAV_ITEMS: NavItem[] = [
 
 type SidebarProps = {
   isOpen?: boolean
+  isCollapsed?: boolean
   onClose?: () => void
+  onCollapseToggle?: () => void
 }
 
-const Sidebar = ({ isOpen = false, onClose }: SidebarProps) => {
+const Sidebar = ({
+  isOpen = false,
+  isCollapsed = false,
+  onClose,
+  onCollapseToggle,
+}: SidebarProps) => {
   const pathname = usePathname()
   const user = useAuthStore((s) => s.user)
 
@@ -101,12 +110,21 @@ const Sidebar = ({ isOpen = false, onClose }: SidebarProps) => {
 
   return (
     <aside className={cn(
-      'fixed inset-y-0 left-0 z-40 flex w-64 flex-col bg-arn-primary transition-transform duration-200 md:sticky md:top-0 md:z-auto md:min-h-screen md:translate-x-0',
+      'fixed inset-y-0 left-0 z-40 flex w-64 flex-col bg-arn-primary transition-[width,transform] duration-200 md:sticky md:top-0 md:z-auto md:min-h-screen md:translate-x-0',
+      isCollapsed ? 'md:w-20' : 'md:w-64',
       isOpen ? 'translate-x-0' : '-translate-x-full',
     )}>
-      <div className="p-6">
+      <div className={cn('p-6', isCollapsed && 'md:px-3')}>
         <div className="flex items-center justify-between gap-3">
-          <Link href="/" className="group flex items-center gap-3" onClick={onClose}>
+          <Link
+            href="/"
+            className={cn(
+              'group flex min-w-0 items-center gap-3',
+              isCollapsed && 'md:justify-center',
+            )}
+            onClick={onClose}
+            title="Observatório Telecom GB"
+          >
             <div className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-lg bg-white p-1">
               <Image
                 src="/logos/arn.png"
@@ -116,11 +134,24 @@ const Sidebar = ({ isOpen = false, onClose }: SidebarProps) => {
                 className="h-auto w-8 object-contain"
               />
             </div>
-            <div>
+            <div className={cn('min-w-0', isCollapsed && 'md:hidden')}>
               <h2 className="text-white font-semibold text-sm leading-tight group-hover:text-white/90 transition-colors">Observatório</h2>
               <p className="text-white/60 text-xs">Telecom GB</p>
             </div>
           </Link>
+          <button
+            type="button"
+            onClick={onCollapseToggle}
+            className="hidden rounded-lg p-2 text-white/70 hover:bg-white/10 hover:text-white md:flex"
+            aria-label={isCollapsed ? 'Expandir menu' : 'Minimizar menu'}
+            title={isCollapsed ? 'Expandir menu' : 'Minimizar menu'}
+          >
+            {isCollapsed ? (
+              <PanelLeftOpen className="h-5 w-5" />
+            ) : (
+              <PanelLeftClose className="h-5 w-5" />
+            )}
+          </button>
           <button
             type="button"
             onClick={onClose}
@@ -132,30 +163,38 @@ const Sidebar = ({ isOpen = false, onClose }: SidebarProps) => {
         </div>
       </div>
 
-      <nav className="flex-1 px-3 space-y-1 overflow-y-auto">
+      <nav className={cn('flex-1 space-y-1 overflow-y-auto px-3', isCollapsed && 'md:px-2')}>
         {NAV_ITEMS.filter(hasAccess).map((item) => (
           <div key={item.href}>
             <Link
               href={item.children ? item.children[0].href : item.href}
               onClick={onClose}
+              title={item.label}
               className={cn(
                 'flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors',
+                isCollapsed && 'md:justify-center md:px-0',
                 isActive(item.href)
                   ? 'bg-white/15 text-white'
                   : 'text-white/70 hover:bg-white/10 hover:text-white'
               )}
             >
               <item.icon className="w-5 h-5 shrink-0" />
-              {item.label}
+              <span className={cn('truncate', isCollapsed && 'md:hidden')}>
+                {item.label}
+              </span>
             </Link>
 
             {item.children && isActive(item.href) && (
-              <div className="ml-8 mt-1 space-y-0.5 max-h-72 overflow-y-auto">
+              <div className={cn(
+                'ml-8 mt-1 space-y-0.5 max-h-72 overflow-y-auto',
+                isCollapsed && 'md:hidden',
+              )}>
                 {item.children.filter(hasAccess).map((child) => (
                   <Link
                     key={child.href}
                     href={child.href}
                     onClick={onClose}
+                    title={child.label}
                     className={cn(
                       'flex items-center gap-2 px-3 py-1.5 rounded-md text-xs font-medium transition-colors',
                       pathname === child.href
@@ -173,9 +212,14 @@ const Sidebar = ({ isOpen = false, onClose }: SidebarProps) => {
         ))}
       </nav>
 
-      <div className="p-4 border-t border-white/10">
+      <div className={cn('p-4 border-t border-white/10', isCollapsed && 'md:px-2')}>
         <p className="text-white/40 text-xs text-center">
-          ARN Guiné-Bissau &copy; {new Date().getFullYear()}
+          <span className={cn(isCollapsed && 'md:hidden')}>
+            ARN Guiné-Bissau &copy; {new Date().getFullYear()}
+          </span>
+          <span className={cn('hidden', isCollapsed && 'md:inline')}>
+            ARN
+          </span>
         </p>
       </div>
     </aside>

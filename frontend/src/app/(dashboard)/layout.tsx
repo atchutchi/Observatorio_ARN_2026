@@ -9,6 +9,7 @@ import Header from '@/components/layout/header'
 const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
   const { tokens, user, hasHydrated, fetchProfile } = useAuthStore()
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false)
   const router = useRouter()
 
   useEffect(() => {
@@ -34,7 +35,12 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
           onClick={() => setIsSidebarOpen(false)}
         />
       )}
-      <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
+      <Sidebar
+        isOpen={isSidebarOpen}
+        isCollapsed={isSidebarCollapsed}
+        onClose={() => setIsSidebarOpen(false)}
+        onCollapseToggle={() => setIsSidebarCollapsed((value) => !value)}
+      />
       <div className="flex min-w-0 flex-1 flex-col">
         <Header onMenuClick={() => setIsSidebarOpen(true)} />
         <main className="flex-1 overflow-x-hidden bg-gray-50 p-4 md:p-6">

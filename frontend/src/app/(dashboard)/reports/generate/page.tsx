@@ -6,6 +6,7 @@ import { ArrowLeft, FileText, Loader2, CheckCircle, AlertCircle } from 'lucide-r
 import api from '@/lib/api'
 import { useDashboardYears } from '@/hooks/use-dashboard-years'
 import toast from 'react-hot-toast'
+import type { OperatorListItem } from '@/types'
 
 type GeneratedReport = {
   id: number
@@ -17,6 +18,9 @@ type GeneratedReport = {
 const GenerateReportPage = () => {
   const router = useRouter()
   const [reportType, setReportType] = useState<'quarterly' | 'annual'>('quarterly')
+  const [operatorScope, setOperatorScope] = useState<'all' | 'operator' | 'others'>('all')
+  const [operatorId, setOperatorId] = useState('')
+  const [operators, setOperators] = useState<OperatorListItem[]>([])
   const { year, setYear, years, isYearReady } = useDashboardYears()
   const [quarter, setQuarter] = useState(1)
   const [title, setTitle] = useState('')
@@ -25,6 +29,16 @@ const GenerateReportPage = () => {
   const pollIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
   useEffect(() => {
+    const fetchOperators = async () => {
+      try {
+        const res = await api.get('/operators/')
+        setOperators(res.data.results ?? res.data ?? [])
+      } catch {
+        setOperators([])
+      }
+    }
+    fetchOperators()
+
     return () => {
       if (pollIntervalRef.current) clearInterval(pollIntervalRef.current)
     }
@@ -62,6 +76,10 @@ const GenerateReportPage = () => {
       toast.error('Seleccione o ano do relatório')
       return
     }
+    if (operatorScope === 'operator' && !operatorId) {
+      toast.error('Seleccione a operadora do relatório')
+      return
+    }
 
     setIsGenerating(true)
     try {
@@ -69,6 +87,8 @@ const GenerateReportPage = () => {
         report_type: reportType,
         year,
         quarter: reportType === 'quarterly' ? quarter : null,
+        operator_scope: operatorScope,
+        operator: operatorScope === 'operator' ? Number(operatorId) : null,
       }
       if (title) payload.title = title
 
@@ -106,7 +126,7 @@ const GenerateReportPage = () => {
         <div>
           <h2 className="text-2xl font-bold text-gray-900">Gerar Relatório</h2>
           <p className="text-gray-500 text-sm mt-0.5">
-            Crie um relatório PDF e Excel com os dados do observatório
+            Crie um relatório PDF, Excel e Word com dados, gráficos e narrativa
           </p>
         </div>
       </div>
@@ -174,6 +194,77 @@ const GenerateReportPage = () => {
             </div>
           )}
         </div>
+
+        <div>
+          <label htmlFor="operatorScope" className="block text-sm font-medium text-gray-700 mb-2">
+            Âmbito
+          </label>
+          <div className="grid grid-cols-3 gap-3">
+            <button
+              type="button"
+              onClick={() => {
+                setOperatorScope('all')
+                setOperatorId('')
+              }}
+              className={`p-3 rounded-xl border-2 text-left transition-colors ${
+                operatorScope === 'all'
+                  ? 'border-arn-primary bg-arn-primary/5'
+                  : 'border-gray-200 hover:border-gray-300'
+              }`}
+            >
+              <p className="font-semibold text-gray-900 text-sm">Geral</p>
+              <p className="text-xs text-gray-500 mt-1">Todos os operadores</p>
+            </button>
+            <button
+              type="button"
+              onClick={() => setOperatorScope('operator')}
+              className={`p-3 rounded-xl border-2 text-left transition-colors ${
+                operatorScope === 'operator'
+                  ? 'border-arn-primary bg-arn-primary/5'
+                  : 'border-gray-200 hover:border-gray-300'
+              }`}
+            >
+              <p className="font-semibold text-gray-900 text-sm">Operadora</p>
+              <p className="text-xs text-gray-500 mt-1">Relatório isolado</p>
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setOperatorScope('others')
+                setOperatorId('')
+              }}
+              className={`p-3 rounded-xl border-2 text-left transition-colors ${
+                operatorScope === 'others'
+                  ? 'border-arn-primary bg-arn-primary/5'
+                  : 'border-gray-200 hover:border-gray-300'
+              }`}
+            >
+              <p className="font-semibold text-gray-900 text-sm">Outros</p>
+              <p className="text-xs text-gray-500 mt-1">Sem os principais</p>
+            </button>
+          </div>
+        </div>
+
+        {operatorScope === 'operator' && (
+          <div>
+            <label htmlFor="operator" className="block text-sm font-medium text-gray-700 mb-1">
+              Operadora
+            </label>
+            <select
+              id="operator"
+              value={operatorId}
+              onChange={(e) => setOperatorId(e.target.value)}
+              className="input-field"
+            >
+              <option value="">Seleccione uma operadora</option>
+              {operators.map((operator) => (
+                <option key={operator.id} value={operator.id}>
+                  {operator.name}
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
 
         <div>
           <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-1">

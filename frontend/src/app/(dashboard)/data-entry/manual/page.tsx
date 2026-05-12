@@ -1,51 +1,83 @@
 'use client'
 
-import { useState, useEffect, useCallback, type FormEvent } from 'react'
+import { useState, useEffect, type FormEvent } from 'react'
 import { useAuthStore } from '@/lib/auth'
 import { useApi } from '@/hooks/use-api'
 import api from '@/lib/api'
-import { cn, formatNumber } from '@/lib/utils'
+import { cn } from '@/lib/utils'
 import toast from 'react-hot-toast'
-import type { IndicatorCategory, Indicator, Period } from '@/types'
+import type { IndicatorCategory, Indicator, Period, OperatorListItem } from '@/types'
 import { Save, ChevronRight } from 'lucide-react'
 
-type FormValues = Record<number, string>
+type FormValues = Record<string, string>
+type ApplicableIndicator = { indicator: number }
 
 const ManualEntryPage = () => {
   const user = useAuthStore((s) => s.user)
   const [selectedCategory, setSelectedCategory] = useState<string>('')
+  const [selectedOperatorId, setSelectedOperatorId] = useState<string>('')
   const [selectedYear, setSelectedYear] = useState<number>(2024)
   const [selectedQuarter, setSelectedQuarter] = useState<number>(1)
   const [formValues, setFormValues] = useState<FormValues>({})
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const isARNStaff = Boolean(user?.is_arn_staff)
+
+  useEffect(() => {
+    if (!isARNStaff && user?.operator) {
+      setSelectedOperatorId(String(user.operator))
+    }
+  }, [isARNStaff, user?.operator])
 
   const { data: categories } = useApi<IndicatorCategory[]>({
     url: '/indicator-categories/',
+  })
+
+  const { data: operators } = useApi<OperatorListItem[]>({
+    url: '/operators/',
+    enabled: isARNStaff,
   })
 
   const { data: categoryDetail } = useApi<IndicatorCategory>({
     url: `/indicator-categories/${selectedCategory}/`,
     enabled: !!selectedCategory,
   })
+  const isCumulative = categoryDetail?.is_cumulative ?? false
+
+  const { data: applicableIndicators } = useApi<ApplicableIndicator[]>({
+    url: `/operators/${selectedOperatorId}/applicable_indicators/`,
+    enabled: !!selectedOperatorId,
+  })
 
   const { data: periods } = useApi<Period[]>({
     url: '/periods/',
     params: { year: selectedYear, quarter: selectedQuarter },
-    enabled: !!selectedYear && !!selectedQuarter,
+    enabled: !!selectedYear && !!selectedQuarter && !isCumulative,
   })
 
-  const isCumulative = categoryDetail?.is_cumulative ?? false
+  const applicableIndicatorIds = new Set((applicableIndicators ?? []).map((item) => item.indicator))
+  const visibleIndicators = filterIndicatorsByApplicability(
+    categoryDetail?.indicators ?? [],
+    applicableIndicatorIds,
+  )
 
-  const handleValueChange = (indicatorId: number, value: string) => {
+  const handleValueChange = (indicatorId: string | number, value: string) => {
     setFormValues((prev) => ({ ...prev, [indicatorId]: value }))
   }
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
-    if (!user?.operator || !periods?.length) return
+    if (!selectedOperatorId) {
+      toast.error('Seleccione a operadora')
+      return
+    }
+    if (!isCumulative && !periods?.length) {
+      toast.error('Sem períodos disponíveis para o trimestre seleccionado')
+      return
+    }
 
     setIsSubmitting(true)
     try {
+      const operator = Number(selectedOperatorId)
       if (isCumulative) {
         const entries = Object.entries(formValues)
           .filter(([, v]) => v !== '' && v !== undefined)
@@ -53,7 +85,7 @@ const ManualEntryPage = () => {
             const [indId, cumType] = indicatorId.toString().split('_')
             return {
               indicator: parseInt(indId),
-              operator: user.operator,
+              operator,
               year: selectedYear,
               cumulative_type: cumType || '3M',
               value,
@@ -67,7 +99,7 @@ const ManualEntryPage = () => {
           .flatMap(([indicatorId, value]) =>
             periods!.map((period) => ({
               indicator: parseInt(indicatorId),
-              operator: user.operator,
+              operator,
               period: period.id,
               value,
             }))
@@ -96,7 +128,32 @@ const ManualEntryPage = () => {
       </div>
 
       <div className="card">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div>
+            <label htmlFor="operator" className="block text-sm font-medium text-gray-700 mb-1">
+              Operadora
+            </label>
+            <select
+              id="operator"
+              className="input-field"
+              value={selectedOperatorId}
+              onChange={(e) => {
+                setSelectedOperatorId(e.target.value)
+                setFormValues({})
+              }}
+              disabled={!isARNStaff}
+            >
+              <option value="">Seleccione uma operadora</option>
+              {isARNStaff ? operators?.map((operator) => (
+                <option key={operator.id} value={operator.id}>
+                  {operator.name}
+                </option>
+              )) : user?.operator && (
+                <option value={user.operator}>{user.operator_name}</option>
+              )}
+            </select>
+          </div>
+
           <div>
             <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-1">
               Indicador
@@ -169,7 +226,7 @@ const ManualEntryPage = () => {
             </h3>
             <button
               type="submit"
-              disabled={isSubmitting || Object.keys(formValues).length === 0}
+              disabled={isSubmitting || Object.keys(formValues).length === 0 || !selectedOperatorId}
               className="btn-primary flex items-center gap-2"
             >
               <Save className="w-4 h-4" />
@@ -179,13 +236,13 @@ const ManualEntryPage = () => {
 
           {isCumulative ? (
             <CumulativeForm
-              indicators={categoryDetail.indicators}
+              indicators={visibleIndicators}
               values={formValues}
               onChange={handleValueChange}
             />
           ) : (
             <MonthlyForm
-              indicators={categoryDetail.indicators}
+              indicators={visibleIndicators}
               values={formValues}
               onChange={handleValueChange}
             />
@@ -199,7 +256,7 @@ const ManualEntryPage = () => {
 type FormProps = {
   indicators: Indicator[]
   values: FormValues
-  onChange: (id: number, value: string) => void
+  onChange: (id: string | number, value: string) => void
 }
 
 const MonthlyForm = ({ indicators, values, onChange }: FormProps) => {
@@ -248,7 +305,7 @@ const CumulativeForm = ({ indicators, values, onChange }: FormProps) => {
 type RowProps = {
   indicator: Indicator
   values: FormValues
-  onChange: (id: number, value: string) => void
+  onChange: (id: string | number, value: string) => void
 }
 
 const IndicatorRow = ({ indicator, values, onChange }: RowProps) => {
@@ -319,8 +376,8 @@ const CumulativeIndicatorRow = ({ indicator, cumTypes, values, onChange }: CumRo
                 step="any"
                 className="input-field text-sm py-1 text-center"
                 placeholder="0"
-                value={values[`${indicator.id}_${ct}` as unknown as number] ?? ''}
-                onChange={(e) => onChange(`${indicator.id}_${ct}` as unknown as number, e.target.value)}
+                value={values[`${indicator.id}_${ct}`] ?? ''}
+                onChange={(e) => onChange(`${indicator.id}_${ct}`, e.target.value)}
               />
             )}
           </div>
@@ -337,6 +394,26 @@ const CumulativeIndicatorRow = ({ indicator, cumTypes, values, onChange }: CumRo
       ))}
     </>
   )
+}
+
+const filterIndicatorsByApplicability = (
+  indicators: Indicator[],
+  applicableIndicatorIds: Set<number>,
+): Indicator[] => {
+  if (applicableIndicatorIds.size === 0) return []
+
+  return indicators
+    .map((indicator) => {
+      const children = filterIndicatorsByApplicability(
+        indicator.children ?? [],
+        applicableIndicatorIds,
+      )
+      if (!applicableIndicatorIds.has(indicator.id) && children.length === 0) {
+        return null
+      }
+      return { ...indicator, children }
+    })
+    .filter((indicator): indicator is Indicator => indicator !== null)
 }
 
 export default ManualEntryPage

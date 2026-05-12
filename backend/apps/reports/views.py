@@ -23,10 +23,16 @@ class ReportViewSet(viewsets.ReadOnlyModelViewSet):
         qs = Report.objects.all()
         year = self.request.query_params.get('year')
         report_type = self.request.query_params.get('report_type')
+        operator_scope = self.request.query_params.get('operator_scope')
+        operator = self.request.query_params.get('operator')
         if year:
             qs = qs.filter(year=year)
         if report_type:
             qs = qs.filter(report_type=report_type)
+        if operator_scope:
+            qs = qs.filter(operator_scope=operator_scope)
+        if operator:
+            qs = qs.filter(operator__code=operator)
         return qs
 
     @action(detail=False, methods=['post'], permission_classes=[IsARNStaff])
@@ -38,14 +44,20 @@ class ReportViewSet(viewsets.ReadOnlyModelViewSet):
         report_type = data['report_type']
         year = data['year']
         quarter = data.get('quarter')
+        operator_scope = data.get('operator_scope') or 'all'
+        operator = data.get('operator')
 
-        title = data.get('title') or self._build_title(report_type, year, quarter)
+        title = data.get('title') or self._build_title(
+            report_type, year, quarter, operator_scope, operator,
+        )
 
         report = Report.objects.create(
             title=title,
             report_type=report_type,
             year=year,
             quarter=quarter,
+            operator_scope=operator_scope,
+            operator=operator,
             generated_by=request.user,
             status='generating',
             sections=data.get('sections', {}),
@@ -129,7 +141,14 @@ class ReportViewSet(viewsets.ReadOnlyModelViewSet):
         report.save(update_fields=['status'])
         return Response(ReportSerializer(report).data)
 
-    def _build_title(self, report_type, year, quarter):
+    def _build_title(self, report_type, year, quarter, operator_scope='all', operator=None):
         if report_type == 'quarterly' and quarter:
-            return f"Observatório Telecom GB — Q{quarter} {year}"
-        return f"Observatório Telecom GB — {year}"
+            title = f"Observatório Telecom GB — Q{quarter} {year}"
+        else:
+            title = f"Observatório Telecom GB — {year}"
+
+        if operator_scope == 'operator' and operator:
+            return f"{title} — {operator.name}"
+        if operator_scope == 'others':
+            return f"{title} — Outros operadores"
+        return title

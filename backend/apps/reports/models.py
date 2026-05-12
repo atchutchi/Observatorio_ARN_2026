@@ -15,6 +15,11 @@ class Report(models.Model):
         ('published', 'Publicado'),
         ('error', 'Erro'),
     ]
+    OPERATOR_SCOPE_CHOICES = [
+        ('all', 'Todos os operadores'),
+        ('operator', 'Operador específico'),
+        ('others', 'Outros operadores'),
+    ]
 
     title = models.CharField(max_length=300, verbose_name='Título')
     report_type = models.CharField(
@@ -22,6 +27,15 @@ class Report(models.Model):
     )
     year = models.IntegerField(verbose_name='Ano')
     quarter = models.IntegerField(null=True, blank=True, verbose_name='Trimestre')
+    operator_scope = models.CharField(
+        max_length=20, choices=OPERATOR_SCOPE_CHOICES,
+        default='all', verbose_name='Âmbito de operadores',
+    )
+    operator = models.ForeignKey(
+        'operators.Operator', on_delete=models.SET_NULL,
+        null=True, blank=True, related_name='reports',
+        verbose_name='Operador',
+    )
     pdf_file = models.FileField(
         upload_to='reports/pdf/%Y/', blank=True, verbose_name='Ficheiro PDF',
     )

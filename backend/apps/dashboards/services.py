@@ -10,7 +10,34 @@ from apps.indicators.models import (
 from apps.data_entry.models import DataEntry, CumulativeData
 
 
+PRIMARY_OPERATOR_CODES = ('TELECEL', 'ORANGE', 'STARLINK')
+
+
 class DashboardService:
+
+    @staticmethod
+    def _normalize_operator_code(operator_code):
+        if not operator_code:
+            return None
+        return str(operator_code).strip().upper()
+
+    @staticmethod
+    def _filter_operator_queryset(queryset, operator_code=None):
+        code = DashboardService._normalize_operator_code(operator_code)
+        if not code:
+            return queryset
+        if code in ('OTHERS', 'OUTROS'):
+            return queryset.exclude(code__in=PRIMARY_OPERATOR_CODES)
+        return queryset.filter(code=code)
+
+    @staticmethod
+    def _operator_filter(operator_code=None):
+        code = DashboardService._normalize_operator_code(operator_code)
+        if not code:
+            return Q()
+        if code in ('OTHERS', 'OUTROS'):
+            return ~Q(operator__code__in=PRIMARY_OPERATOR_CODES)
+        return Q(operator__code=code)
 
     @staticmethod
     def get_latest_data_year():
@@ -20,32 +47,34 @@ class DashboardService:
         return max(years) if years else None
 
     @staticmethod
-    def get_operators():
-        return Operator.objects.filter(is_active=True).select_related('operator_type')
+    def get_operators(operator_code=None):
+        operators = Operator.objects.filter(is_active=True).select_related('operator_type')
+        return DashboardService._filter_operator_queryset(operators, operator_code)
 
     @staticmethod
-    def get_applicable_operators(category_code):
+    def get_applicable_operators(category_code, operator_code=None):
         category = IndicatorCategory.objects.get(code=category_code)
-        root_indicators = Indicator.objects.filter(category=category, level=0)
-        if not root_indicators.exists():
+        indicators = Indicator.objects.filter(category=category)
+        if not indicators.exists():
             return Operator.objects.none()
 
-        first_root = root_indicators.first()
         applicable_type_ids = OperatorTypeIndicator.objects.filter(
-            indicator=first_root, is_applicable=True,
-        ).values_list('operator_type_id', flat=True)
+            indicator__in=indicators, is_applicable=True,
+        ).values_list('operator_type_id', flat=True).distinct()
 
-        return Operator.objects.filter(
+        operators = Operator.objects.filter(
             operator_type_id__in=applicable_type_ids, is_active=True,
         )
+        return DashboardService._filter_operator_queryset(operators, operator_code)
 
     @staticmethod
-    def get_summary(year, quarter=None):
+    def get_summary(year, quarter=None, operator_code=None):
         period_filter = Q(period__year=year)
         if quarter:
             period_filter &= Q(period__quarter=quarter)
+        operator_filter = DashboardService._operator_filter(operator_code)
 
-        operators = Operator.objects.filter(is_active=True)
+        operators = DashboardService.get_operators(operator_code)
 
         mobile_cat = IndicatorCategory.objects.filter(code='estacoes_moveis').first()
         total_subscribers = Decimal('0')
@@ -53,9 +82,15 @@ class DashboardService:
             root = Indicator.objects.filter(category=mobile_cat, code='1').first()
             if root:
                 latest_period = Period.objects.filter(year=year).order_by('-month').first()
+                if quarter:
+                    latest_period = Period.objects.filter(
+                        year=year, quarter=quarter,
+                    ).order_by('-month').first()
                 if latest_period:
                     total_subscribers = DataEntry.objects.filter(
                         indicator=root, period=latest_period,
+                    ).filter(
+                        operator_filter,
                     ).aggregate(total=Coalesce(Sum('value'), Decimal('0')))['total']
 
         revenue_cat = IndicatorCategory.objects.filter(code='receitas').first()
@@ -63,17 +98,24 @@ class DashboardService:
         if revenue_cat:
             root = Indicator.objects.filter(category=revenue_cat, code='8').first()
             if root:
+                cumulative_type = '12M'
+                if quarter:
+                    cumulative_type = f'{quarter * 3}M'
                 cum = CumulativeData.objects.filter(
-                    indicator=root, year=year, cumulative_type='12M',
+                    indicator=root, year=year, cumulative_type=cumulative_type,
+                ).filter(
+                    operator_filter,
                 ).aggregate(total=Coalesce(Sum('value'), Decimal('0')))['total']
                 if cum == Decimal('0'):
                     cum = CumulativeData.objects.filter(
                         indicator=root, year=year,
-                    ).order_by('-cumulative_type').values_list('value', flat=True).first()
+                    ).filter(operator_filter).order_by(
+                        '-cumulative_type',
+                    ).values_list('value', flat=True).first()
                     if cum:
                         total_revenue = CumulativeData.objects.filter(
                             indicator=root, year=year,
-                        ).order_by('-cumulative_type').aggregate(
+                        ).filter(operator_filter).order_by('-cumulative_type').aggregate(
                             total=Coalesce(Sum('value'), Decimal('0')),
                         )['total']
                 else:
@@ -85,8 +127,10 @@ class DashboardService:
             root = Indicator.objects.filter(category=data_cat, code='4').first()
             if root:
                 total_data_traffic = DataEntry.objects.filter(
-                    indicator=root, period__year=year,
-                ).aggregate(total=Coalesce(Sum('value'), Decimal('0')))['total']
+                    indicator=root,
+                ).filter(period_filter).filter(operator_filter).aggregate(
+                    total=Coalesce(Sum('value'), Decimal('0')),
+                )['total']
 
         population = settings.POPULATION_REFERENCE
         penetration_rate = (
@@ -101,7 +145,9 @@ class DashboardService:
                 if prev_period:
                     prev_subscribers = DataEntry.objects.filter(
                         indicator=root, period=prev_period,
-                    ).aggregate(total=Coalesce(Sum('value'), Decimal('0')))['total']
+                    ).filter(operator_filter).aggregate(
+                        total=Coalesce(Sum('value'), Decimal('0')),
+                    )['total']
 
         sub_change = 0
         if prev_subscribers and prev_subscribers > 0:
@@ -126,11 +172,9 @@ class DashboardService:
         if indicator_code:
             indicators = indicators.filter(code=indicator_code)
 
-        operator_filter = Q()
-        if operator_code:
-            operator_filter = Q(operator__code=operator_code)
+        operator_filter = DashboardService._operator_filter(operator_code)
 
-        applicable_ops = DashboardService.get_applicable_operators(category_code)
+        applicable_ops = DashboardService.get_applicable_operators(category_code, operator_code)
 
         if category.is_cumulative:
             entries = CumulativeData.objects.filter(
@@ -185,7 +229,7 @@ class DashboardService:
         return result
 
     @staticmethod
-    def get_market_share(year, quarter=None, market='mobile'):
+    def get_market_share(year, quarter=None, market='mobile', operator_code=None):
         market_config = {
             'mobile': {'category': 'estacoes_moveis', 'indicator_code': '1'},
             'voice': {'category': 'trafego_originado', 'indicator_code': '1'},
@@ -210,7 +254,7 @@ class DashboardService:
         if not indicator:
             return []
 
-        applicable_ops = DashboardService.get_applicable_operators(category_code)
+        applicable_ops = DashboardService.get_applicable_operators(category_code, operator_code)
 
         if category.is_cumulative:
             cum_type = '12M'
@@ -255,7 +299,7 @@ class DashboardService:
         return sorted(values, key=lambda x: x['value'], reverse=True)
 
     @staticmethod
-    def get_trends(category_code, indicator_code=None, start_year=2018, end_year=2026):
+    def get_trends(category_code, indicator_code=None, start_year=2018, end_year=2026, operator_code=None):
         category = IndicatorCategory.objects.get(code=category_code)
 
         target_code = indicator_code or '1'
@@ -265,7 +309,7 @@ class DashboardService:
         if not indicator:
             return []
 
-        applicable_ops = DashboardService.get_applicable_operators(category_code)
+        applicable_ops = DashboardService.get_applicable_operators(category_code, operator_code)
 
         if category.is_cumulative:
             entries = CumulativeData.objects.filter(
@@ -313,12 +357,12 @@ class DashboardService:
         return list(annual_data.values())
 
     @staticmethod
-    def get_growth_rates(category_code, year):
+    def get_growth_rates(category_code, year, operator_code=None):
         current = DashboardService.get_trends(
-            category_code, start_year=year, end_year=year,
+            category_code, start_year=year, end_year=year, operator_code=operator_code,
         )
         previous = DashboardService.get_trends(
-            category_code, start_year=year - 1, end_year=year - 1,
+            category_code, start_year=year - 1, end_year=year - 1, operator_code=operator_code,
         )
 
         if not current or not previous:
@@ -327,7 +371,7 @@ class DashboardService:
         curr = current[0]
         prev = previous[0]
 
-        applicable_ops = DashboardService.get_applicable_operators(category_code)
+        applicable_ops = DashboardService.get_applicable_operators(category_code, operator_code)
         results = []
 
         for op in applicable_ops:
@@ -349,13 +393,13 @@ class DashboardService:
         return results
 
     @staticmethod
-    def get_cagr(category_code, start_year, end_year):
+    def get_cagr(category_code, start_year, end_year, operator_code=None):
         """Compound Annual Growth Rate (CAGR) per operator."""
         start_data = DashboardService.get_trends(
-            category_code, start_year=start_year, end_year=start_year,
+            category_code, start_year=start_year, end_year=start_year, operator_code=operator_code,
         )
         end_data = DashboardService.get_trends(
-            category_code, start_year=end_year, end_year=end_year,
+            category_code, start_year=end_year, end_year=end_year, operator_code=operator_code,
         )
 
         if not start_data or not end_data:
@@ -367,7 +411,7 @@ class DashboardService:
         if n <= 0:
             return []
 
-        applicable_ops = DashboardService.get_applicable_operators(category_code)
+        applicable_ops = DashboardService.get_applicable_operators(category_code, operator_code)
         results = []
 
         for op in applicable_ops:
@@ -395,15 +439,16 @@ class DashboardService:
         if total_start and total_start > 0 and total_end and total_end > 0 and n > 0:
             total_cagr = ((total_end / total_start) ** (1 / n) - 1) * 100
 
-        results.append({
-            'operator_code': 'TOTAL',
-            'operator_name': 'Total Mercado',
-            'operator_color': '#1B2A4A',
-            'start_value': total_start,
-            'end_value': total_end,
-            'years': n,
-            'cagr': round(total_cagr, 2),
-        })
+        if not DashboardService._normalize_operator_code(operator_code):
+            results.append({
+                'operator_code': 'TOTAL',
+                'operator_name': 'Total Mercado',
+                'operator_color': '#1B2A4A',
+                'start_value': total_start,
+                'end_value': total_end,
+                'years': n,
+                'cagr': round(total_cagr, 2),
+            })
 
         return results
 

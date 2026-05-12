@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import Image from 'next/image'
-import { Users, DollarSign, Wifi, TrendingUp, BarChart3, Activity } from 'lucide-react'
+import { Users, DollarSign, Wifi, TrendingUp, BarChart3, Activity, RadioTower, Crown } from 'lucide-react'
 import KPICard from '@/components/ui/kpi-card'
 import { ChartWrapper, ComboChart, PieChart, BarChart } from '@/components/charts'
 import api from '@/lib/api'
@@ -41,6 +41,12 @@ type OperatorInfo = {
   color: string
 }
 
+type HHIData = {
+  hhi: number
+  classification: string
+  operators: MarketShareItem[]
+}
+
 const DashboardPage = () => {
   const { year, setYear, years, isYearReady } = useDashboardYears()
   const [quarter, setQuarter] = useState<number | undefined>(undefined)
@@ -50,6 +56,10 @@ const DashboardPage = () => {
   const [marketShare, setMarketShare] = useState<MarketShareItem[]>([])
   const [revenueTrends, setRevenueTrends] = useState<TrendData[]>([])
   const [revenueOperators, setRevenueOperators] = useState<OperatorInfo[]>([])
+  const [dataTrends, setDataTrends] = useState<TrendData[]>([])
+  const [dataOperators, setDataOperators] = useState<OperatorInfo[]>([])
+  const [fixedInternetShare, setFixedInternetShare] = useState<MarketShareItem[]>([])
+  const [hhi, setHhi] = useState<HHIData | null>(null)
   const [isLoading, setIsLoading] = useState(true)
 
   const fetchDashboard = useCallback(async () => {
@@ -59,11 +69,14 @@ const DashboardPage = () => {
       const params: Record<string, number> = { year }
       if (quarter) params.quarter = quarter
 
-      const [sumRes, trendRes, shareRes, revRes] = await Promise.all([
+      const [sumRes, trendRes, shareRes, revRes, dataRes, fixedRes, hhiRes] = await Promise.all([
         api.get('/dashboard/summary/', { params }),
         api.get('/dashboard/trends/', { params: { category: 'estacoes_moveis', start_year: 2018, end_year: year } }),
         api.get('/dashboard/market-share/', { params: { ...params, market: 'mobile' } }),
         api.get('/dashboard/trends/', { params: { category: 'receitas', indicator: '8', start_year: 2018, end_year: year } }),
+        api.get('/dashboard/trends/', { params: { category: 'trafego_originado', indicator: '4', start_year: 2018, end_year: year } }),
+        api.get('/dashboard/market-share/', { params: { ...params, market: 'fixed_internet' } }),
+        api.get('/dashboard/hhi/', { params: { year, market: 'mobile' } }),
       ])
 
       setSummary(sumRes.data)
@@ -72,6 +85,10 @@ const DashboardPage = () => {
       setMarketShare(shareRes.data.data || [])
       setRevenueTrends(revRes.data.data || [])
       setRevenueOperators(revRes.data.operators || [])
+      setDataTrends(dataRes.data.data || [])
+      setDataOperators(dataRes.data.operators || [])
+      setFixedInternetShare(fixedRes.data.data || [])
+      setHhi(hhiRes.data || null)
     } catch {
       // API may return empty when no data exists
     } finally {
@@ -89,6 +106,11 @@ const DashboardPage = () => {
   }
 
   const trendCategories = trends.map((t) => t.period)
+  const marketLeader = marketShare[0]
+  const hhiColor = !hhi ? '#6B7280'
+    : hhi.hhi > 2500 ? '#EF4444'
+    : hhi.hhi > 1500 ? '#F59E0B'
+    : '#10B981'
   const buildBarSeries = (operators: OperatorInfo[], data: TrendData[]) =>
     operators.map((op) => ({
       name: op.name,
@@ -161,6 +183,37 @@ const DashboardPage = () => {
           value={summary ? `${summary.penetration_rate}%` : '—'}
           icon={TrendingUp}
           color="#9B59B6"
+        />
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <KPICard
+          title="Operadores Activos"
+          value={summary ? String(summary.active_operators) : '—'}
+          icon={RadioTower}
+          color="#1B2A4A"
+        />
+        <KPICard
+          title="HHI Móvel"
+          value={hhi ? formatNumber(hhi.hhi) : '—'}
+          change={hhi?.classification}
+          changeType={hhi && hhi.hhi < 2500 ? 'positive' : 'negative'}
+          icon={Activity}
+          color={hhiColor}
+        />
+        <KPICard
+          title="Líder Móvel"
+          value={marketLeader?.operator_name || '—'}
+          change={marketLeader ? `${marketLeader.share_pct}%` : undefined}
+          changeType="positive"
+          icon={Crown}
+          color={marketLeader?.operator_color || '#6B7280'}
+        />
+        <KPICard
+          title="Internet Fixa"
+          value={fixedInternetShare.length ? formatLargeNumber(fixedInternetShare.reduce((sum, item) => sum + item.value, 0)) : '—'}
+          icon={BarChart3}
+          color="#E67E22"
         />
       </div>
 
@@ -258,6 +311,38 @@ const DashboardPage = () => {
               )
             })}
           </div>
+        </ChartWrapper>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <ChartWrapper
+          title="Evolução do Tráfego de Dados"
+          subtitle={year ? `Tráfego originado · 2018-${year}` : 'A carregar...'}
+          isLoading={isLoading}
+          isEmpty={dataTrends.length === 0}
+        >
+          <ComboChart
+            categories={dataTrends.map((t) => t.period)}
+            barSeries={buildBarSeries(dataOperators, dataTrends)}
+            lineSeries={buildLineSeries(dataTrends)}
+            stacked
+            yAxisLabel="Dados"
+          />
+        </ChartWrapper>
+
+        <ChartWrapper
+          title="Quota de Internet Fixa"
+          subtitle={year ? `${year}${quarter ? ` Q${quarter}` : ''}` : 'A carregar...'}
+          isLoading={isLoading}
+          isEmpty={fixedInternetShare.length === 0}
+        >
+          <PieChart
+            data={fixedInternetShare.map((s) => ({
+              name: s.operator_name,
+              value: s.value,
+              color: s.operator_color,
+            }))}
+          />
         </ChartWrapper>
       </div>
     </div>

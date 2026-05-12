@@ -16,8 +16,9 @@ class DashboardSummaryView(APIView):
         year = int(request.query_params.get('year', datetime.now().year))
         quarter = request.query_params.get('quarter')
         quarter = int(quarter) if quarter else None
+        operator = request.query_params.get('operator')
 
-        data = DashboardService.get_summary(year, quarter)
+        data = DashboardService.get_summary(year, quarter, operator)
         return Response(data)
 
 
@@ -73,8 +74,9 @@ class DashboardMarketShareView(APIView):
         quarter = request.query_params.get('quarter')
         quarter = int(quarter) if quarter else None
         market = request.query_params.get('market', 'mobile')
+        operator = request.query_params.get('operator')
 
-        data = DashboardService.get_market_share(year, quarter, market)
+        data = DashboardService.get_market_share(year, quarter, market, operator)
         return Response({'market': market, 'year': year, 'data': data})
 
 
@@ -86,10 +88,11 @@ class DashboardTrendsView(APIView):
         indicator = request.query_params.get('indicator')
         start_year = int(request.query_params.get('start_year', 2018))
         end_year = int(request.query_params.get('end_year', datetime.now().year))
+        operator = request.query_params.get('operator')
 
-        data = DashboardService.get_trends(category, indicator, start_year, end_year)
+        data = DashboardService.get_trends(category, indicator, start_year, end_year, operator)
 
-        operators = DashboardService.get_applicable_operators(category)
+        operators = DashboardService.get_applicable_operators(category, operator)
         operator_info = [
             {'code': op.code, 'name': op.name, 'color': op.brand_color}
             for op in operators
@@ -108,6 +111,7 @@ class DashboardComparativeView(APIView):
 
     def get(self, request):
         year = int(request.query_params.get('year', datetime.now().year))
+        operator = request.query_params.get('operator')
         categories = request.query_params.getlist('categories')
         if not categories:
             categories = list(
@@ -131,9 +135,9 @@ class DashboardComparativeView(APIView):
         results = {}
         for cat_code in categories:
             try:
-                growth = DashboardService.get_growth_rates(cat_code, year)
+                growth = DashboardService.get_growth_rates(cat_code, year, operator)
                 market_key = category_to_market.get(cat_code, 'mobile')
-                market = DashboardService.get_market_share(year, market=market_key)
+                market = DashboardService.get_market_share(year, market=market_key, operator_code=operator)
                 results[cat_code] = {
                     'growth': growth,
                     'market_share': market,
@@ -151,8 +155,9 @@ class DashboardCAGRView(APIView):
         category = request.query_params.get('category', 'estacoes_moveis')
         start_year = int(request.query_params.get('start_year', 2018))
         end_year = int(request.query_params.get('end_year', datetime.now().year))
+        operator = request.query_params.get('operator')
 
-        data = DashboardService.get_cagr(category, start_year, end_year)
+        data = DashboardService.get_cagr(category, start_year, end_year, operator)
         return Response({
             'category': category,
             'start_year': start_year,
@@ -195,6 +200,7 @@ class DashboardExportView(APIView):
         category = request.query_params.get('category')
         year = int(request.query_params.get('year', datetime.now().year))
         fmt = request.query_params.get('format', 'json')
+        operator = request.query_params.get('operator')
 
         if not category:
             return Response(
@@ -202,7 +208,7 @@ class DashboardExportView(APIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        data = DashboardService.get_indicator_data(category, year)
+        data = DashboardService.get_indicator_data(category, year, operator_code=operator)
 
         if fmt == 'json':
             return Response(data)
@@ -241,6 +247,7 @@ class DashboardExportView(APIView):
         response = HttpResponse(
             content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
         )
-        response['Content-Disposition'] = f'attachment; filename="{category}_{year}.xlsx"'
+        suffix = f"_{operator}" if operator else ''
+        response['Content-Disposition'] = f'attachment; filename="{category}_{year}{suffix}.xlsx"'
         wb.save(response)
         return response

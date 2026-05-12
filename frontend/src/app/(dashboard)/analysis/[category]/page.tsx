@@ -8,6 +8,7 @@ import api from '@/lib/api'
 import { formatNumber } from '@/lib/utils'
 import { useDashboardYears } from '@/hooks/use-dashboard-years'
 import toast from 'react-hot-toast'
+import type { OperatorListItem } from '@/types'
 
 type IndicatorDataItem = {
   indicator_code: string
@@ -54,6 +55,18 @@ type GrowthItem = {
 
 type OperatorInfo = { code: string; name: string; color: string }
 
+const CATEGORY_MARKET_MAP: Record<string, string> = {
+  estacoes_moveis: 'mobile',
+  trafego_originado: 'voice',
+  trafego_terminado: 'voice',
+  trafego_roaming: 'mobile',
+  internet_fixo: 'fixed_internet',
+  internet_trafic: 'data',
+  receitas: 'revenue',
+  empregos: 'employment',
+  investimento: 'revenue',
+}
+
 const CategoryAnalysisPage = () => {
   const params = useParams()
   const router = useRouter()
@@ -61,6 +74,7 @@ const CategoryAnalysisPage = () => {
 
   const { year, setYear, years, isYearReady } = useDashboardYears()
   const [quarter, setQuarter] = useState<number | undefined>(undefined)
+  const [selectedOperator, setSelectedOperator] = useState('')
   const [categoryName, setCategoryName] = useState('')
   const [isCumulative, setIsCumulative] = useState(false)
   const [rootIndicators, setRootIndicators] = useState<RootIndicator[]>([])
@@ -69,6 +83,7 @@ const CategoryAnalysisPage = () => {
   const [trendOperators, setTrendOperators] = useState<OperatorInfo[]>([])
   const [marketShare, setMarketShare] = useState<MarketShareItem[]>([])
   const [growth, setGrowth] = useState<GrowthItem[]>([])
+  const [allOperators, setAllOperators] = useState<OperatorListItem[]>([])
   const [isLoading, setIsLoading] = useState(true)
 
   const fetchData = useCallback(async () => {
@@ -77,15 +92,17 @@ const CategoryAnalysisPage = () => {
     try {
       const qParams: Record<string, string | number> = { year }
       if (quarter) qParams.quarter = quarter
+      if (selectedOperator) qParams.operator = selectedOperator
 
-      const [indRes, trendRes, growthRes] = await Promise.all([
+      const [indRes, trendRes, growthRes, operatorsRes] = await Promise.all([
         api.get(`/dashboard/indicator/${categoryCode}/`, { params: qParams }),
         api.get('/dashboard/trends/', {
-          params: { category: categoryCode, start_year: 2018, end_year: year },
+          params: { category: categoryCode, start_year: 2018, end_year: year, operator: selectedOperator || undefined },
         }),
         api.get('/dashboard/market-share/', {
-          params: { ...qParams, market: categoryCode },
+          params: { ...qParams, market: CATEGORY_MARKET_MAP[categoryCode] || 'mobile' },
         }),
+        api.get('/operators/'),
       ])
 
       setCategoryName(indRes.data.category?.name || categoryCode)
@@ -95,10 +112,11 @@ const CategoryAnalysisPage = () => {
       setTrends(trendRes.data.data || [])
       setTrendOperators(trendRes.data.operators || [])
       setMarketShare(growthRes.data.data || [])
+      setAllOperators(operatorsRes.data.results ?? operatorsRes.data ?? [])
 
       try {
         const gRes = await api.get('/dashboard/comparative/', {
-          params: { year, categories: categoryCode },
+          params: { year, categories: categoryCode, operator: selectedOperator || undefined },
         })
         const catGrowth = gRes.data.categories?.[categoryCode]?.growth || []
         setGrowth(catGrowth)
@@ -110,7 +128,7 @@ const CategoryAnalysisPage = () => {
     } finally {
       setIsLoading(false)
     }
-  }, [categoryCode, year, quarter])
+  }, [categoryCode, year, quarter, selectedOperator])
 
   useEffect(() => { fetchData() }, [fetchData])
 
@@ -118,13 +136,18 @@ const CategoryAnalysisPage = () => {
     if (!year) return
     try {
       const response = await api.get('/dashboard/export/', {
-        params: { category: categoryCode, year, format: 'xlsx' },
+        params: {
+          category: categoryCode,
+          year,
+          format: 'xlsx',
+          operator: selectedOperator || undefined,
+        },
         responseType: 'blob',
       })
       const url = window.URL.createObjectURL(new Blob([response.data]))
       const link = document.createElement('a')
       link.href = url
-      link.setAttribute('download', `${categoryCode}_${year}.xlsx`)
+      link.setAttribute('download', `${categoryCode}_${year}${selectedOperator ? `_${selectedOperator}` : ''}.xlsx`)
       document.body.appendChild(link)
       link.click()
       link.remove()
@@ -133,11 +156,23 @@ const CategoryAnalysisPage = () => {
     }
   }
 
-  const operatorCodes = Array.from(new Set(data.map((d) => d.operator_code)))
+  const operatorCodes = selectedOperator && selectedOperator !== 'OTHERS'
+    ? [selectedOperator]
+    : Array.from(new Set(data.map((d) => d.operator_code)))
   const operators = operatorCodes.map((code) => {
     const item = data.find((d) => d.operator_code === code)
-    return { code, name: item?.operator_name || code, color: item?.operator_color || '#6B7280' }
+    const operator = allOperators.find((op) => op.code === code)
+    return {
+      code,
+      name: item?.operator_name || operator?.name || code,
+      color: item?.operator_color || operator?.brand_color || '#6B7280',
+    }
   })
+  const selectedOperatorLabel = selectedOperator
+    ? selectedOperator === 'OTHERS'
+      ? 'Outros operadores'
+      : allOperators.find((op) => op.code === selectedOperator)?.name || selectedOperator
+    : 'Todos os operadores'
 
   const groupedByIndicator = data.reduce<Record<string, IndicatorDataItem[]>>((acc, item) => {
     const key = item.indicator_code
@@ -189,6 +224,20 @@ const CategoryAnalysisPage = () => {
               <option value="4">Q4</option>
             </select>
           )}
+          <select
+            value={selectedOperator}
+            onChange={(e) => setSelectedOperator(e.target.value)}
+            className="input-field text-sm w-44"
+            aria-label="Operadora"
+          >
+            <option value="">Todos</option>
+            {allOperators.map((operator) => (
+              <option key={operator.code} value={operator.code}>
+                {operator.name}
+              </option>
+            ))}
+            <option value="OTHERS">Outros</option>
+          </select>
           <button
             type="button"
             onClick={handleExport}
@@ -223,7 +272,7 @@ const CategoryAnalysisPage = () => {
         <div className="lg:col-span-2">
           <ChartWrapper
             title={`Evolução — ${categoryName}`}
-            subtitle={year ? `2018 - ${year}` : 'A carregar...'}
+            subtitle={year ? `${selectedOperatorLabel} · 2018 - ${year}` : 'A carregar...'}
             isLoading={isLoading}
             isEmpty={trends.length === 0}
           >
@@ -234,7 +283,7 @@ const CategoryAnalysisPage = () => {
                 data: trends.map((t) => (t[op.code] as number) || 0),
                 color: op.color,
               }))}
-              lineSeries={[{
+              lineSeries={selectedOperator ? [] : [{
                 name: 'Total',
                 data: trends.map((t) => t.total || 0),
                 color: '#1B2A4A',
@@ -246,7 +295,7 @@ const CategoryAnalysisPage = () => {
 
         <ChartWrapper
           title="Quota de Mercado"
-          subtitle={year ? `${year}${quarter ? ` Q${quarter}` : ''}` : 'A carregar...'}
+          subtitle={year ? `${selectedOperatorLabel} · ${year}${quarter ? ` Q${quarter}` : ''}` : 'A carregar...'}
           isLoading={isLoading}
           isEmpty={marketShare.length === 0}
         >
@@ -262,6 +311,7 @@ const CategoryAnalysisPage = () => {
 
       <ChartWrapper
         title="Comparação entre Operadores"
+        subtitle={selectedOperatorLabel}
         isLoading={isLoading}
         isEmpty={trends.length === 0}
       >

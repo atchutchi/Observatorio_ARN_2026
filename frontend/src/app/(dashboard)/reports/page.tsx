@@ -13,6 +13,8 @@ type Report = {
   year: number
   quarter: number | null
   status: string
+  operator_scope: 'all' | 'operator' | 'others'
+  operator_name: string | null
   generated_at: string
   generated_by_name: string
   pdf_url: string | null
@@ -121,6 +123,13 @@ const ReportsPage = () => {
                       {report.generated_by_name && (
                         <span className="text-xs text-gray-400">por {report.generated_by_name}</span>
                       )}
+                      <span className="text-xs text-gray-400">
+                        {report.operator_scope === 'operator'
+                          ? report.operator_name
+                          : report.operator_scope === 'others'
+                            ? 'Outros operadores'
+                            : 'Geral'}
+                      </span>
                     </div>
                   </div>
                 </div>

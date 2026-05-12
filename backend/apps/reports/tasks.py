@@ -18,11 +18,23 @@ def generate_report_task(report_id):
         filename_base = f"observatorio_{report.report_type}_{report.year}"
         if report.quarter:
             filename_base += f"_Q{report.quarter}"
+        if report.operator_scope == 'operator' and report.operator:
+            filename_base += f"_{report.operator.code.lower()}"
+        elif report.operator_scope == 'others':
+            filename_base += "_outros"
+
+        operator_code = None
+        if report.operator_scope == 'operator' and report.operator:
+            operator_code = report.operator.code
+        elif report.operator_scope == 'others':
+            operator_code = 'OTHERS'
 
         pdf_gen = PDFReportGenerator(
             year=report.year,
             quarter=report.quarter,
             report_type=report.report_type,
+            operator_code=operator_code,
+            operator_scope=report.operator_scope,
         )
         pdf_bytes = pdf_gen.generate()
         report.pdf_file.save(
@@ -34,6 +46,8 @@ def generate_report_task(report_id):
         excel_gen = ExcelReportGenerator(
             year=report.year,
             quarter=report.quarter,
+            operator_code=operator_code,
+            operator_scope=report.operator_scope,
         )
         excel_bytes = excel_gen.generate()
         report.excel_file.save(
@@ -47,6 +61,8 @@ def generate_report_task(report_id):
             year=report.year,
             quarter=report.quarter,
             report_type=report.report_type,
+            operator_code=operator_code,
+            operator_scope=report.operator_scope,
         )
         docx_bytes = docx_gen.generate()
         report.docx_file.save(

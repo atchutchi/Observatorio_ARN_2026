@@ -19,7 +19,7 @@ def _get_color(code):
     return OPERATOR_COLORS.get(code, '#6B7280')
 
 
-def generate_market_share_chart(year, quarter=None, market='mobile'):
+def generate_market_share_chart(year, quarter=None, market='mobile', operator_code=None):
     """Pie chart of market shares. Returns base64-encoded PNG."""
     try:
         import matplotlib
@@ -28,7 +28,7 @@ def generate_market_share_chart(year, quarter=None, market='mobile'):
     except ImportError:
         return None
 
-    shares = DashboardService.get_market_share(year, quarter, market)
+    shares = DashboardService.get_market_share(year, quarter, market, operator_code)
     if not shares:
         return None
 
@@ -55,7 +55,7 @@ def generate_market_share_chart(year, quarter=None, market='mobile'):
     return base64.b64encode(buf.getvalue()).decode('utf-8')
 
 
-def generate_trends_chart(category_code, start_year=2018, end_year=2026):
+def generate_trends_chart(category_code, start_year=2018, end_year=2026, operator_code=None):
     """Stacked bar chart with trend line. Returns base64-encoded PNG."""
     try:
         import matplotlib
@@ -65,11 +65,16 @@ def generate_trends_chart(category_code, start_year=2018, end_year=2026):
     except ImportError:
         return None
 
-    data = DashboardService.get_trends(category_code, start_year=start_year, end_year=end_year)
+    data = DashboardService.get_trends(
+        category_code,
+        start_year=start_year,
+        end_year=end_year,
+        operator_code=operator_code,
+    )
     if not data:
         return None
 
-    operators = DashboardService.get_applicable_operators(category_code)
+    operators = DashboardService.get_applicable_operators(category_code, operator_code)
     op_codes = [op.code for op in operators]
     op_names = {op.code: op.name for op in operators}
     op_colors = {op.code: _get_color(op.code) for op in operators}
@@ -88,7 +93,8 @@ def generate_trends_chart(category_code, start_year=2018, end_year=2026):
         bottom += values
 
     totals = [d.get('total', 0) for d in data]
-    ax.plot(x, totals, color=ARN_PRIMARY, linewidth=2, marker='o', markersize=4, label='Total')
+    if not operator_code:
+        ax.plot(x, totals, color=ARN_PRIMARY, linewidth=2, marker='o', markersize=4, label='Total')
 
     ax.set_xticks(x)
     ax.set_xticklabels(years, fontsize=9)
@@ -141,22 +147,23 @@ def generate_hhi_chart(year, market='mobile'):
     return base64.b64encode(buf.getvalue()).decode('utf-8')
 
 
-def generate_all_charts(year, quarter=None):
+def generate_all_charts(year, quarter=None, operator_code=None):
     """Returns dict of all chart images as base64 PNGs for embedding in reports."""
     charts = {}
 
     for market in ['mobile', 'fixed_internet', 'revenue']:
-        chart = generate_market_share_chart(year, quarter, market)
+        chart = generate_market_share_chart(year, quarter, market, operator_code)
         if chart:
             charts[f'market_share_{market}'] = chart
 
     for cat_code in ['estacoes_moveis', 'trafego_originado', 'receitas']:
-        chart = generate_trends_chart(cat_code, end_year=year)
+        chart = generate_trends_chart(cat_code, end_year=year, operator_code=operator_code)
         if chart:
             charts[f'trends_{cat_code}'] = chart
 
-    hhi_chart = generate_hhi_chart(year)
-    if hhi_chart:
-        charts['hhi_mobile'] = hhi_chart
+    if not operator_code:
+        hhi_chart = generate_hhi_chart(year)
+        if hhi_chart:
+            charts['hhi_mobile'] = hhi_chart
 
     return charts

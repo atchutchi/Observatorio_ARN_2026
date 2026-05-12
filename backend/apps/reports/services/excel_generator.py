@@ -16,9 +16,11 @@ OPERATOR_HEX = {
 
 class ExcelReportGenerator:
 
-    def __init__(self, year, quarter=None):
+    def __init__(self, year, quarter=None, operator_code=None, operator_scope='all'):
         self.year = year
         self.quarter = quarter
+        self.operator_code = operator_code
+        self.operator_scope = operator_scope
         self.wb = Workbook()
         self.wb.remove(self.wb.active)
 
@@ -40,7 +42,9 @@ class ExcelReportGenerator:
             top=Side(style='thin'), bottom=Side(style='thin'),
         )
 
-        applicable_ops = DashboardService.get_applicable_operators(category.code)
+        applicable_ops = DashboardService.get_applicable_operators(
+            category.code, self.operator_code,
+        )
 
         headers = ['Cód.', 'Indicador']
         for op in applicable_ops:
@@ -55,7 +59,9 @@ class ExcelReportGenerator:
             cell.border = thin_border
 
         indicators = Indicator.objects.filter(category=category).order_by('order')
-        data = DashboardService.get_indicator_data(category.code, self.year, self.quarter)
+        data = DashboardService.get_indicator_data(
+            category.code, self.year, self.quarter, self.operator_code,
+        )
 
         row = 2
         for ind in indicators:
@@ -97,10 +103,15 @@ class ExcelReportGenerator:
         header_fill = PatternFill(start_color='1B2A4A', end_color='1B2A4A', fill_type='solid')
 
         ws.merge_cells('A1:D1')
-        title_cell = ws.cell(row=1, column=1, value=f'Observatório Telecom GB — {self.year}')
+        title = f'Observatório Telecom GB — {self.year}'
+        if self.operator_scope == 'operator' and self.operator_code:
+            title += f' — {self.operator_code}'
+        elif self.operator_scope == 'others':
+            title += ' — Outros operadores'
+        title_cell = ws.cell(row=1, column=1, value=title)
         title_cell.font = Font(bold=True, size=14, color='1B2A4A')
 
-        summary = DashboardService.get_summary(self.year, self.quarter)
+        summary = DashboardService.get_summary(self.year, self.quarter, self.operator_code)
 
         kpis = [
             ('Total Assinantes Móvel', summary['total_subscribers']),

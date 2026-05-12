@@ -24,6 +24,9 @@
         .level-0 td { font-weight: bold; background: #eef2f7; }
         .footer { text-align: center; font-size: 8pt; color: #999; margin-top: 2em; border-top: 1px solid #ddd; padding-top: 0.5em; }
         .page-break { page-break-before: always; }
+        .narrative { margin: 0.5em 0 1em; color: #3f4654; }
+        .chart { text-align: center; margin: 1em 0 1.2em; page-break-inside: avoid; }
+        .chart img { max-width: 100%; height: auto; }
         .operator-telecel { color: #E30613; }
         .operator-orange { color: #FF6600; }
         .operator-starlink { color: #000000; }
@@ -35,10 +38,35 @@
         <p style="color: #555; font-size: 11pt;">Autoridade Reguladora Nacional — Guiné-Bissau</p>
         <div class="subtitle">Observatório do Mercado de Telecomunicações</div>
         <div class="period">{{ period_label }}</div>
+        <p style="color: #555; margin-top: 1em;">Âmbito: {{ operator_label }}</p>
         <p style="color: #777; margin-top: 2em;">Relatório {% if report_type == 'quarterly' %}Trimestral{% else %}Anual{% endif %}</p>
     </div>
 
+    <h1>Introdução</h1>
+    <p class="narrative">
+        O presente relatório apresenta a evolução {% if is_operator_report %}da operadora {{ operator_label }}{% else %}do mercado das telecomunicações{% endif %}
+        na Guiné-Bissau durante {{ period_label }}. A informação está organizada por indicadores regulatórios,
+        com leitura descritiva, tabelas de suporte e gráficos de evolução.
+    </p>
+    <p class="narrative">
+        Os dados resultam das declarações submetidas pelos operadores licenciados e do tratamento estatístico
+        realizado pela Autoridade Reguladora Nacional no âmbito do Observatório do Mercado.
+    </p>
+    {% if operators %}
+    <h2>Operadores incluídos</h2>
+    <ul>
+        {% for operator in operators %}
+        <li>{{ operator.name }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+
     <h1>Resumo Executivo</h1>
+    <p class="narrative">
+        No período {{ period_label }}, {% if is_operator_report %}{{ operator_label }}{% else %}o mercado{% endif %}
+        registou {{ summary.total_subscribers|floatformat:0 }} assinantes móveis, uma taxa de penetração de
+        {{ summary.penetration_rate }}% e uma variação anual de {{ summary.subscriber_change }}%.
+    </p>
     <div class="kpi-grid">
         <div class="kpi-card">
             <div class="label">Total Assinantes</div>
@@ -60,6 +88,9 @@
 
     {% if market_shares.mobile %}
     <h2>Quota de Mercado Móvel</h2>
+    {% if charts.market_share_mobile %}
+    <div class="chart"><img src="data:image/png;base64,{{ charts.market_share_mobile }}" alt="Quota de Mercado Móvel"></div>
+    {% endif %}
     <table>
         <tr><th>Operador</th><th>Assinantes</th><th>Quota (%)</th></tr>
         {% for item in market_shares.mobile %}
@@ -74,6 +105,9 @@
 
     {% if market_shares.fixed_internet %}
     <h2>Quota de Mercado — Internet Fixa</h2>
+    {% if charts.market_share_fixed_internet %}
+    <div class="chart"><img src="data:image/png;base64,{{ charts.market_share_fixed_internet }}" alt="Quota de Mercado Internet Fixa"></div>
+    {% endif %}
     <table>
         <tr><th>Operador</th><th>Assinantes</th><th>Quota (%)</th></tr>
         {% for item in market_shares.fixed_internet %}
@@ -86,16 +120,44 @@
     </table>
     {% endif %}
 
+    {% if market_shares.revenue %}
+    <h2>Quota de Mercado — Receitas</h2>
+    {% if charts.market_share_revenue %}
+    <div class="chart"><img src="data:image/png;base64,{{ charts.market_share_revenue }}" alt="Quota de Mercado Receitas"></div>
+    {% endif %}
+    <table>
+        <tr><th>Operador</th><th>Receitas</th><th>Quota (%)</th></tr>
+        {% for item in market_shares.revenue %}
+        <tr>
+            <td><strong>{{ item.operator_name }}</strong></td>
+            <td>{{ item.value|floatformat:0 }}</td>
+            <td>{{ item.share_pct }}%</td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% endif %}
+
+    {% if not is_operator_report %}
     <h2>Concentração de Mercado (HHI)</h2>
+    {% if charts.hhi_mobile %}
+    <div class="chart"><img src="data:image/png;base64,{{ charts.hhi_mobile }}" alt="Índice HHI"></div>
+    {% endif %}
     <table>
         <tr><th>Mercado</th><th>HHI</th><th>Classificação</th></tr>
         <tr><td>Móvel</td><td>{{ hhi_mobile.hhi|floatformat:0 }}</td><td>{{ hhi_mobile.classification }}</td></tr>
         <tr><td>Internet Fixa</td><td>{{ hhi_internet.hhi|floatformat:0 }}</td><td>{{ hhi_internet.classification }}</td></tr>
     </table>
+    {% endif %}
 
     {% for section in category_sections %}
     <div class="page-break"></div>
     <h2>{{ section.order }}. {{ section.name }}</h2>
+    {% if section.narrative %}
+    <p class="narrative">{{ section.narrative }}</p>
+    {% endif %}
+    {% if section.chart %}
+    <div class="chart"><img src="data:image/png;base64,{{ section.chart }}" alt="Evolução {{ section.name }}"></div>
+    {% endif %}
 
     {% if section.indicator_rows %}
     <h3>Indicadores</h3>
