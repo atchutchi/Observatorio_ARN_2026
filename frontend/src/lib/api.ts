@@ -2,7 +2,20 @@ import axios, { type InternalAxiosRequestConfig } from 'axios'
 import { useAuthStore } from '@/lib/auth'
 import type { AuthTokens } from '@/types'
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/v1'
+const getDefaultApiBaseUrl = () => {
+  if (typeof window === 'undefined') {
+    return 'http://localhost:8000/api/v1'
+  }
+
+  const localHosts = ['localhost', '127.0.0.1', '::1']
+  if (localHosts.includes(window.location.hostname)) {
+    return 'http://localhost:8000/api/v1'
+  }
+
+  return '/_/backend/api/v1'
+}
+
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || getDefaultApiBaseUrl()
 type RetriableRequestConfig = InternalAxiosRequestConfig & { _retry?: boolean }
 let refreshRequest: Promise<AuthTokens> | null = null
 
