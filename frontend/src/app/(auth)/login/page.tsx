@@ -24,7 +24,7 @@ const LoginPage = () => {
       toast.success('Login efectuado com sucesso')
       router.push('/')
     } catch {
-      toast.error('Credenciais inválidas. Utilize: admin / admin123')
+      toast.error('Credenciais inválidas. Verifique o utilizador e a palavra-passe.')
     }
   }
 

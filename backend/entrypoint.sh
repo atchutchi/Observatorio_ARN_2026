@@ -2,16 +2,38 @@
 set -e
 
 echo "Waiting for PostgreSQL..."
-while ! python -c "import psycopg2; psycopg2.connect(dbname='$POSTGRES_DB', user='$POSTGRES_USER', password='$POSTGRES_PASSWORD', host='$POSTGRES_HOST', port='$POSTGRES_PORT')" 2>/dev/null; do
-    sleep 1
-done
+python - <<'PY'
+import os
+import time
+
+import psycopg2
+
+database_url = os.environ.get('DATABASE_URL')
+
+while True:
+    try:
+        if database_url:
+            conn = psycopg2.connect(database_url)
+        else:
+            conn = psycopg2.connect(
+                dbname=os.environ.get('POSTGRES_DB'),
+                user=os.environ.get('POSTGRES_USER'),
+                password=os.environ.get('POSTGRES_PASSWORD'),
+                host=os.environ.get('POSTGRES_HOST'),
+                port=os.environ.get('POSTGRES_PORT'),
+            )
+        conn.close()
+        break
+    except psycopg2.Error:
+        time.sleep(1)
+PY
 echo "PostgreSQL is ready."
 
 echo "Running migrations..."
 python manage.py migrate --noinput
 
 echo "Collecting static files..."
-python manage.py collectstatic --noinput 2>/dev/null || true
+python manage.py collectstatic --noinput
 
 echo "Creating superuser if needed..."
 python manage.py shell -c "
