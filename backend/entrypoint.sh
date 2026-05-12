@@ -35,7 +35,7 @@ python manage.py migrate --noinput
 echo "Collecting static files..."
 python manage.py collectstatic --noinput
 
-echo "Creating superuser if needed..."
+echo "Ensuring superuser if configured..."
 python manage.py shell -c "
 from django.contrib.auth import get_user_model
 User = get_user_model()
@@ -44,13 +44,28 @@ username = os.environ.get('DJANGO_SUPERUSER_USERNAME')
 email = os.environ.get('DJANGO_SUPERUSER_EMAIL')
 password = os.environ.get('DJANGO_SUPERUSER_PASSWORD')
 if not all([username, email, password]):
-    print('DJANGO_SUPERUSER_USERNAME, DJANGO_SUPERUSER_EMAIL, and DJANGO_SUPERUSER_PASSWORD must be set.')
-elif not User.objects.filter(username=username).exists():
-    User.objects.create_superuser(username=username, email=email, password=password, role='admin_arn')
-    print(f'Superuser {username} created.')
+    print('DJANGO_SUPERUSER_USERNAME, DJANGO_SUPERUSER_EMAIL, and DJANGO_SUPERUSER_PASSWORD not set. Skipping superuser sync.')
 else:
-    print(f'Superuser {username} already exists.')
-" 2>/dev/null || true
+    user, created = User.objects.get_or_create(
+        username=username,
+        defaults={
+            'email': email,
+            'role': 'admin_arn',
+            'is_staff': True,
+            'is_superuser': True,
+        },
+    )
+    user.email = email
+    user.role = 'admin_arn'
+    user.is_staff = True
+    user.is_superuser = True
+    user.set_password(password)
+    user.save()
+    if created:
+        print(f'Superuser {username} created.')
+    else:
+        print(f'Superuser {username} updated.')
+"
 
 echo "Seeding reference data..."
 python manage.py seed_data 2>/dev/null || true
