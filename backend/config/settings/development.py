@@ -6,6 +6,7 @@ DEBUG = True
 
 CORS_ALLOW_ALL_ORIGINS = True
 REPORTS_GENERATE_SYNC = os.environ.get('REPORTS_GENERATE_SYNC', 'true').lower() == 'true'
+DATA_UPLOAD_PROCESS_SYNC = os.environ.get('DATA_UPLOAD_PROCESS_SYNC', 'true').lower() == 'true'
 
 if os.environ.get('USE_SQLITE', 'false').lower() == 'true':
     DATABASES = {
@@ -19,3 +20,4 @@ if 'test' in sys.argv:
     CELERY_BROKER_URL = 'memory://'
     CELERY_RESULT_BACKEND = 'cache+memory://'
     REPORTS_GENERATE_SYNC = os.environ.get('REPORTS_GENERATE_SYNC', 'false').lower() == 'true'
+    DATA_UPLOAD_PROCESS_SYNC = os.environ.get('DATA_UPLOAD_PROCESS_SYNC', 'false').lower() == 'true'

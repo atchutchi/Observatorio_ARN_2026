@@ -12,6 +12,7 @@ import {
   FileText,
   MessageSquare,
   Settings,
+  Inbox,
   Upload,
   CheckCircle,
   History,
@@ -53,6 +54,7 @@ const NAV_ITEMS: NavItem[] = [
       { label: 'Histórico', href: '/data-entry/history', icon: History },
     ],
   },
+  { label: 'Documentos', href: '/documents', icon: Inbox, roles: ['admin_arn', 'analyst_arn'] },
   {
     label: 'Análise', href: '/analysis', icon: BarChart3,
     children: [

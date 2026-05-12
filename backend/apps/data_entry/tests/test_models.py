@@ -1,9 +1,13 @@
 from decimal import Decimal
+from django.contrib.auth import get_user_model
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase
 
 from apps.operators.models import OperatorType, Operator
 from apps.indicators.models import IndicatorCategory, Indicator, Period
-from apps.data_entry.models import DataEntry, CumulativeData
+from apps.data_entry.models import DataEntry, CumulativeData, ReceivedDocument
+
+User = get_user_model()
 
 
 class DataEntryModelTest(TestCase):
@@ -97,3 +101,29 @@ class CumulativeDataModelTest(TestCase):
                 indicator=self.indicator, operator=self.operator,
                 year=2024, cumulative_type='12M', value=Decimal('6000000'),
             )
+
+
+class ReceivedDocumentModelTest(TestCase):
+
+    def setUp(self):
+        self.user = User.objects.create_user(
+            username='analyst', password='testpass123', role='analyst_arn',
+        )
+        self.op_type = OperatorType.objects.create(code='MOBILE', name='Móvel')
+        self.operator = Operator.objects.create(
+            name='Orange', code='ORANGE', operator_type=self.op_type,
+        )
+
+    def test_create_received_document(self):
+        document = ReceivedDocument.objects.create(
+            operator=self.operator,
+            file=SimpleUploadedFile('orange.xlsx', b'data'),
+            original_filename='orange.xlsx',
+            year=2024,
+            received_by=self.user,
+            assigned_to=self.user,
+        )
+
+        self.assertEqual(document.status, 'received')
+        self.assertEqual(document.priority, 'normal')
+        self.assertIn('ORANGE', str(document))

@@ -5,7 +5,9 @@ from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from apps.accounts.views import UserViewSet
 from apps.operators.views import OperatorTypeViewSet, OperatorViewSet
 from apps.indicators.views import IndicatorCategoryViewSet, IndicatorViewSet, PeriodViewSet
-from apps.data_entry.views import DataEntryViewSet, CumulativeDataViewSet, FileUploadViewSet
+from apps.data_entry.views import (
+    DataEntryViewSet, CumulativeDataViewSet, FileUploadViewSet, ReceivedDocumentViewSet,
+)
 from apps.reports.views import ReportViewSet
 from apps.ai_assistant.views import AssistantQueryView, ChatSessionViewSet
 
@@ -19,6 +21,7 @@ router.register(r'periods', PeriodViewSet, basename='period')
 router.register(r'data', DataEntryViewSet, basename='data-entry')
 router.register(r'cumulative-data', CumulativeDataViewSet, basename='cumulative-data')
 router.register(r'uploads', FileUploadViewSet, basename='upload')
+router.register(r'received-documents', ReceivedDocumentViewSet, basename='received-document')
 router.register(r'reports', ReportViewSet, basename='report')
 router.register(r'assistant/sessions', ChatSessionViewSet, basename='chat-session')
 

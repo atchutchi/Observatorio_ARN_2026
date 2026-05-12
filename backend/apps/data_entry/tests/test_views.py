@@ -1,13 +1,15 @@
 from decimal import Decimal
+from datetime import timedelta
 from unittest.mock import patch
 
 from django.contrib.auth import get_user_model
 from django.core.files.uploadedfile import SimpleUploadedFile
+from django.utils import timezone
 from django.test import TestCase
 from rest_framework import status
 from rest_framework.test import APIClient
 
-from apps.data_entry.models import DataEntry, FileUpload
+from apps.data_entry.models import DataEntry, FileUpload, ReceivedDocument
 from apps.indicators.models import IndicatorCategory, Indicator, Period
 from apps.operators.models import Operator, OperatorType
 
@@ -134,3 +136,143 @@ class FileUploadViewSetTest(TestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         upload = FileUpload.objects.get(id=response.data['id'])
         self.assertEqual(upload.operator, self.telecel)
+
+
+class ReceivedDocumentViewSetTest(TestCase):
+
+    def setUp(self):
+        self.client = APIClient()
+        self.operator_type = OperatorType.objects.create(code='MOBILE', name='Móvel')
+        self.orange = Operator.objects.create(
+            name='Orange', code='ORANGE', operator_type=self.operator_type,
+        )
+        self.admin = User.objects.create_user(
+            username='admin_docs', password='testpass123', role='admin_arn',
+        )
+        self.viewer = User.objects.create_user(
+            username='viewer_docs', password='testpass123', role='viewer',
+        )
+
+    def _file(self, name='orange_2024.xlsx'):
+        return SimpleUploadedFile(
+            name,
+            b'fake spreadsheet',
+            content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        )
+
+    def test_staff_can_register_received_document(self):
+        self.client.force_authenticate(user=self.admin)
+        response = self.client.post('/api/v1/received-documents/', {
+            'operator': self.orange.id,
+            'file': self._file(),
+            'document_type': 'questionnaire',
+            'year': 2024,
+            'priority': 'high',
+        }, format='multipart')
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        document = ReceivedDocument.objects.get(id=response.data['id'])
+        self.assertEqual(document.operator, self.orange)
+        self.assertEqual(document.received_by, self.admin)
+        self.assertEqual(document.assigned_to, self.admin)
+        self.assertEqual(document.original_filename, 'orange_2024.xlsx')
+
+    def test_viewer_cannot_register_received_document(self):
+        self.client.force_authenticate(user=self.viewer)
+        response = self.client.post('/api/v1/received-documents/', {
+            'operator': self.orange.id,
+            'file': self._file(),
+            'document_type': 'questionnaire',
+            'year': 2024,
+        }, format='multipart')
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_summary_counts_open_overdue_and_high_priority(self):
+        ReceivedDocument.objects.create(
+            operator=self.orange,
+            file=self._file('late.xlsx'),
+            original_filename='late.xlsx',
+            year=2024,
+            status='reviewing',
+            priority='high',
+            due_date=timezone.localdate() - timedelta(days=1),
+            received_by=self.admin,
+            assigned_to=self.admin,
+        )
+        ReceivedDocument.objects.create(
+            operator=self.orange,
+            file=self._file('done.xlsx'),
+            original_filename='done.xlsx',
+            year=2024,
+            status='imported',
+            priority='normal',
+            received_by=self.admin,
+            assigned_to=self.admin,
+        )
+        self.client.force_authenticate(user=self.admin)
+
+        response = self.client.get('/api/v1/received-documents/summary/')
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['total'], 2)
+        self.assertEqual(response.data['open'], 1)
+        self.assertEqual(response.data['overdue'], 1)
+        self.assertEqual(response.data['high_priority'], 1)
+
+    def test_send_to_import_creates_linked_upload(self):
+        document = ReceivedDocument.objects.create(
+            operator=self.orange,
+            file=self._file('orange.xlsx'),
+            original_filename='orange.xlsx',
+            document_type='kpi_summary',
+            year=2024,
+            received_by=self.admin,
+            assigned_to=self.admin,
+        )
+        self.client.force_authenticate(user=self.admin)
+
+        with patch('apps.data_entry.tasks.process_excel_upload.delay') as task_delay:
+            response = self.client.post(
+                f'/api/v1/received-documents/{document.id}/send_to_import/',
+            )
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        upload = FileUpload.objects.get(received_document=document)
+        self.assertEqual(upload.operator, self.orange)
+        self.assertEqual(upload.file_type, 'kpi_orange')
+        self.assertEqual(upload.original_filename, 'orange.xlsx')
+        self.assertEqual(upload.file.name, document.file.name)
+        task_delay.assert_called_once_with(upload.id)
+
+        document.refresh_from_db()
+        self.assertEqual(document.status, 'extracting')
+
+    def test_send_to_import_reuses_active_upload(self):
+        document = ReceivedDocument.objects.create(
+            operator=self.orange,
+            file=self._file('orange.xlsx'),
+            original_filename='orange.xlsx',
+            year=2024,
+            received_by=self.admin,
+            assigned_to=self.admin,
+        )
+        upload = FileUpload.objects.create(
+            operator=self.orange,
+            uploaded_by=self.admin,
+            received_document=document,
+            file=document.file.name,
+            original_filename='orange.xlsx',
+            file_type='questionnaire_orange',
+            year=2024,
+            status='processed',
+        )
+        self.client.force_authenticate(user=self.admin)
+
+        response = self.client.post(
+            f'/api/v1/received-documents/{document.id}/send_to_import/',
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['upload']['id'], upload.id)
+        self.assertEqual(FileUpload.objects.filter(received_document=document).count(), 1)

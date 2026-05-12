@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import DataEntry, CumulativeData, FileUpload, DataValidationRule
+from .models import DataEntry, CumulativeData, FileUpload, ReceivedDocument, DataValidationRule
 
 
 @admin.register(DataEntry)
@@ -18,8 +18,23 @@ class CumulativeDataAdmin(admin.ModelAdmin):
 
 @admin.register(FileUpload)
 class FileUploadAdmin(admin.ModelAdmin):
-    list_display = ['original_filename', 'operator', 'file_type', 'year', 'status', 'uploaded_at']
+    list_display = [
+        'original_filename', 'operator', 'file_type', 'year',
+        'status', 'received_document', 'uploaded_at',
+    ]
     list_filter = ['operator', 'file_type', 'status', 'year']
+    raw_id_fields = ['received_document']
+
+
+@admin.register(ReceivedDocument)
+class ReceivedDocumentAdmin(admin.ModelAdmin):
+    list_display = [
+        'original_filename', 'operator', 'document_type', 'year',
+        'quarter', 'status', 'priority', 'assigned_to', 'created_at',
+    ]
+    list_filter = ['operator', 'document_type', 'status', 'priority', 'year']
+    search_fields = ['original_filename', 'notes', 'operator__name', 'operator__code']
+    raw_id_fields = ['assigned_to', 'received_by']
 
 
 @admin.register(DataValidationRule)

@@ -135,6 +135,14 @@ class FileUpload(models.Model):
         settings.AUTH_USER_MODEL, on_delete=models.SET_NULL,
         null=True, verbose_name='Carregado por',
     )
+    received_document = models.ForeignKey(
+        'data_entry.ReceivedDocument',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name='imports',
+        verbose_name='Documento recebido',
+    )
     file = models.FileField(upload_to='uploads/%Y/%m/', verbose_name='Ficheiro')
     original_filename = models.CharField(max_length=255, verbose_name='Nome do ficheiro')
     file_type = models.CharField(
@@ -158,6 +166,79 @@ class FileUpload(models.Model):
 
     def __str__(self):
         return f"{self.original_filename} ({self.get_status_display()})"
+
+
+class ReceivedDocument(models.Model):
+    """Documento recebido de um operador antes do tratamento e importação de KPIs"""
+
+    DOCUMENT_TYPE_CHOICES = [
+        ('questionnaire', 'Questionário preenchido'),
+        ('kpi_summary', 'Resumo KPI'),
+        ('supporting_document', 'Documento de suporte'),
+        ('correspondence', 'Correspondência'),
+        ('other', 'Outro'),
+    ]
+
+    STATUS_CHOICES = [
+        ('received', 'Recebido'),
+        ('classifying', 'Em classificação'),
+        ('extracting', 'Em extracção'),
+        ('reviewing', 'Em revisão'),
+        ('validated', 'Validado'),
+        ('imported', 'Importado'),
+        ('archived', 'Arquivado'),
+    ]
+
+    PRIORITY_CHOICES = [
+        ('low', 'Baixa'),
+        ('normal', 'Normal'),
+        ('high', 'Alta'),
+    ]
+
+    operator = models.ForeignKey(
+        'operators.Operator', on_delete=models.CASCADE,
+        related_name='received_documents', verbose_name='Operador',
+    )
+    file = models.FileField(upload_to='received_documents/%Y/%m/', verbose_name='Ficheiro')
+    original_filename = models.CharField(max_length=255, verbose_name='Nome original')
+    document_type = models.CharField(
+        max_length=30, choices=DOCUMENT_TYPE_CHOICES, default='questionnaire',
+        verbose_name='Tipo de documento',
+    )
+    year = models.IntegerField(verbose_name='Ano')
+    quarter = models.IntegerField(null=True, blank=True, verbose_name='Trimestre')
+    status = models.CharField(
+        max_length=20, choices=STATUS_CHOICES, default='received', verbose_name='Estado',
+    )
+    priority = models.CharField(
+        max_length=10, choices=PRIORITY_CHOICES, default='normal', verbose_name='Prioridade',
+    )
+    assigned_to = models.ForeignKey(
+        settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL,
+        related_name='assigned_documents', verbose_name='Responsável',
+    )
+    received_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL,
+        related_name='received_documents', verbose_name='Recebido por',
+    )
+    due_date = models.DateField(null=True, blank=True, verbose_name='Prazo interno')
+    notes = models.TextField(blank=True, verbose_name='Notas internas')
+    checklist = models.JSONField(default=dict, blank=True, verbose_name='Checklist')
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name='Data de registo')
+    updated_at = models.DateTimeField(auto_now=True, verbose_name='Última actualização')
+
+    class Meta:
+        verbose_name = 'Documento Recebido'
+        verbose_name_plural = 'Documentos Recebidos'
+        ordering = ['-created_at']
+        indexes = [
+            models.Index(fields=['operator', 'year']),
+            models.Index(fields=['status', 'priority']),
+            models.Index(fields=['assigned_to', 'status']),
+        ]
+
+    def __str__(self):
+        return f"{self.operator.code} | {self.year} | {self.original_filename}"
 
 
 class DataValidationRule(models.Model):

@@ -1,5 +1,6 @@
 import logging
 from celery import shared_task
+from django.conf import settings
 
 logger = logging.getLogger(__name__)
 
@@ -23,6 +24,10 @@ def process_excel_upload(self, file_upload_id: int):
 
     processor = ExcelProcessor(upload)
     success = processor.process()
+    if upload.received_document_id:
+        document = upload.received_document
+        document.status = 'imported' if success else 'reviewing'
+        document.save(update_fields=['status', 'updated_at'])
 
     if success:
         logger.info(
@@ -31,3 +36,10 @@ def process_excel_upload(self, file_upload_id: int):
         )
     else:
         logger.error(f"Upload #{upload.id} falhou")
+
+
+def dispatch_excel_upload(file_upload_id: int):
+    if getattr(settings, 'DATA_UPLOAD_PROCESS_SYNC', False):
+        process_excel_upload(file_upload_id)
+        return
+    process_excel_upload.delay(file_upload_id)

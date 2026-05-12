@@ -127,6 +127,7 @@ export type CumulativeData = {
 export type FileUpload = {
   id: number
   operator: number
+  operator_name?: string
   original_filename: string
   file_type: string
   year: number
@@ -137,6 +138,61 @@ export type FileUpload = {
   records_errors: number
   uploaded_at: string
   processed_at: string | null
+  received_document?: number | null
+  received_document_filename?: string | null
+}
+
+export type ReceivedDocumentStatus =
+  | 'received'
+  | 'classifying'
+  | 'extracting'
+  | 'reviewing'
+  | 'validated'
+  | 'imported'
+  | 'archived'
+
+export type ReceivedDocument = {
+  id: number
+  operator: number
+  operator_name: string
+  operator_code: string
+  file: string
+  original_filename: string
+  document_type: 'questionnaire' | 'kpi_summary' | 'supporting_document' | 'correspondence' | 'other'
+  document_type_display: string
+  year: number
+  quarter: number | null
+  status: ReceivedDocumentStatus
+  status_display: string
+  priority: 'low' | 'normal' | 'high'
+  priority_display: string
+  assigned_to: number | null
+  assigned_to_name: string | null
+  received_by: number | null
+  received_by_name: string | null
+  due_date: string | null
+  notes: string
+  checklist: Record<string, boolean>
+  latest_import: {
+    id: number
+    file_type: string
+    status: FileUpload['status']
+    processing_log: string
+    records_imported: number
+    records_errors: number
+    uploaded_at: string
+    processed_at: string | null
+  } | null
+  created_at: string
+  updated_at: string
+}
+
+export type ReceivedDocumentSummary = {
+  total: number
+  open: number
+  overdue: number
+  high_priority: number
+  by_status: Partial<Record<ReceivedDocumentStatus, number>>
 }
 
 export type AuthTokens = {
