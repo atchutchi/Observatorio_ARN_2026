@@ -3,10 +3,11 @@
 import { useState, useCallback, useEffect, useRef } from 'react'
 import { useDropzone } from 'react-dropzone'
 import { useAuthStore } from '@/lib/auth'
+import { useApi } from '@/hooks/use-api'
 import api from '@/lib/api'
 import { cn } from '@/lib/utils'
 import toast from 'react-hot-toast'
-import type { FileUpload } from '@/types'
+import type { FileUpload, OperatorListItem } from '@/types'
 import {
   Upload, FileSpreadsheet, CheckCircle, XCircle, Loader2, AlertTriangle,
 } from 'lucide-react'
@@ -23,16 +24,30 @@ const FILE_TYPES = [
 const UploadPage = () => {
   const user = useAuthStore((s) => s.user)
   const [fileType, setFileType] = useState('')
+  const [operatorId, setOperatorId] = useState('')
   const [year, setYear] = useState(2024)
   const [quarter, setQuarter] = useState<number | ''>('')
   const [uploadResult, setUploadResult] = useState<FileUpload | null>(null)
   const [isUploading, setIsUploading] = useState(false)
   const pollingRef = useRef<ReturnType<typeof setInterval> | null>(null)
+  const isARNStaff = user?.role === 'admin_arn' || user?.role === 'analyst_arn'
+  const { data: operators } = useApi<OperatorListItem[]>({
+    url: '/operators/',
+    enabled: !!isARNStaff,
+  })
 
   const onDrop = useCallback(async (acceptedFiles: File[]) => {
     const file = acceptedFiles[0]
     if (!file || !fileType) {
       toast.error('Seleccione o tipo de ficheiro primeiro')
+      return
+    }
+    if (isARNStaff && !operatorId) {
+      toast.error('Seleccione o operador associado ao ficheiro')
+      return
+    }
+    if (!isARNStaff && !user?.operator) {
+      toast.error('A sua conta não tem operador associado')
       return
     }
 
@@ -44,6 +59,7 @@ const UploadPage = () => {
     formData.append('file_type', fileType)
     formData.append('year', year.toString())
     if (quarter) formData.append('quarter', quarter.toString())
+    if (isARNStaff) formData.append('operator', operatorId)
 
     try {
       const response = await api.post('/uploads/', formData, {
@@ -56,7 +72,7 @@ const UploadPage = () => {
       toast.error('Erro ao carregar ficheiro')
       setIsUploading(false)
     }
-  }, [fileType, year, quarter])
+  }, [fileType, isARNStaff, operatorId, quarter, user?.operator, year])
 
   const startPolling = (uploadId: number) => {
     if (pollingRef.current) clearInterval(pollingRef.current)
@@ -128,7 +144,26 @@ const UploadPage = () => {
 
       <div className="card">
         <h3 className="text-base font-semibold text-gray-900 mb-4">Configuração</h3>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          {isARNStaff && (
+            <div>
+              <label htmlFor="operator" className="block text-sm font-medium text-gray-700 mb-1">
+                Operador
+              </label>
+              <select
+                id="operator"
+                className="input-field"
+                value={operatorId}
+                onChange={(e) => setOperatorId(e.target.value)}
+              >
+                <option value="">Seleccione</option>
+                {operators?.map((operator) => (
+                  <option key={operator.id} value={operator.id}>{operator.name}</option>
+                ))}
+              </select>
+            </div>
+          )}
+
           <div>
             <label htmlFor="fileType" className="block text-sm font-medium text-gray-700 mb-1">
               Tipo de Ficheiro

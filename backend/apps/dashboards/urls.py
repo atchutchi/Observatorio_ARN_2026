@@ -2,6 +2,7 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
+    path('latest-year/', views.DashboardLatestYearView.as_view(), name='dashboard-latest-year'),
     path('summary/', views.DashboardSummaryView.as_view(), name='dashboard-summary'),
     path('indicator/<str:category_code>/', views.DashboardIndicatorView.as_view(), name='dashboard-indicator'),
     path('market-share/', views.DashboardMarketShareView.as_view(), name='dashboard-market-share'),
@@ -9,5 +10,6 @@ urlpatterns = [
     path('comparative/', views.DashboardComparativeView.as_view(), name='dashboard-comparative'),
     path('cagr/', views.DashboardCAGRView.as_view(), name='dashboard-cagr'),
     path('hhi/', views.DashboardHHIView.as_view(), name='dashboard-hhi'),
+    path('hhi-history/', views.DashboardHHIHistoryView.as_view(), name='dashboard-hhi-history'),
     path('export/', views.DashboardExportView.as_view(), name='dashboard-export'),
 ]

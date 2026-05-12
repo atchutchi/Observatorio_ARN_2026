@@ -1,3 +1,6 @@
+import logging
+
+from django.conf import settings
 from django.http import FileResponse
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
@@ -8,6 +11,8 @@ from apps.accounts.permissions import IsARNStaff
 from .models import Report
 from .serializers import ReportSerializer, ReportGenerateSerializer
 from .tasks import generate_report_task
+
+logger = logging.getLogger(__name__)
 
 
 class ReportViewSet(viewsets.ReadOnlyModelViewSet):
@@ -42,11 +47,27 @@ class ReportViewSet(viewsets.ReadOnlyModelViewSet):
             year=year,
             quarter=quarter,
             generated_by=request.user,
-            status='draft',
+            status='generating',
             sections=data.get('sections', {}),
         )
 
-        generate_report_task.delay(report.id)
+        try:
+            if settings.REPORTS_GENERATE_SYNC:
+                generate_report_task(report.id)
+                report.refresh_from_db()
+            else:
+                generate_report_task.delay(report.id)
+        except Exception as exc:
+            logger.exception("Failed starting report generation")
+            report.status = 'error'
+            report.error_log = str(exc)
+            report.save(update_fields=['status', 'error_log'])
+            response_data = ReportSerializer(report).data
+            response_data['detail'] = 'Não foi possível iniciar a geração do relatório.'
+            return Response(
+                response_data,
+                status=status.HTTP_503_SERVICE_UNAVAILABLE,
+            )
 
         return Response(
             ReportSerializer(report).data,

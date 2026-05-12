@@ -1,6 +1,6 @@
 from decimal import Decimal
 from django.conf import settings
-from django.db.models import Sum, Q, F, Value, CharField
+from django.db.models import Sum, Q, F, Value, CharField, Max
 from django.db.models.functions import Coalesce
 
 from apps.operators.models import Operator
@@ -11,6 +11,13 @@ from apps.data_entry.models import DataEntry, CumulativeData
 
 
 class DashboardService:
+
+    @staticmethod
+    def get_latest_data_year():
+        data_year = DataEntry.objects.aggregate(year=Max('period__year'))['year']
+        cumulative_year = CumulativeData.objects.aggregate(year=Max('year'))['year']
+        years = [year for year in (data_year, cumulative_year) if year is not None]
+        return max(years) if years else None
 
     @staticmethod
     def get_operators():
@@ -193,7 +200,10 @@ class DashboardService:
         category_code = config['category']
         indicator_code = config['indicator_code']
 
-        category = IndicatorCategory.objects.get(code=category_code)
+        category = IndicatorCategory.objects.filter(code=category_code).first()
+        if not category:
+            return []
+
         indicator = Indicator.objects.filter(
             category=category, code=indicator_code,
         ).first()
@@ -417,3 +427,15 @@ class DashboardService:
             'classification': classification,
             'operators': shares,
         }
+
+    @staticmethod
+    def get_hhi_history(start_year, end_year, market='mobile'):
+        history = []
+        for year in range(start_year, end_year + 1):
+            item = DashboardService.get_hhi(year, market)
+            history.append({
+                'year': year,
+                'hhi': item['hhi'],
+                'classification': item['classification'],
+            })
+        return history

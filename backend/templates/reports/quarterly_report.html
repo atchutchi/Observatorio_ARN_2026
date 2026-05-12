@@ -93,27 +93,48 @@
         <tr><td>Internet Fixa</td><td>{{ hhi_internet.hhi|floatformat:0 }}</td><td>{{ hhi_internet.classification }}</td></tr>
     </table>
 
-    {% for cat in categories %}
+    {% for section in category_sections %}
     <div class="page-break"></div>
-    <h2>{{ cat.order }}. {{ cat.name }}</h2>
-    {% with cat_data=category_data %}
-    {% if cat.code in cat_data %}
+    <h2>{{ section.order }}. {{ section.name }}</h2>
 
-    {% if cat_data|length > 0 %}
-    {% with growth_data=cat_data %}
-    {% if cat.code in growth_data and growth_data|length > 0 %}
-    <h3>Crescimento Anual</h3>
+    {% if section.indicator_rows %}
+    <h3>Indicadores</h3>
     <table>
-        <tr><th>Operador</th><th>{{ year|add:"-1" }}</th><th>{{ year }}</th><th>Variação</th><th>%</th></tr>
-        {% for g in growth_data.values|first %}
+        <tr>
+            <th>Cód.</th>
+            <th>Indicador</th>
+            {% for operator in section.operators %}
+            <th>{{ operator }}</th>
+            {% endfor %}
+        </tr>
+        {% for row in section.indicator_rows %}
+        <tr class="level-{{ row.level }}">
+            <td>{{ row.code }}</td>
+            <td style="padding-left: {{ row.indent }}px;">{{ row.name }}</td>
+            {% for value in row.values %}
+            <td>{% if value %}{{ value|floatformat:0 }}{% else %}—{% endif %}</td>
+            {% endfor %}
+        </tr>
         {% endfor %}
     </table>
     {% endif %}
-    {% endwith %}
+
+    {% if section.growth %}
+    <h3>Crescimento Anual</h3>
+    <table>
+        <tr><th>Operador</th><th>{{ year|add:"-1" }}</th><th>{{ year }}</th><th>Variação</th><th>%</th></tr>
+        {% for g in section.growth %}
+        <tr>
+            <td>{{ g.operator_name }}</td>
+            <td>{{ g.previous_value|floatformat:0 }}</td>
+            <td>{{ g.current_value|floatformat:0 }}</td>
+            <td>{{ g.absolute_change|floatformat:0 }}</td>
+            <td>{{ g.pct_change }}%</td>
+        </tr>
+        {% endfor %}
+    </table>
     {% endif %}
 
-    {% endif %}
-    {% endwith %}
     {% endfor %}
 
     <div class="footer">

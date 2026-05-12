@@ -4,19 +4,24 @@ import { useState, useEffect, useCallback, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { ArrowLeft, FileText, Loader2, CheckCircle, AlertCircle } from 'lucide-react'
 import api from '@/lib/api'
+import { useDashboardYears } from '@/hooks/use-dashboard-years'
 import toast from 'react-hot-toast'
 
-const CURRENT_YEAR = new Date().getFullYear()
-const YEARS = Array.from({ length: CURRENT_YEAR - 2017 }, (_, i) => 2018 + i).reverse()
+type GeneratedReport = {
+  id: number
+  status: 'draft' | 'generating' | 'ready' | 'published' | 'error'
+  detail?: string
+  error_log?: string
+}
 
 const GenerateReportPage = () => {
   const router = useRouter()
   const [reportType, setReportType] = useState<'quarterly' | 'annual'>('quarterly')
-  const [year, setYear] = useState(CURRENT_YEAR)
+  const { year, setYear, years, isYearReady } = useDashboardYears()
   const [quarter, setQuarter] = useState(1)
   const [title, setTitle] = useState('')
   const [isGenerating, setIsGenerating] = useState(false)
-  const [generatedReport, setGeneratedReport] = useState<{ id: number; status: string } | null>(null)
+  const [generatedReport, setGeneratedReport] = useState<GeneratedReport | null>(null)
   const pollIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
   useEffect(() => {
@@ -53,6 +58,11 @@ const GenerateReportPage = () => {
   }, [])
 
   const handleGenerate = async () => {
+    if (!year) {
+      toast.error('Seleccione o ano do relatório')
+      return
+    }
+
     setIsGenerating(true)
     try {
       const payload: Record<string, string | number | null> = {
@@ -63,12 +73,22 @@ const GenerateReportPage = () => {
       if (title) payload.title = title
 
       const res = await api.post('/reports/generate/', payload)
-      setGeneratedReport({ id: res.data.id, status: 'generating' })
-      toast.success('Geração iniciada...')
-      pollStatus(res.data.id)
-    } catch {
+      const status = res.data.status || 'generating'
+      setGeneratedReport({ id: res.data.id, status })
+      if (status === 'ready') {
+        setIsGenerating(false)
+        toast.success('Relatório gerado com sucesso!')
+      } else if (status === 'error') {
+        setIsGenerating(false)
+        toast.error(res.data.detail || 'Erro ao gerar relatório')
+      } else {
+        toast.success('Geração iniciada...')
+        pollStatus(res.data.id)
+      }
+    } catch (error: unknown) {
       setIsGenerating(false)
-      toast.error('Erro ao iniciar geração')
+      const apiError = error as { response?: { data?: { detail?: string } } }
+      toast.error(apiError.response?.data?.detail || 'Erro ao iniciar geração')
     }
   }
 
@@ -129,11 +149,12 @@ const GenerateReportPage = () => {
             <label htmlFor="year" className="block text-sm font-medium text-gray-700 mb-1">Ano</label>
             <select
               id="year"
-              value={year}
+              value={year ?? ''}
               onChange={(e) => setYear(Number(e.target.value))}
               className="input-field"
+              disabled={!isYearReady}
             >
-              {YEARS.map((y) => <option key={y} value={y}>{y}</option>)}
+              {years.map((y) => <option key={y} value={y}>{y}</option>)}
             </select>
           </div>
           {reportType === 'quarterly' && (
@@ -164,14 +185,14 @@ const GenerateReportPage = () => {
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             className="input-field"
-            placeholder={`Observatório Telecom GB — ${reportType === 'quarterly' ? `Q${quarter} ` : ''}${year}`}
+            placeholder={`Observatório Telecom GB — ${reportType === 'quarterly' ? `Q${quarter} ` : ''}${year ?? ''}`}
           />
         </div>
 
         <button
           type="button"
           onClick={handleGenerate}
-          disabled={isGenerating}
+          disabled={isGenerating || !isYearReady}
           className="btn-primary w-full flex items-center justify-center gap-2 py-3"
         >
           {isGenerating ? (
@@ -207,12 +228,15 @@ const GenerateReportPage = () => {
             <div>
               <p className="font-semibold text-gray-900">
                 {generatedReport.status === 'generating' && 'A processar...'}
+                {generatedReport.status === 'draft' && 'Geração em fila...'}
                 {generatedReport.status === 'ready' && 'Relatório pronto!'}
+                {generatedReport.status === 'published' && 'Relatório publicado!'}
                 {generatedReport.status === 'error' && 'Erro na geração'}
               </p>
               <p className="text-sm text-gray-600">
                 {generatedReport.status === 'ready' && 'Vá à lista de relatórios para descarregar.'}
-                {generatedReport.status === 'generating' && 'Pode demorar alguns segundos...'}
+                {(generatedReport.status === 'generating' || generatedReport.status === 'draft') && 'Pode demorar alguns segundos...'}
+                {generatedReport.status === 'error' && (generatedReport.detail || 'Consulte o relatório na lista para ver o estado.')}
               </p>
             </div>
           </div>

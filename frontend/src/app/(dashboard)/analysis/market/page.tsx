@@ -7,6 +7,7 @@ import { ChartWrapper, PieChart, BarChart, LineChart, ComboChart } from '@/compo
 import KPICard from '@/components/ui/kpi-card'
 import api from '@/lib/api'
 import { formatNumber } from '@/lib/utils'
+import { useDashboardYears } from '@/hooks/use-dashboard-years'
 import toast from 'react-hot-toast'
 
 const OPERATOR_LOGOS: Record<string, string> = {
@@ -86,11 +87,8 @@ const MARKET_CATEGORY_MAP: Record<string, string> = {
   employment: 'empregos',
 }
 
-const CURRENT_YEAR = new Date().getFullYear()
-const YEARS = Array.from({ length: CURRENT_YEAR - 2017 }, (_, i) => 2018 + i).reverse()
-
 const MarketAnalysisPage = () => {
-  const [year, setYear] = useState(CURRENT_YEAR)
+  const { year, setYear, years, isYearReady } = useDashboardYears()
   const [market, setMarket] = useState('mobile')
   const [isLoading, setIsLoading] = useState(true)
   const [hhi, setHhi] = useState<HHIData | null>(null)
@@ -100,14 +98,16 @@ const MarketAnalysisPage = () => {
   const [hhiHistory, setHhiHistory] = useState<{ year: number; hhi: number }[]>([])
 
   const fetchData = useCallback(async () => {
+    if (!year) return
     setIsLoading(true)
     try {
       const catCode = MARKET_CATEGORY_MAP[market] || 'estacoes_moveis'
 
-      const [hhiRes, growthRes, trendRes] = await Promise.all([
+      const [hhiRes, growthRes, trendRes, hhiHistoryRes] = await Promise.all([
         api.get('/dashboard/hhi/', { params: { year, market } }),
         api.get('/dashboard/comparative/', { params: { year, categories: catCode } }),
         api.get('/dashboard/trends/', { params: { category: catCode, start_year: 2018, end_year: year } }),
+        api.get('/dashboard/hhi-history/', { params: { market, start_year: 2018, end_year: year } }),
       ])
 
       setHhi(hhiRes.data)
@@ -115,16 +115,7 @@ const MarketAnalysisPage = () => {
       setTrends(trendRes.data.data || [])
       setTrendOperators(trendRes.data.operators || [])
 
-      const hhiYears: { year: number; hhi: number }[] = []
-      for (let y = 2018; y <= year; y++) {
-        try {
-          const r = await api.get('/dashboard/hhi/', { params: { year: y, market } })
-          hhiYears.push({ year: y, hhi: r.data.hhi || 0 })
-        } catch {
-          hhiYears.push({ year: y, hhi: 0 })
-        }
-      }
-      setHhiHistory(hhiYears)
+      setHhiHistory(hhiHistoryRes.data.data || [])
     } catch {
       toast.error('Erro ao carregar dados de mercado')
     } finally {
@@ -158,12 +149,13 @@ const MarketAnalysisPage = () => {
             ))}
           </select>
           <select
-            value={year}
+            value={year ?? ''}
             onChange={(e) => setYear(Number(e.target.value))}
             className="input-field text-sm w-28"
             aria-label="Seleccionar ano"
+            disabled={!isYearReady}
           >
-            {YEARS.map((y) => (
+            {years.map((y) => (
               <option key={y} value={y}>{y}</option>
             ))}
           </select>
@@ -202,7 +194,7 @@ const MarketAnalysisPage = () => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <ChartWrapper
           title="Quota de Mercado"
-          subtitle={`${MARKETS.find((m) => m.key === market)?.label} — ${year}`}
+          subtitle={year ? `${MARKETS.find((m) => m.key === market)?.label} — ${year}` : 'A carregar...'}
           isLoading={isLoading}
           isEmpty={!hhi?.operators?.length}
         >
@@ -217,7 +209,7 @@ const MarketAnalysisPage = () => {
 
         <ChartWrapper
           title="Evolução HHI"
-          subtitle={`2018 — ${year}`}
+          subtitle={year ? `2018 — ${year}` : 'A carregar...'}
           isLoading={isLoading}
           isEmpty={hhiHistory.length === 0}
         >
@@ -236,7 +228,7 @@ const MarketAnalysisPage = () => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <ChartWrapper
           title="Evolução por Operador"
-          subtitle={`2018 — ${year}`}
+          subtitle={year ? `2018 — ${year}` : 'A carregar...'}
           isLoading={isLoading}
           isEmpty={trends.length === 0}
         >
@@ -258,7 +250,7 @@ const MarketAnalysisPage = () => {
 
         <ChartWrapper
           title="Taxas de Crescimento"
-          subtitle={`${year - 1} → ${year}`}
+          subtitle={year ? `${year - 1} → ${year}` : 'A carregar...'}
           isLoading={isLoading}
           isEmpty={growth.length === 0}
         >

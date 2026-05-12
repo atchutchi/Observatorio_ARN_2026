@@ -7,8 +7,10 @@ type AuthState = {
   user: User | null
   tokens: AuthTokens | null
   isLoading: boolean
+  hasHydrated: boolean
   setTokens: (tokens: AuthTokens) => void
   setUser: (user: User) => void
+  setHasHydrated: (hasHydrated: boolean) => void
   login: (username: string, password: string) => Promise<void>
   fetchProfile: () => Promise<void>
   logout: () => void
@@ -20,9 +22,11 @@ export const useAuthStore = create<AuthState>()(
       user: null,
       tokens: null,
       isLoading: false,
+      hasHydrated: false,
 
       setTokens: (tokens) => set({ tokens }),
       setUser: (user) => set({ user }),
+      setHasHydrated: (hasHydrated) => set({ hasHydrated }),
 
       login: async (username, password) => {
         set({ isLoading: true })
@@ -58,6 +62,9 @@ export const useAuthStore = create<AuthState>()(
         tokens: state.tokens,
         user: state.user,
       }),
+      onRehydrateStorage: () => (state) => {
+        state?.setHasHydrated(true)
+      },
     }
   )
 )

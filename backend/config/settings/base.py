@@ -143,6 +143,9 @@ CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 
+# Reports
+REPORTS_GENERATE_SYNC = os.environ.get('REPORTS_GENERATE_SYNC', 'false').lower() == 'true'
+
 # Gemini AI
 GEMINI_API_KEY = os.environ.get('GEMINI_API_KEY', '')
 GEMINI_MODEL = os.environ.get('GEMINI_MODEL', 'gemini-2.0-flash')

@@ -6,6 +6,7 @@ import { ArrowLeft, Download } from 'lucide-react'
 import { ChartWrapper, ComboChart, PieChart, LineChart } from '@/components/charts'
 import api from '@/lib/api'
 import { formatNumber } from '@/lib/utils'
+import { useDashboardYears } from '@/hooks/use-dashboard-years'
 import toast from 'react-hot-toast'
 
 type IndicatorDataItem = {
@@ -53,15 +54,12 @@ type GrowthItem = {
 
 type OperatorInfo = { code: string; name: string; color: string }
 
-const CURRENT_YEAR = new Date().getFullYear()
-const YEARS = Array.from({ length: CURRENT_YEAR - 2017 }, (_, i) => 2018 + i).reverse()
-
 const CategoryAnalysisPage = () => {
   const params = useParams()
   const router = useRouter()
   const categoryCode = params.category as string
 
-  const [year, setYear] = useState(CURRENT_YEAR)
+  const { year, setYear, years, isYearReady } = useDashboardYears()
   const [quarter, setQuarter] = useState<number | undefined>(undefined)
   const [categoryName, setCategoryName] = useState('')
   const [isCumulative, setIsCumulative] = useState(false)
@@ -74,6 +72,7 @@ const CategoryAnalysisPage = () => {
   const [isLoading, setIsLoading] = useState(true)
 
   const fetchData = useCallback(async () => {
+    if (!year) return
     setIsLoading(true)
     try {
       const qParams: Record<string, string | number> = { year }
@@ -116,6 +115,7 @@ const CategoryAnalysisPage = () => {
   useEffect(() => { fetchData() }, [fetchData])
 
   const handleExport = async () => {
+    if (!year) return
     try {
       const response = await api.get('/dashboard/export/', {
         params: { category: categoryCode, year, format: 'xlsx' },
@@ -167,12 +167,13 @@ const CategoryAnalysisPage = () => {
         </div>
         <div className="flex items-center gap-3">
           <select
-            value={year}
+            value={year ?? ''}
             onChange={(e) => setYear(Number(e.target.value))}
             className="input-field text-sm w-28"
             aria-label="Ano"
+            disabled={!isYearReady}
           >
-            {YEARS.map((y) => <option key={y} value={y}>{y}</option>)}
+            {years.map((y) => <option key={y} value={y}>{y}</option>)}
           </select>
           {!isCumulative && (
             <select
@@ -211,7 +212,7 @@ const CategoryAnalysisPage = () => {
               </div>
               <p className="text-2xl font-bold text-gray-900">{formatNumber(g.current_value)}</p>
               <p className={`text-sm font-medium mt-1 ${g.pct_change >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                {g.pct_change >= 0 ? '+' : ''}{g.pct_change}% vs {year - 1}
+                {g.pct_change >= 0 ? '+' : ''}{g.pct_change}% vs {year ? year - 1 : '—'}
               </p>
             </div>
           ))}
@@ -222,7 +223,7 @@ const CategoryAnalysisPage = () => {
         <div className="lg:col-span-2">
           <ChartWrapper
             title={`Evolução — ${categoryName}`}
-            subtitle={`2018 - ${year}`}
+            subtitle={year ? `2018 - ${year}` : 'A carregar...'}
             isLoading={isLoading}
             isEmpty={trends.length === 0}
           >
@@ -245,7 +246,7 @@ const CategoryAnalysisPage = () => {
 
         <ChartWrapper
           title="Quota de Mercado"
-          subtitle={`${year}${quarter ? ` Q${quarter}` : ''}`}
+          subtitle={year ? `${year}${quarter ? ` Q${quarter}` : ''}` : 'A carregar...'}
           isLoading={isLoading}
           isEmpty={marketShare.length === 0}
         >

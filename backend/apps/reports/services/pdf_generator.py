@@ -41,12 +41,16 @@ class PDFReportGenerator:
             )
 
         category_data = {}
+        category_sections = []
         for cat in categories:
+            data = DashboardService.get_indicator_data(cat.code, self.year, self.quarter)
+            growth = DashboardService.get_growth_rates(cat.code, self.year)
             category_data[cat.code] = {
                 'name': cat.name,
-                'data': DashboardService.get_indicator_data(cat.code, self.year, self.quarter),
-                'growth': DashboardService.get_growth_rates(cat.code, self.year),
+                'data': data,
+                'growth': growth,
             }
+            category_sections.append(self._build_category_section(cat, data, growth))
 
         hhi_mobile = DashboardService.get_hhi(self.year, 'mobile')
         hhi_internet = DashboardService.get_hhi(self.year, 'fixed_internet')
@@ -61,9 +65,53 @@ class PDFReportGenerator:
             'summary': summary,
             'market_shares': market_shares,
             'category_data': category_data,
+            'category_sections': category_sections,
             'hhi_mobile': hhi_mobile,
             'hhi_internet': hhi_internet,
             'categories': categories,
+        }
+
+    def _build_category_section(self, category, data, growth):
+        operators = []
+        indicators = {}
+
+        for item in data:
+            operator_name = item['operator_name']
+            if operator_name not in operators:
+                operators.append(operator_name)
+
+            code = item['indicator_code']
+            if code not in indicators:
+                indicators[code] = {
+                    'code': code,
+                    'name': item['indicator_name'],
+                    'level': item['indicator_level'],
+                    'indent': item['indicator_level'] * 12,
+                    'values': {},
+                }
+
+            if item['value'] is not None:
+                indicators[code]['values'][operator_name] = item['value']
+
+        indicator_rows = []
+        for indicator in indicators.values():
+            indicator_rows.append({
+                'code': indicator['code'],
+                'name': indicator['name'],
+                'level': indicator['level'],
+                'indent': indicator['indent'],
+                'values': [
+                    indicator['values'].get(operator_name)
+                    for operator_name in operators
+                ],
+            })
+
+        return {
+            'order': category.order,
+            'name': category.name,
+            'operators': operators,
+            'indicator_rows': indicator_rows,
+            'growth': growth,
         }
 
     def _fallback_pdf(self, html_content):

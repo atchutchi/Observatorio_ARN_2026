@@ -21,6 +21,14 @@ class DashboardSummaryView(APIView):
         return Response(data)
 
 
+class DashboardLatestYearView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        year = DashboardService.get_latest_data_year() or datetime.now().year
+        return Response({'year': year})
+
+
 class DashboardIndicatorView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -162,6 +170,22 @@ class DashboardHHIView(APIView):
 
         data = DashboardService.get_hhi(year, market)
         return Response(data)
+
+
+class DashboardHHIHistoryView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        market = request.query_params.get('market', 'mobile')
+        start_year = int(request.query_params.get('start_year', 2018))
+        end_year = int(request.query_params.get('end_year', datetime.now().year))
+
+        return Response({
+            'market': market,
+            'start_year': start_year,
+            'end_year': end_year,
+            'data': DashboardService.get_hhi_history(start_year, end_year, market),
+        })
 
 
 class DashboardExportView(APIView):

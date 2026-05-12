@@ -29,6 +29,7 @@ import {
   GitCompare,
   PieChart,
   UserCog,
+  X,
 } from 'lucide-react'
 
 type NavItem = {
@@ -79,7 +80,12 @@ const NAV_ITEMS: NavItem[] = [
   },
 ]
 
-const Sidebar = () => {
+type SidebarProps = {
+  isOpen?: boolean
+  onClose?: () => void
+}
+
+const Sidebar = ({ isOpen = false, onClose }: SidebarProps) => {
   const pathname = usePathname()
   const user = useAuthStore((s) => s.user)
 
@@ -94,23 +100,36 @@ const Sidebar = () => {
   }
 
   return (
-    <aside className="w-64 bg-arn-primary min-h-screen flex flex-col">
+    <aside className={cn(
+      'fixed inset-y-0 left-0 z-40 flex w-64 flex-col bg-arn-primary transition-transform duration-200 md:sticky md:top-0 md:z-auto md:min-h-screen md:translate-x-0',
+      isOpen ? 'translate-x-0' : '-translate-x-full',
+    )}>
       <div className="p-6">
-        <Link href="/" className="flex items-center gap-3 group">
-          <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center overflow-hidden p-1">
-            <Image
-              src="/logos/arn.png"
-              alt="ARN - Autoridade Reguladora Nacional"
-              width={32}
-              height={32}
-              className="object-contain"
-            />
-          </div>
-          <div>
-            <h2 className="text-white font-semibold text-sm leading-tight group-hover:text-white/90 transition-colors">Observatório</h2>
-            <p className="text-white/60 text-xs">Telecom GB</p>
-          </div>
-        </Link>
+        <div className="flex items-center justify-between gap-3">
+          <Link href="/" className="group flex items-center gap-3" onClick={onClose}>
+            <div className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-lg bg-white p-1">
+              <Image
+                src="/logos/arn.png"
+                alt="ARN - Autoridade Reguladora Nacional"
+                width={64}
+                height={29}
+                className="h-auto w-8 object-contain"
+              />
+            </div>
+            <div>
+              <h2 className="text-white font-semibold text-sm leading-tight group-hover:text-white/90 transition-colors">Observatório</h2>
+              <p className="text-white/60 text-xs">Telecom GB</p>
+            </div>
+          </Link>
+          <button
+            type="button"
+            onClick={onClose}
+            className="rounded-lg p-2 text-white/70 hover:bg-white/10 hover:text-white md:hidden"
+            aria-label="Fechar menu"
+          >
+            <X className="h-5 w-5" />
+          </button>
+        </div>
       </div>
 
       <nav className="flex-1 px-3 space-y-1 overflow-y-auto">
@@ -118,6 +137,7 @@ const Sidebar = () => {
           <div key={item.href}>
             <Link
               href={item.children ? item.children[0].href : item.href}
+              onClick={onClose}
               className={cn(
                 'flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors',
                 isActive(item.href)
@@ -135,6 +155,7 @@ const Sidebar = () => {
                   <Link
                     key={child.href}
                     href={child.href}
+                    onClick={onClose}
                     className={cn(
                       'flex items-center gap-2 px-3 py-1.5 rounded-md text-xs font-medium transition-colors',
                       pathname === child.href

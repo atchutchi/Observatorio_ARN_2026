@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation'
 import { ChartWrapper, BarChart, PieChart } from '@/components/charts'
 import api from '@/lib/api'
 import { formatNumber } from '@/lib/utils'
+import { useDashboardYears } from '@/hooks/use-dashboard-years'
 import toast from 'react-hot-toast'
 
 type HHIData = {
@@ -24,9 +25,6 @@ type GrowthItem = {
   pct_change: number
 }
 
-const CURRENT_YEAR = new Date().getFullYear()
-const YEARS = Array.from({ length: CURRENT_YEAR - 2017 }, (_, i) => 2018 + i).reverse()
-
 const MARKETS = [
   { value: 'mobile', label: 'Mercado Móvel' },
   { value: 'voice', label: 'Tráfego de Voz' },
@@ -39,13 +37,14 @@ const MARKETS = [
 
 const ComparativeAnalysisPage = () => {
   const router = useRouter()
-  const [year, setYear] = useState(CURRENT_YEAR)
+  const { year, setYear, years, isYearReady } = useDashboardYears()
   const [market, setMarket] = useState('mobile')
   const [hhi, setHHI] = useState<HHIData | null>(null)
   const [growth, setGrowth] = useState<GrowthItem[]>([])
   const [isLoading, setIsLoading] = useState(true)
 
   const fetchData = useCallback(async () => {
+    if (!year) return
     setIsLoading(true)
     try {
       const hhiRes = await api.get('/dashboard/hhi/', { params: { year, market } })
@@ -104,12 +103,13 @@ const ComparativeAnalysisPage = () => {
         </div>
         <div className="flex items-center gap-3">
           <select
-            value={year}
+            value={year ?? ''}
             onChange={(e) => setYear(Number(e.target.value))}
             className="input-field text-sm w-28"
             aria-label="Ano"
+            disabled={!isYearReady}
           >
-            {YEARS.map((y) => <option key={y} value={y}>{y}</option>)}
+            {years.map((y) => <option key={y} value={y}>{y}</option>)}
           </select>
           <select
             value={market}
@@ -172,7 +172,7 @@ const ComparativeAnalysisPage = () => {
 
         <ChartWrapper
           title="Crescimento Anual por Operador"
-          subtitle={`${year} vs ${year - 1}`}
+          subtitle={year ? `${year} vs ${year - 1}` : 'A carregar...'}
           isLoading={isLoading}
           isEmpty={growth.length === 0}
         >
@@ -196,8 +196,8 @@ const ComparativeAnalysisPage = () => {
               <thead>
                 <tr className="border-b border-gray-200">
                   <th className="text-left py-3 px-4 font-semibold text-gray-700">Operador</th>
-                  <th className="text-right py-3 px-4 font-semibold text-gray-700">{year - 1}</th>
-                  <th className="text-right py-3 px-4 font-semibold text-gray-700">{year}</th>
+                  <th className="text-right py-3 px-4 font-semibold text-gray-700">{year ? year - 1 : '—'}</th>
+                  <th className="text-right py-3 px-4 font-semibold text-gray-700">{year ?? '—'}</th>
                   <th className="text-right py-3 px-4 font-semibold text-gray-700">Variação</th>
                   <th className="text-right py-3 px-4 font-semibold text-gray-700">%</th>
                 </tr>

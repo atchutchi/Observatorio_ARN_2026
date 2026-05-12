@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from apps.operators.models import Operator
 from .models import DataEntry, CumulativeData, FileUpload
 
 
@@ -146,9 +147,24 @@ class FileUploadSerializer(serializers.ModelSerializer):
 
 
 class FileUploadCreateSerializer(serializers.ModelSerializer):
+    operator = serializers.PrimaryKeyRelatedField(
+        queryset=Operator.objects.filter(is_active=True),
+        required=False,
+        allow_null=True,
+    )
+
     class Meta:
         model = FileUpload
-        fields = ['file', 'file_type', 'year', 'quarter']
+        fields = ['file', 'file_type', 'year', 'quarter', 'operator']
+
+    def validate(self, attrs):
+        request = self.context.get('request')
+        user = getattr(request, 'user', None)
+        if user and user.is_arn_staff and not attrs.get('operator'):
+            raise serializers.ValidationError({
+                'operator': 'Seleccione o operador associado ao ficheiro.',
+            })
+        return attrs
 
 
 class ValidationActionSerializer(serializers.Serializer):

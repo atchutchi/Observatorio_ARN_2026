@@ -4,6 +4,7 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.parsers import MultiPartParser, FormParser
+from rest_framework.exceptions import PermissionDenied
 from django_filters.rest_framework import DjangoFilterBackend
 
 from apps.accounts.permissions import IsARNStaff, IsOwnerOrARN
@@ -73,7 +74,10 @@ class DataEntryViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=['get'], permission_classes=[IsARNStaff])
     def pending_validation(self, request):
-        qs = self.get_queryset().filter(is_validated=False, source__in=['manual', 'upload'])
+        qs = self.filter_queryset(self.get_queryset()).filter(
+            is_validated=False,
+            source__in=['manual', 'upload'],
+        )
         page = self.paginate_queryset(qs)
         serializer = DataEntrySerializer(page or qs, many=True)
         if page is not None:
@@ -133,9 +137,27 @@ class FileUploadViewSet(viewsets.ModelViewSet):
             return FileUploadCreateSerializer
         return FileUploadSerializer
 
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response(
+            FileUploadSerializer(serializer.instance, context={'request': request}).data,
+            status=status.HTTP_201_CREATED,
+            headers=headers,
+        )
+
     def perform_create(self, serializer):
         user = self.request.user
-        operator = user.operator
+        operator = serializer.validated_data.pop('operator', None)
+        if user.is_operator_user:
+            operator = user.operator
+        elif not user.is_arn_staff:
+            raise PermissionDenied('Não tem permissão para carregar ficheiros.')
+        if operator is None:
+            raise PermissionDenied('Seleccione o operador associado ao ficheiro.')
+
         upload = serializer.save(
             operator=operator,
             uploaded_by=user,

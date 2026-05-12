@@ -7,6 +7,7 @@ import KPICard from '@/components/ui/kpi-card'
 import { ChartWrapper, ComboChart, PieChart, BarChart } from '@/components/charts'
 import api from '@/lib/api'
 import { formatNumber } from '@/lib/utils'
+import { useDashboardYears } from '@/hooks/use-dashboard-years'
 
 type SummaryData = {
   total_subscribers: number
@@ -40,11 +41,8 @@ type OperatorInfo = {
   color: string
 }
 
-const CURRENT_YEAR = new Date().getFullYear()
-const YEARS = Array.from({ length: CURRENT_YEAR - 2017 }, (_, i) => 2018 + i).reverse()
-
 const DashboardPage = () => {
-  const [year, setYear] = useState(CURRENT_YEAR)
+  const { year, setYear, years, isYearReady } = useDashboardYears()
   const [quarter, setQuarter] = useState<number | undefined>(undefined)
   const [summary, setSummary] = useState<SummaryData | null>(null)
   const [trends, setTrends] = useState<TrendData[]>([])
@@ -55,6 +53,7 @@ const DashboardPage = () => {
   const [isLoading, setIsLoading] = useState(true)
 
   const fetchDashboard = useCallback(async () => {
+    if (!year) return
     setIsLoading(true)
     try {
       const params: Record<string, number> = { year }
@@ -111,12 +110,13 @@ const DashboardPage = () => {
         </div>
         <div className="flex items-center gap-3">
           <select
-            value={year}
+            value={year ?? ''}
             onChange={(e) => setYear(Number(e.target.value))}
             className="input-field text-sm w-28"
             aria-label="Seleccionar ano"
+            disabled={!isYearReady}
           >
-            {YEARS.map((y) => (
+            {years.map((y) => (
               <option key={y} value={y}>{y}</option>
             ))}
           </select>
@@ -139,7 +139,7 @@ const DashboardPage = () => {
         <KPICard
           title="Total Assinantes Móvel"
           value={summary ? formatLargeNumber(summary.total_subscribers) : '—'}
-          change={summary ? `${summary.subscriber_change > 0 ? '+' : ''}${summary.subscriber_change}% vs ${year - 1}` : undefined}
+          change={summary && year ? `${summary.subscriber_change > 0 ? '+' : ''}${summary.subscriber_change}% vs ${year - 1}` : undefined}
           changeType={summary && summary.subscriber_change >= 0 ? 'positive' : 'negative'}
           icon={Users}
           color="#1B2A4A"
@@ -168,7 +168,7 @@ const DashboardPage = () => {
         <div className="lg:col-span-2">
           <ChartWrapper
             title="Evolução do Parque de Assinantes"
-            subtitle={`2018 - ${year}`}
+            subtitle={year ? `2018 - ${year}` : 'A carregar...'}
             isLoading={isLoading}
             isEmpty={trends.length === 0}
           >
@@ -184,7 +184,7 @@ const DashboardPage = () => {
 
         <ChartWrapper
           title="Quota de Mercado Móvel"
-          subtitle={`${year}${quarter ? ` Q${quarter}` : ''}`}
+          subtitle={year ? `${year}${quarter ? ` Q${quarter}` : ''}` : 'A carregar...'}
           isLoading={isLoading}
           isEmpty={marketShare.length === 0}
         >
@@ -201,7 +201,7 @@ const DashboardPage = () => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <ChartWrapper
           title="Evolução das Receitas"
-          subtitle={`Volume de Negócios (Milhões FCFA) — 2018-${year}`}
+          subtitle={year ? `Volume de Negócios (Milhões FCFA) — 2018-${year}` : 'A carregar...'}
           isLoading={isLoading}
           isEmpty={revenueTrends.length === 0}
         >

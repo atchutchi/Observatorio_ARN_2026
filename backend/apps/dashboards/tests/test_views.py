@@ -62,6 +62,11 @@ class DashboardSummaryViewTest(DashboardViewsTestMixin, TestCase):
         response = self.client.get('/api/v1/dashboard/summary/')
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
+    def test_get_latest_year(self):
+        response = self.client.get('/api/v1/dashboard/latest-year/')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['year'], 2024)
+
 
 class DashboardMarketShareViewTest(DashboardViewsTestMixin, TestCase):
 
@@ -98,6 +103,16 @@ class DashboardHHIViewTest(DashboardViewsTestMixin, TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertIn('hhi', response.data)
         self.assertIn('classification', response.data)
+
+    def test_get_hhi_history(self):
+        response = self.client.get('/api/v1/dashboard/hhi-history/', {
+            'start_year': 2023,
+            'end_year': 2024,
+            'market': 'mobile',
+        })
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data['data']), 2)
+        self.assertEqual(response.data['data'][-1]['year'], 2024)
 
 
 class DashboardCAGRViewTest(DashboardViewsTestMixin, TestCase):

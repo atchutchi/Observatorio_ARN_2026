@@ -1,3 +1,6 @@
+from unittest.mock import patch
+
+from django.test import override_settings
 from django.test import TestCase
 from django.contrib.auth import get_user_model
 from rest_framework.test import APIClient
@@ -42,14 +45,50 @@ class ReportViewSetTest(TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['title'], 'Test Report Q1 2024')
 
+    @override_settings(REPORTS_GENERATE_SYNC=False)
     def test_generate_as_admin(self):
         self.client.force_authenticate(user=self.admin)
-        response = self.client.post('/api/v1/reports/generate/', {
-            'report_type': 'quarterly',
-            'year': 2024,
-            'quarter': 2,
-        })
+        with patch('apps.reports.views.generate_report_task.delay') as delay:
+            response = self.client.post('/api/v1/reports/generate/', {
+                'report_type': 'quarterly',
+                'year': 2024,
+                'quarter': 2,
+            })
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(response.data['status'], 'generating')
+        delay.assert_called_once()
+
+    @override_settings(REPORTS_GENERATE_SYNC=True)
+    def test_generate_sync_as_admin(self):
+        self.client.force_authenticate(user=self.admin)
+
+        def mark_ready(report_id):
+            Report.objects.filter(id=report_id).update(status='ready')
+
+        with patch('apps.reports.views.generate_report_task', side_effect=mark_ready) as task:
+            response = self.client.post('/api/v1/reports/generate/', {
+                'report_type': 'annual',
+                'year': 2024,
+            })
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(response.data['status'], 'ready')
+        task.assert_called_once()
+
+    @override_settings(REPORTS_GENERATE_SYNC=False)
+    def test_generate_returns_controlled_error_when_queue_fails(self):
+        self.client.force_authenticate(user=self.admin)
+        with patch(
+            'apps.reports.views.generate_report_task.delay',
+            side_effect=RuntimeError('broker unavailable'),
+        ):
+            response = self.client.post('/api/v1/reports/generate/', {
+                'report_type': 'annual',
+                'year': 2024,
+            })
+
+        self.assertEqual(response.status_code, status.HTTP_503_SERVICE_UNAVAILABLE)
+        self.assertEqual(response.data['status'], 'error')
 
     def test_generate_as_viewer_forbidden(self):
         self.client.force_authenticate(user=self.viewer)
