@@ -25,9 +25,9 @@ services:
       - key: CSRF_TRUSTED_ORIGINS
         sync: false
       - key: REPORTS_GENERATE_SYNC
-        value: true
+        value: "true"
       - key: USE_S3_STORAGE
-        value: false
+        value: "false"
       - key: DJANGO_SUPERUSER_USERNAME
         sync: false
       - key: DJANGO_SUPERUSER_EMAIL
@@ -42,5 +42,4 @@ databases:
     databaseName: observatorio_arn
     user: observatorio_arn
     plan: free
-    diskSizeGB: 1
     postgresMajorVersion: "16"
