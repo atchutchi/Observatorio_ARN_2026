@@ -3,6 +3,9 @@ Pipeline ETL para ficheiros Excel dos operadores.
 Suporta Questionário Telecel (ex-MTN), KPI Orange e Questionário Starlink.
 """
 import logging
+import re
+import unicodedata
+from datetime import date, datetime
 from decimal import Decimal, InvalidOperation
 from typing import Optional
 
@@ -15,9 +18,37 @@ from apps.data_entry.models import DataEntry, CumulativeData, FileUpload
 from .sheet_mappings import (
     SHEET_TO_CATEGORY, OPERATOR_NAME_MAPPING,
     MONTHLY_COLUMN_LAYOUT, CUMULATIVE_COLUMN_LAYOUT, CUMULATIVE_CATEGORIES,
+    EXCEL_INDICATOR_MAPPINGS,
 )
 
 logger = logging.getLogger(__name__)
+
+
+MONTH_ALIASES = {
+    'jan': 1, 'janeiro': 1,
+    'feb': 2, 'fev': 2, 'fevereiro': 2,
+    'mar': 3, 'marco': 3, 'março': 3,
+    'apr': 4, 'abr': 4, 'abril': 4,
+    'may': 5, 'mai': 5, 'maio': 5,
+    'jun': 6, 'junho': 6,
+    'jul': 7, 'julho': 7,
+    'aug': 8, 'ago': 8, 'agosto': 8,
+    'sep': 9, 'set': 9, 'setembro': 9,
+    'oct': 10, 'out': 10, 'outubro': 10,
+    'nov': 11, 'novembro': 11,
+    'dec': 12, 'dez': 12, 'dezembro': 12,
+}
+
+CUMULATIVE_LABELS = {
+    '3 meses': '3M',
+    '3m': '3M',
+    '6 meses': '6M',
+    '6m': '6M',
+    '9 meses': '9M',
+    '9m': '9M',
+    '12 meses': '12M',
+    '12m': '12M',
+}
 
 
 class ExcelProcessor:
@@ -47,7 +78,7 @@ class ExcelProcessor:
             self.log(f"Categorias aplicáveis a {self.operator.name}: {[c.code for c in applicable_categories]}")
 
             for sheet_name in xl.sheet_names:
-                category_code = SHEET_TO_CATEGORY.get(sheet_name)
+                category_code = self._category_code_for_sheet(sheet_name)
                 if not category_code:
                     self.log(f"Sheet '{sheet_name}' não mapeada — ignorada", 'warning')
                     continue
@@ -95,86 +126,46 @@ class ExcelProcessor:
         return list(IndicatorCategory.objects.filter(id__in=applicable_indicator_ids))
 
     def _process_monthly_sheet(self, df: pd.DataFrame, category: IndicatorCategory):
-        layout = MONTHLY_COLUMN_LAYOUT
+        month_columns = self._detect_month_columns(df, only_reported_quarter=True)
+        if not month_columns:
+            self.log(f"Nenhuma coluna mensal detectada em '{category.name}'", 'warning')
+            return
+
         indicators = {
             ind.code: ind for ind in
             Indicator.objects.filter(category=category)
         }
+        pending_values: dict[tuple[Indicator, Period], Decimal] = {}
 
         for row_idx in range(len(df)):
-            raw_code = df.iloc[row_idx, layout['indicator_code_col']]
-            if pd.isna(raw_code):
+            raw_code = df.iloc[row_idx, MONTHLY_COLUMN_LAYOUT['indicator_code_col']]
+            raw_name = (
+                df.iloc[row_idx, MONTHLY_COLUMN_LAYOUT['indicator_name_col']]
+                if MONTHLY_COLUMN_LAYOUT['indicator_name_col'] < len(df.columns)
+                else None
+            )
+
+            code = self._resolve_target_indicator_code(
+                category.code,
+                raw_code,
+                raw_name,
+                indicators,
+            )
+            if not code:
                 continue
 
-            code = str(raw_code).strip()
             indicator = indicators.get(code)
             if not indicator:
+                self.log(
+                    f"Indicador '{code}' não encontrado na categoria '{category.code}'",
+                    'warning',
+                )
                 continue
 
             if not self._is_indicator_applicable(indicator):
                 continue
 
-            for quarter_num, quarter_info in layout['quarters'].items():
-                if self.quarter and quarter_num != self.quarter:
-                    continue
-
-                for i, month in enumerate(quarter_info['months']):
-                    col_idx = quarter_info['start_col'] + i
-                    if col_idx >= len(df.columns):
-                        continue
-
-                    raw_value = df.iloc[row_idx, col_idx]
-                    value = self._parse_value(raw_value)
-
-                    if value is None:
-                        continue
-
-                    period = Period.objects.filter(
-                        year=self.year, month=month,
-                    ).first()
-
-                    if not period:
-                        self.log(f"Período {self.year}/{month} não encontrado", 'warning')
-                        continue
-
-                    try:
-                        DataEntry.objects.update_or_create(
-                            indicator=indicator,
-                            operator=self.operator,
-                            period=period,
-                            defaults={
-                                'value': value,
-                                'source': 'upload',
-                                'submitted_by': self.file_upload.uploaded_by,
-                                'is_validated': False,
-                            },
-                        )
-                        self.records_imported += 1
-                    except Exception as e:
-                        self.records_errors += 1
-                        self.log(f"Erro ao gravar {indicator.code} / {month}: {e}", 'error')
-
-    def _process_cumulative_sheet(self, df: pd.DataFrame, category: IndicatorCategory):
-        layout = CUMULATIVE_COLUMN_LAYOUT
-        indicators = {
-            ind.code: ind for ind in
-            Indicator.objects.filter(category=category)
-        }
-
-        for row_idx in range(len(df)):
-            raw_code = df.iloc[row_idx, layout['indicator_code_col']]
-            if pd.isna(raw_code):
-                continue
-
-            code = str(raw_code).strip()
-            indicator = indicators.get(code)
-            if not indicator:
-                continue
-
-            if not self._is_indicator_applicable(indicator):
-                continue
-
-            for cum_type, col_idx in layout['periods'].items():
+            for month, col_idx in month_columns:
                 if col_idx >= len(df.columns):
                     continue
 
@@ -184,30 +175,442 @@ class ExcelProcessor:
                 if value is None:
                     continue
 
-                try:
-                    CumulativeData.objects.update_or_create(
-                        indicator=indicator,
-                        operator=self.operator,
-                        year=self.year,
-                        cumulative_type=cum_type,
-                        defaults={
-                            'value': value,
-                            'source': 'upload',
-                            'submitted_by': self.file_upload.uploaded_by,
-                            'is_validated': False,
-                        },
-                    )
-                    self.records_imported += 1
-                except Exception as e:
-                    self.records_errors += 1
-                    self.log(f"Erro ao gravar {indicator.code} / {cum_type}: {e}", 'error')
+                value = self._normalize_value_for_indicator(value, indicator)
+
+                period = Period.objects.filter(
+                    year=self.year, month=month,
+                ).first()
+
+                if not period:
+                    self.log(f"Período {self.year}/{month} não encontrado", 'warning')
+                    continue
+
+                key = (indicator, period)
+                pending_values[key] = pending_values.get(key, Decimal('0')) + value
+
+        for (indicator, period), value in pending_values.items():
+            try:
+                DataEntry.objects.update_or_create(
+                    indicator=indicator,
+                    operator=self.operator,
+                    period=period,
+                    defaults={
+                        'value': value,
+                        'source': 'upload',
+                        'submitted_by': self.file_upload.uploaded_by,
+                        'is_validated': False,
+                    },
+                )
+                self.records_imported += 1
+            except Exception as e:
+                self.records_errors += 1
+                self.log(f"Erro ao gravar {indicator.code} / {period.month}: {e}", 'error')
+
+    def _process_cumulative_sheet(self, df: pd.DataFrame, category: IndicatorCategory):
+        cumulative_columns = self._detect_cumulative_columns(df)
+        if not cumulative_columns:
+            self._process_monthly_cumulative_sheet(df, category)
+            return
+
+        indicators = {
+            ind.code: ind for ind in
+            Indicator.objects.filter(category=category)
+        }
+        pending_values: dict[tuple[Indicator, str], Decimal] = {}
+
+        for row_idx in range(len(df)):
+            raw_code = df.iloc[row_idx, CUMULATIVE_COLUMN_LAYOUT['indicator_code_col']]
+            raw_name = (
+                df.iloc[row_idx, CUMULATIVE_COLUMN_LAYOUT['indicator_name_col']]
+                if CUMULATIVE_COLUMN_LAYOUT['indicator_name_col'] < len(df.columns)
+                else None
+            )
+
+            code = self._resolve_target_indicator_code(
+                category.code,
+                raw_code,
+                raw_name,
+                indicators,
+            )
+            if not code:
+                continue
+
+            indicator = indicators.get(code)
+            if not indicator:
+                self.log(
+                    f"Indicador '{code}' não encontrado na categoria '{category.code}'",
+                    'warning',
+                )
+                continue
+
+            if not self._is_indicator_applicable(indicator):
+                continue
+
+            for cum_type, col_idx in cumulative_columns:
+                if col_idx >= len(df.columns):
+                    continue
+
+                raw_value = df.iloc[row_idx, col_idx]
+                value = self._parse_value(raw_value)
+
+                if value is None:
+                    continue
+
+                pending_values[(indicator, cum_type)] = self._normalize_value_for_indicator(
+                    value, indicator,
+                )
+
+        for (indicator, cum_type), value in pending_values.items():
+            try:
+                CumulativeData.objects.update_or_create(
+                    indicator=indicator,
+                    operator=self.operator,
+                    year=self.year,
+                    cumulative_type=cum_type,
+                    defaults={
+                        'value': value,
+                        'source': 'upload',
+                        'submitted_by': self.file_upload.uploaded_by,
+                        'is_validated': False,
+                    },
+                )
+                self.records_imported += 1
+            except Exception as e:
+                self.records_errors += 1
+                self.log(f"Erro ao gravar {indicator.code} / {cum_type}: {e}", 'error')
+
+    def _process_monthly_cumulative_sheet(self, df: pd.DataFrame, category: IndicatorCategory):
+        if not self.quarter:
+            self.log(f"Trimestre não definido para '{category.name}'", 'warning')
+            return
+
+        month_columns = self._detect_month_columns(df, only_reported_quarter=False)
+        if not month_columns:
+            self.log(f"Nenhuma coluna mensal cumulativa detectada em '{category.name}'", 'warning')
+            return
+
+        target_month = self.quarter * 3
+        current_columns = [
+            (month, col_idx)
+            for month, col_idx in month_columns
+            if month <= target_month
+        ]
+        if not current_columns:
+            return
+
+        indicators = {
+            ind.code: ind for ind in
+            Indicator.objects.filter(category=category)
+        }
+        pending_values: dict[Indicator, tuple[Decimal, int]] = {}
+
+        for row_idx in range(len(df)):
+            raw_code = df.iloc[row_idx, MONTHLY_COLUMN_LAYOUT['indicator_code_col']]
+            raw_name = (
+                df.iloc[row_idx, MONTHLY_COLUMN_LAYOUT['indicator_name_col']]
+                if MONTHLY_COLUMN_LAYOUT['indicator_name_col'] < len(df.columns)
+                else None
+            )
+
+            code = self._resolve_target_indicator_code(
+                category.code,
+                raw_code,
+                raw_name,
+                indicators,
+            )
+            if not code:
+                continue
+
+            indicator = indicators.get(code)
+            if not indicator or not self._is_indicator_applicable(indicator):
+                continue
+
+            row_total = Decimal('0')
+            first_month_with_value = None
+            for month, col_idx in current_columns:
+                if col_idx >= len(df.columns):
+                    continue
+                value = self._parse_value(df.iloc[row_idx, col_idx])
+                if value is None:
+                    continue
+                row_total += value
+                first_month_with_value = (
+                    month if first_month_with_value is None
+                    else min(first_month_with_value, month)
+                )
+
+            if first_month_with_value is None:
+                continue
+
+            row_total = self._normalize_value_for_indicator(row_total, indicator)
+
+            current_value, current_first_month = pending_values.get(
+                indicator,
+                (Decimal('0'), first_month_with_value),
+            )
+            pending_values[indicator] = (
+                current_value + row_total,
+                min(current_first_month, first_month_with_value),
+            )
+
+        cum_type = f"{target_month}M"
+        for indicator, (value, first_month_with_value) in pending_values.items():
+            if first_month_with_value > 1 and self.quarter > 1:
+                previous_type = f"{(self.quarter - 1) * 3}M"
+                previous = CumulativeData.objects.filter(
+                    indicator=indicator,
+                    operator=self.operator,
+                    year=self.year,
+                    cumulative_type=previous_type,
+                ).first()
+                if previous and previous.value is not None:
+                    value += previous.value
+
+            try:
+                CumulativeData.objects.update_or_create(
+                    indicator=indicator,
+                    operator=self.operator,
+                    year=self.year,
+                    cumulative_type=cum_type,
+                    defaults={
+                        'value': value,
+                        'source': 'upload',
+                        'submitted_by': self.file_upload.uploaded_by,
+                        'is_validated': False,
+                    },
+                )
+                self.records_imported += 1
+            except Exception as e:
+                self.records_errors += 1
+                self.log(f"Erro ao gravar {indicator.code} / {cum_type}: {e}", 'error')
 
     def _is_indicator_applicable(self, indicator: Indicator) -> bool:
-        return OperatorTypeIndicator.objects.filter(
+        mapping = OperatorTypeIndicator.objects.filter(
             operator_type=self.operator.operator_type,
             indicator=indicator,
+        ).first()
+        if mapping is not None:
+            return mapping.is_applicable
+
+        if indicator.parent_id:
+            return self._is_indicator_applicable(indicator.parent)
+
+        return OperatorTypeIndicator.objects.filter(
+            operator_type=self.operator.operator_type,
+            indicator__category=indicator.category,
             is_applicable=True,
         ).exists()
+
+    def _category_code_for_sheet(self, sheet_name: str) -> Optional[str]:
+        direct_match = SHEET_TO_CATEGORY.get(sheet_name) or SHEET_TO_CATEGORY.get(sheet_name.strip())
+        if direct_match:
+            return direct_match
+
+        normalized_sheet = self._normalize_text(sheet_name)
+        for candidate, category_code in SHEET_TO_CATEGORY.items():
+            if self._normalize_text(candidate) == normalized_sheet:
+                return category_code
+        return None
+
+    def _resolve_target_indicator_code(
+        self,
+        category_code: str,
+        raw_code,
+        raw_name,
+        indicators: Optional[dict[str, Indicator]] = None,
+    ) -> Optional[str]:
+        source_code = self._normalize_code(raw_code)
+        source_name = self._normalize_text(raw_name)
+
+        direct_code = self._match_internal_indicator_code(
+            indicators,
+            source_code,
+            source_name,
+            require_name=True,
+        )
+        if direct_code:
+            return direct_code
+
+        for mapping in EXCEL_INDICATOR_MAPPINGS.get(category_code, []):
+            expected_code = mapping.get('code')
+            if expected_code and self._normalize_code(expected_code) != source_code:
+                continue
+
+            expected_name = mapping.get('name_contains')
+            if expected_name and self._normalize_text(expected_name) not in source_name:
+                continue
+
+            return mapping['target']
+
+        return self._match_internal_indicator_code(
+            indicators,
+            source_code,
+            source_name,
+            require_name=False,
+        )
+
+    @classmethod
+    def _match_internal_indicator_code(
+        cls,
+        indicators: Optional[dict[str, Indicator]],
+        source_code: str,
+        source_name: str,
+        require_name: bool,
+    ) -> Optional[str]:
+        if not indicators or not source_code:
+            return None
+
+        for indicator_code, indicator in indicators.items():
+            if cls._normalize_code(indicator_code) != source_code:
+                continue
+
+            if require_name:
+                indicator_name = cls._normalize_text(indicator.name)
+                if not indicator_name or not source_name:
+                    continue
+                if indicator_name not in source_name and source_name not in indicator_name:
+                    continue
+
+            return indicator_code
+
+        return None
+
+    def _detect_month_columns(
+        self,
+        df: pd.DataFrame,
+        only_reported_quarter: bool,
+    ) -> list[tuple[int, int]]:
+        quarters = [self.quarter] if only_reported_quarter and self.quarter else None
+        quarter_columns = self._detect_quarter_columns(df, quarters=quarters)
+        if quarter_columns:
+            return quarter_columns
+
+        detected: list[tuple[int, int]] = []
+        for row_idx in range(min(15, len(df))):
+            row_detected: list[tuple[int, int]] = []
+            for col_idx in range(3, len(df.columns)):
+                month = self._parse_month_header(df.iloc[row_idx, col_idx])
+                if not month:
+                    continue
+                if quarters and ((month - 1) // 3 + 1) not in quarters:
+                    continue
+                row_detected.append((month, col_idx))
+            if len(row_detected) >= 3:
+                detected = row_detected
+                break
+
+        return detected
+
+    def _detect_quarter_columns(
+        self,
+        df: pd.DataFrame,
+        quarters: Optional[list[int]] = None,
+    ) -> list[tuple[int, int]]:
+        for row_idx in range(min(12, len(df))):
+            groups: list[tuple[int, int]] = []
+            for col_idx in range(3, len(df.columns)):
+                quarter = self._parse_quarter_label(df.iloc[row_idx, col_idx])
+                if quarter:
+                    groups.append((quarter, col_idx))
+
+            if not groups:
+                continue
+
+            columns: list[tuple[int, int]] = []
+            for quarter, start_col in groups:
+                if quarters and quarter not in quarters:
+                    continue
+                for offset in range(3):
+                    col_idx = start_col + offset
+                    if col_idx >= len(df.columns):
+                        continue
+                    month = (quarter - 1) * 3 + offset + 1
+                    columns.append((month, col_idx))
+            if columns:
+                return columns
+        return []
+
+    def _detect_cumulative_columns(self, df: pd.DataFrame) -> list[tuple[str, int]]:
+        for row_idx in range(min(8, len(df))):
+            columns: list[tuple[str, int]] = []
+            for col_idx in range(3, len(df.columns)):
+                label = self._normalize_text(df.iloc[row_idx, col_idx])
+                if not label:
+                    continue
+                for key, cum_type in CUMULATIVE_LABELS.items():
+                    if key in label:
+                        columns.append((cum_type, col_idx))
+                        break
+            if columns:
+                return columns
+        return []
+
+    @classmethod
+    def _parse_month_header(cls, raw) -> Optional[int]:
+        if pd.isna(raw):
+            return None
+
+        if isinstance(raw, (datetime, date, pd.Timestamp)):
+            return raw.month
+
+        text = cls._normalize_text(raw)
+        if not text:
+            return None
+
+        if text in MONTH_ALIASES:
+            return MONTH_ALIASES[text]
+
+        first_token = re.split(r'[\s/.-]+', text, maxsplit=1)[0]
+        if first_token in MONTH_ALIASES:
+            return MONTH_ALIASES[first_token]
+
+        try:
+            parsed = pd.to_datetime(str(raw), errors='raise')
+        except (ValueError, TypeError, OverflowError):
+            return None
+        return parsed.month
+
+    @classmethod
+    def _parse_quarter_label(cls, raw) -> Optional[int]:
+        text = cls._normalize_text(raw)
+        if not text:
+            return None
+
+        match = re.search(r'([1-4])\s*(?:o|º)?\s*trimestre', text)
+        if not match:
+            return None
+        return int(match.group(1))
+
+    @staticmethod
+    def _normalize_code(raw) -> str:
+        if pd.isna(raw):
+            return ''
+
+        if isinstance(raw, float) and raw.is_integer():
+            raw = int(raw)
+
+        code = str(raw).replace('\xa0', ' ').strip()
+        code = re.sub(r'\s+', '', code)
+        while code.endswith('.'):
+            code = code[:-1]
+        return code.lower()
+
+    @staticmethod
+    def _normalize_text(raw) -> str:
+        if raw is None or pd.isna(raw):
+            return ''
+
+        text = str(raw).replace('\xa0', ' ').strip().lower()
+        text = unicodedata.normalize('NFKD', text)
+        text = ''.join(ch for ch in text if not unicodedata.combining(ch))
+        text = re.sub(r'\s+', ' ', text)
+        return text
+
+    @staticmethod
+    def _normalize_value_for_indicator(value: Decimal, indicator: Indicator) -> Decimal:
+        if indicator.unit == 'fcfa_millions' and abs(value) >= Decimal('1000000'):
+            return value / Decimal('1000000')
+        return value
 
     @staticmethod
     def _parse_value(raw) -> Optional[Decimal]:

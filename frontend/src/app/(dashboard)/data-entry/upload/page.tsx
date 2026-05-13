@@ -9,7 +9,7 @@ import { cn } from '@/lib/utils'
 import toast from 'react-hot-toast'
 import type { FileUpload, OperatorListItem } from '@/types'
 import {
-  Upload, FileSpreadsheet, CheckCircle, XCircle, Loader2, AlertTriangle,
+  Download, FileSpreadsheet, CheckCircle, XCircle, Loader2, Info,
 } from 'lucide-react'
 
 const FILE_TYPES = [
@@ -20,6 +20,8 @@ const FILE_TYPES = [
   { value: 'statistics', label: 'Dados Estatísticos Consolidados' },
   { value: 'other', label: 'Outro' },
 ]
+
+const TEMPLATE_URL = '/templates/modelo_upload_kpi_arn.xlsx'
 
 const UploadPage = () => {
   const user = useAuthStore((s) => s.user)
@@ -143,7 +145,17 @@ const UploadPage = () => {
       </div>
 
       <div className="card">
-        <h3 className="text-base font-semibold text-gray-900 mb-4">Configuração</h3>
+        <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between mb-4">
+          <h3 className="text-base font-semibold text-gray-900">Configuração</h3>
+          <a
+            href={TEMPLATE_URL}
+            download
+            className="btn-secondary inline-flex items-center justify-center gap-2 text-sm"
+          >
+            <Download className="w-4 h-4" />
+            Descarregar modelo Excel
+          </a>
+        </div>
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           {isARNStaff && (
             <div>
@@ -213,6 +225,24 @@ const UploadPage = () => {
               <option value={3}>Q3</option>
               <option value={4}>Q4</option>
             </select>
+          </div>
+        </div>
+      </div>
+
+      <div className="card">
+        <div className="flex gap-3">
+          <Info className="w-5 h-5 text-arn-primary shrink-0 mt-0.5" />
+          <div className="space-y-2 text-sm text-gray-600">
+            <p className="font-medium text-gray-900">Formato aceite</p>
+            <p>
+              Pode carregar directamente os questionários oficiais da Orange e da Telecel/MTN,
+              com folhas como Estações móveis, Trafego_originado, Trafego_Terminado,
+              Internet_Fixo, RECEITAS, Empregos e Investimento.
+            </p>
+            <p>
+              No modelo alternativo, mantenha os nomes das folhas e a coluna Cod.;
+              preencha apenas os valores numéricos e seleccione o trimestre correcto antes do upload.
+            </p>
           </div>
         </div>
       </div>

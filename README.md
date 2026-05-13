@@ -53,6 +53,30 @@ O projecto responde a uma necessidade operacional da ARN: transformar ficheiros,
 - suporte a dados cumulativos e periódicos
 - normalização de operadores, incluindo mapeamentos históricos como MTN para Telecel
 
+### Upload Excel
+
+O upload aceita directamente os questionários oficiais enviados pelas operadoras, incluindo ficheiros da Orange e da Telecel/MTN com folhas como:
+
+- `Estações móveis`
+- `Trafego_originado`
+- `Trafego_Terminado`
+- `Trafego_Roaming_Internacional`
+- `Internet_Trafic`
+- `Internet_Fixo`
+- `LBI`
+- `RECEITAS`
+- `Empregos`
+- `Investimento`
+
+Na página `Entrada de Dados > Upload Excel`, seleccionar o operador, o tipo de ficheiro, o ano e o trimestre antes de carregar o ficheiro. A aplicação lê os meses do trimestre seleccionado e grava os dados na base para validação.
+
+Quando não existir questionário oficial, existe um modelo alternativo em `frontend/public/templates/modelo_upload_kpi_arn.xlsx`. O modelo pode ser regenerado a partir do catálogo de indicadores com:
+
+```bash
+cd backend
+USE_SQLITE=true DJANGO_SETTINGS_MODULE=config.settings.development ./venv/bin/python manage.py generate_upload_template
+```
+
 ### Documentos recebidos
 
 - registo interno de questionários, resumos KPI e documentos de suporte recebidos

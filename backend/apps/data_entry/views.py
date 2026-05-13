@@ -167,6 +167,7 @@ class FileUploadViewSet(viewsets.ModelViewSet):
         )
         from .tasks import dispatch_excel_upload
         dispatch_excel_upload(upload.id)
+        upload.refresh_from_db()
 
     @action(detail=True, methods=['get'])
     def log(self, request, pk=None):
@@ -253,6 +254,8 @@ class ReceivedDocumentViewSet(viewsets.ModelViewSet):
 
         from .tasks import dispatch_excel_upload
         dispatch_excel_upload(upload.id)
+        upload.refresh_from_db()
+        document.refresh_from_db()
 
         return Response({
             'detail': 'Documento enviado para importação.',
