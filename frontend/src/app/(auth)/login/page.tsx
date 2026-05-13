@@ -4,6 +4,7 @@ import { useState, type FormEvent } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuthStore } from '@/lib/auth'
 import toast from 'react-hot-toast'
+import axios from 'axios'
 
 const LoginPage = () => {
   const [username, setUsername] = useState('')
@@ -23,8 +24,19 @@ const LoginPage = () => {
       await login(trimmedUser, trimmedPass)
       toast.success('Login efectuado com sucesso')
       router.push('/')
-    } catch {
-      toast.error('Credenciais inválidas. Verifique o utilizador e a palavra-passe.')
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        const status = error.response?.status
+        if (status === 401) {
+          toast.error('Credenciais inválidas. Verifique o utilizador e a palavra-passe.')
+          return
+        }
+        if (!error.response || status === 502 || status === 503 || status === 504) {
+          toast.error('Servidor a acordar ou indisponível. Aguarde um minuto e tente novamente.')
+          return
+        }
+      }
+      toast.error('Não foi possível efectuar login. Tente novamente.')
     }
   }
 
