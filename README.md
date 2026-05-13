@@ -235,6 +235,9 @@ Ver `.env.example` para a lista completa.
 | `GEMINI_API_KEY` | chave opcional para assistente IA |
 | `USE_S3_STORAGE` | activa storage S3 quando definido como `true` |
 | `DATA_UPLOAD_PROCESS_SYNC` | processa uploads Excel de forma síncrona quando definido como `true` |
+| `RUN_SEED_ON_STARTUP` | executa `seed_data` no arranque quando definido como `true` |
+| `RUN_KPI_IMPORT_ON_STARTUP` | importa os ficheiros KPI JSON no arranque quando definido como `true` |
+| `KPI_IMPORT_YEARS` | lista de anos a importar quando `RUN_KPI_IMPORT_ON_STARTUP=true` |
 
 ### Frontend
 
@@ -282,6 +285,16 @@ DJANGO_SUPERUSER_EMAIL=<email-admin>
 DJANGO_SUPERUSER_PASSWORD=<password-forte>
 GEMINI_API_KEY=<opcional>
 ```
+
+Por defeito, o backend não reexecuta `seed_data` nem `import_kpi_json` em cada arranque. Isto evita cold starts longos no plano free do Render. Para reimportar dados históricos, activar temporariamente:
+
+```txt
+RUN_SEED_ON_STARTUP=true
+RUN_KPI_IMPORT_ON_STARTUP=true
+KPI_IMPORT_YEARS=2024 2021 2020 2019 2018
+```
+
+Depois do deploy/importação, voltar a definir `RUN_SEED_ON_STARTUP=false` e `RUN_KPI_IMPORT_ON_STARTUP=false`.
 
 Depois do deploy, validar:
 

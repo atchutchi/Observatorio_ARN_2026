@@ -1,6 +1,13 @@
 #!/bin/sh
 set -e
 
+is_true() {
+    case "$(printf '%s' "${1:-}" | tr '[:upper:]' '[:lower:]')" in
+        1|true|yes|on) return 0 ;;
+        *) return 1 ;;
+    esac
+}
+
 echo "Waiting for PostgreSQL..."
 python - <<'PY'
 import os
@@ -67,14 +74,21 @@ else:
         print(f'Superuser {username} updated.')
 "
 
-echo "Seeding reference data..."
-python manage.py seed_data 2>/dev/null || true
+if is_true "$RUN_SEED_ON_STARTUP"; then
+    echo "Seeding reference data..."
+    python manage.py seed_data
+else
+    echo "Skipping seed_data. Set RUN_SEED_ON_STARTUP=true to run it."
+fi
 
-echo "Importing KPI data if available..."
-python manage.py import_kpi_json --data-dir data/kpi_2024 2>/dev/null || true
-python manage.py import_kpi_json --data-dir data/kpi_2021 2>/dev/null || true
-python manage.py import_kpi_json --data-dir data/kpi_2020 2>/dev/null || true
-python manage.py import_kpi_json --data-dir data/kpi_2019 2>/dev/null || true
-python manage.py import_kpi_json --data-dir data/kpi_2018 2>/dev/null || true
+if is_true "$RUN_KPI_IMPORT_ON_STARTUP"; then
+    KPI_IMPORT_YEARS="${KPI_IMPORT_YEARS:-2024 2021 2020 2019 2018}"
+    echo "Importing KPI data for years: $KPI_IMPORT_YEARS"
+    for year in $KPI_IMPORT_YEARS; do
+        python manage.py import_kpi_json --data-dir "data/kpi_$year"
+    done
+else
+    echo "Skipping KPI import. Set RUN_KPI_IMPORT_ON_STARTUP=true to run it."
+fi
 
 echo "Entrypoint complete."
