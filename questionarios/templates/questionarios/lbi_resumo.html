@@ -1,0 +1,141 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4">Resumo de LBI (Largura de Banda de Internet Internacional) - {{ ano }}</h2>
+
+    <!-- Filtro de Operadora -->
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+            Filtrar por Operadora
+        </div>
+        <div class="card-body">
+            <form method="get" class="form-inline">
+                <div class="row align-items-center">
+                    <div class="col-auto">
+                        <select name="operadora" class="form-control">
+                            <option value="">Todas</option>
+                            <option value="orange" {% if operadora_selecionada == 'orange' %}selected{% endif %}>Orange</option>
+                            <option value="telecel" {% if operadora_selecionada == 'telecel' %}selected{% endif %}>TELECEL</option>
+                        </select>
+                    </div>
+                    <div class="col-auto">
+                        <button type="submit" class="btn btn-primary">Filtrar</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    {% if operadora_selecionada %}
+    <div class="alert alert-info">
+        Mostrando dados da operadora: {{ operadora_selecionada|upper }}
+    </div>
+    {% endif %}
+
+    <h3>Totais Trimestrais</h3>
+    {% for trimestre in totais_trimestrais %}
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+            {{ trimestre.trimestre }}º Trimestre
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-4">
+                    <h5>Tecnologia</h5>
+                    <p><strong>Satélite:</strong> {{ trimestre.total_satelite|floatformat:2 }} Mbit/s</p>
+                    <p><strong>Fibra Óptica:</strong> {{ trimestre.total_fibra|floatformat:2 }} Mbit/s</p>
+                    <p><strong>Feixe Hertziano:</strong> {{ trimestre.total_hertziano|floatformat:2 }} Mbit/s</p>
+                    <p><strong>Total:</strong> {{ trimestre.total_tecnologia|floatformat:2 }} Mbit/s</p>
+                </div>
+                <div class="col-md-4">
+                    <h5>Down Link</h5>
+                    <p><strong>Disponível:</strong> {{ trimestre.total_disponivel_down|floatformat:2 }} Mbit/s</p>
+                    <p><strong>Instalado:</strong> {{ trimestre.total_instalado_down|floatformat:2 }} Mbit/s</p>
+                    <p><strong>Contratado:</strong> {{ trimestre.total_contratado_down|floatformat:2 }} Mbit/s</p>
+                    <p><strong>Utilizado:</strong> {{ trimestre.total_down|floatformat:2 }} Mbit/s</p>
+                </div>
+                <div class="col-md-4">
+                    <h5>Up Link</h5>
+                    <p><strong>Disponível:</strong> {{ trimestre.total_disponivel_up|floatformat:2 }} Mbit/s</p>
+                    <p><strong>Instalado:</strong> {{ trimestre.total_instalado_up|floatformat:2 }} Mbit/s</p>
+                    <p><strong>Contratado:</strong> {{ trimestre.total_contratado_up|floatformat:2 }} Mbit/s</p>
+                    <p><strong>Utilizado:</strong> {{ trimestre.total_up|floatformat:2 }} Mbit/s</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+
+    <h3>Totais Anuais</h3>
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+            Ano {{ ano }}{% if operadora_selecionada %} - {{ operadora_selecionada|upper }}{% endif %}
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-4">
+                    <h5>Tecnologia</h5>
+                    <p><strong>Satélite:</strong> {{ total_satelite_anual|floatformat:2 }} Mbit/s</p>
+                    <p><strong>Fibra Óptica:</strong> {{ total_fibra_anual|floatformat:2 }} Mbit/s</p>
+                    <p><strong>Feixe Hertziano:</strong> {{ total_hertziano_anual|floatformat:2 }} Mbit/s</p>
+                    <p><strong>Total:</strong> {{ total_tecnologia_anual|floatformat:2 }} Mbit/s</p>
+                </div>
+                <div class="col-md-4">
+                    <h5>Down Link</h5>
+                    <p><strong>Disponível:</strong> {{ total_disponivel_down_anual|floatformat:2 }} Mbit/s</p>
+                    <p><strong>Instalado:</strong> {{ total_instalado_down_anual|floatformat:2 }} Mbit/s</p>
+                    <p><strong>Contratado:</strong> {{ total_contratado_down_anual|floatformat:2 }} Mbit/s</p>
+                    <p><strong>Utilizado:</strong> {{ total_down_anual|floatformat:2 }} Mbit/s</p>
+                </div>
+                <div class="col-md-4">
+                    <h5>Up Link</h5>
+                    <p><strong>Disponível:</strong> {{ total_disponivel_up_anual|floatformat:2 }} Mbit/s</p>
+                    <p><strong>Instalado:</strong> {{ total_instalado_up_anual|floatformat:2 }} Mbit/s</p>
+                    <p><strong>Contratado:</strong> {{ total_contratado_up_anual|floatformat:2 }} Mbit/s</p>
+                    <p><strong>Utilizado:</strong> {{ total_up_anual|floatformat:2 }} Mbit/s</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <h3>Detalhes Mensais</h3>
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Mês</th>
+                    <th>Operadora</th>
+                    <th>Tecnologia</th>
+                    <th>Down Link</th>
+                    <th>Up Link</th>
+                    <th>% Utilização Down</th>
+                    <th>% Utilização Up</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for indicador in indicadores %}
+                <tr>
+                    <td>{{ indicador.get_mes_display }}</td>
+                    <td>{{ indicador.get_operadora_display }}</td>
+                    <td>{{ indicador.calcular_total_tecnologia|floatformat:2 }} Mbit/s</td>
+                    <td>{{ indicador.calcular_total_down|floatformat:2 }} Mbit/s</td>
+                    <td>{{ indicador.calcular_total_up|floatformat:2 }} Mbit/s</td>
+                    <td>{{ indicador.utilizada_down|div:indicador.disponivel_nominal_down|multiply:100|floatformat:1 }}%</td>
+                    <td>{{ indicador.utilizada_up|div:indicador.disponivel_nominal_up|multiply:100|floatformat:1 }}%</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="mt-4 mb-4">
+        <a href="{% url 'questionarios:lbi_list' %}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Voltar para a Lista
+        </a>
+        <button class="btn btn-primary" onclick="window.print()">
+            <i class="fas fa-print"></i> Imprimir Relatório
+        </button>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,317 @@
+{% extends "dashboard/base_dashboard.html" %}
+{% load static %}
+{% load humanize %}
+
+{% block dashboard_title %}Dashboard Executivo {{ year }}{% endblock %}
+
+{% block dashboard_content %}
+<!-- Header do Dashboard -->
+<div class="platform-card mb-4">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <div>
+            <h2 class="card-title mb-0">
+                <i class="fas fa-crown me-2"></i>
+                Dashboard Executivo ARN
+            </h2>
+            <p class="card-subtitle">Visão estratégica do mercado - {{ year }}</p>
+        </div>
+        <div class="export-buttons">
+            <a href="#" class="btn-export" data-format="pdf" data-report-type="executive">
+                <i class="fas fa-file-pdf"></i> PDF
+            </a>
+            <a href="#" class="btn-export" data-format="excel" data-report-type="executive">
+                <i class="fas fa-file-excel"></i> Excel
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Filtros -->
+<div class="dashboard-filters">
+    <h5 class="dashboard-filters-title">Período de Análise</h5>
+    <form method="get" class="dashboard-filter-group">
+        <div class="form-group">
+            <label class="form-label">Ano</label>
+            <select name="year" class="form-select-questionario dashboard-filter" onchange="this.form.submit()">
+                {% for ano in 2020|make_list|add:2021|make_list|add:2022|make_list|add:2023|make_list|add:2024|make_list|add:2025|make_list %}
+                <option value="{{ ano }}" {% if ano == year %}selected{% endif %}>{{ ano }}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </form>
+</div>
+
+<!-- KPIs Principais -->
+<div class="dashboard-kpis">
+    {% with kpis=dashboard_data.kpis_principais %}
+    <div class="kpi-card kpi-primary">
+        <div class="kpi-icon">
+            <i class="fas fa-users"></i>
+        </div>
+        <div class="kpi-value">
+            {{ kpis.total_assinantes.valor|floatformat:0|default:"0" }}
+        </div>
+        <div class="kpi-label">Total de Assinantes</div>
+        <div class="kpi-change positive">
+            <i class="fas fa-arrow-up"></i>
+            {{ kpis.total_assinantes.variacao|default:"+0%" }}
+        </div>
+    </div>
+    
+    <div class="kpi-card kpi-info">
+        <div class="kpi-icon">
+            <i class="fas fa-chart-pie"></i>
+        </div>
+        <div class="kpi-value">{{ kpis.taxa_penetracao.valor|default:"0%" }}</div>
+        <div class="kpi-label">Taxa de Penetração</div>
+        <div class="kpi-change {% if kpis.taxa_penetracao.cor == 'verde' %}positive{% else %}neutral{% endif %}">
+            <i class="fas fa-chart-line"></i>
+            {{ kpis.taxa_penetracao.variacao|default:"--" }}
+        </div>
+    </div>
+    
+    <div class="kpi-card kpi-warning">
+        <div class="kpi-icon">
+            <i class="fas fa-phone-volume"></i>
+        </div>
+        <div class="kpi-value">{{ kpis.volume_trafego.valor|default:"0M min" }}</div>
+        <div class="kpi-label">Volume de Tráfego</div>
+        <div class="kpi-change positive">
+            <i class="fas fa-arrow-up"></i>
+            {{ kpis.volume_trafego.variacao|default:"+0%" }}
+        </div>
+    </div>
+    
+    <div class="kpi-card kpi-success">
+        <div class="kpi-icon">
+            <i class="fas fa-dollar-sign"></i>
+        </div>
+        <div class="kpi-value">{{ kpis.receita_total.valor|default:"0M FCFA" }}</div>
+        <div class="kpi-label">Receita Total</div>
+        <div class="kpi-change {% if kpis.receita_total.cor == 'verde' %}positive{% else %}negative{% endif %}">
+            <i class="fas fa-arrow-up"></i>
+            {{ kpis.receita_total.variacao|default:"+0%" }}
+        </div>
+    </div>
+    {% endwith %}
+</div>
+
+<!-- Market Share -->
+<div class="row mt-4">
+    <div class="col-md-6">
+        <div class="platform-card">
+            <div class="card-header">
+                <h3 class="card-title">
+                    <i class="fas fa-chart-pie me-2"></i>
+                    Market Share por Operadora
+                </h3>
+            </div>
+            <div class="platform-card-body">
+                {% for operadora, percentual in dashboard_data.market_share.items %}
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        <span class="fw-bold">{{ operadora }}</span>
+                        <span class="badge badge-binance">{{ percentual|floatformat:1 }}%</span>
+                    </div>
+                    <div class="progress" style="height: 12px;">
+                        <div class="progress-bar {% if operadora == 'ORANGE' %}bg-warning{% else %}bg-danger{% endif %}" 
+                             style="width: {{ percentual }}%;">
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <div class="platform-card">
+            <div class="card-header">
+                <h3 class="card-title">
+                    <i class="fas fa-chart-line me-2"></i>
+                    Tendência Mensal
+                </h3>
+            </div>
+            <div class="platform-card-body">
+                <canvas id="trendChart" height="200"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Insights Rápidos -->
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="platform-card">
+            <div class="card-header">
+                <h3 class="card-title">
+                    <i class="fas fa-lightbulb me-2"></i>
+                    Insights Principais
+                </h3>
+            </div>
+            <div class="platform-card-body">
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <div class="insight-box">
+                            <i class="fas fa-trophy insight-icon text-warning"></i>
+                            <h4>Líder de Mercado</h4>
+                            <p class="text-muted">
+                                {% for operadora, percentual in dashboard_data.market_share.items %}
+                                    {% if forloop.first %}
+                                        {{ operadora }} lidera com {{ percentual|floatformat:1 }}% de quota
+                                    {% endif %}
+                                {% endfor %}
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-4 mb-3">
+                        <div class="insight-box">
+                            <i class="fas fa-chart-line insight-icon text-success"></i>
+                            <h4>Crescimento</h4>
+                            <p class="text-muted">
+                                Crescimento anual do mercado em {{ year }}
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-4 mb-3">
+                        <div class="insight-box">
+                            <i class="fas fa-mobile-alt insight-icon text-info"></i>
+                            <h4>Tecnologia</h4>
+                            <p class="text-muted">
+                                Expansão de 4G e preparação para 5G
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="quick-actions mt-4">
+    <a href="{% url 'dashboard:market-report' %}?year={{ year }}" class="quick-action">
+        <i class="fas fa-chart-area quick-action-icon"></i>
+        <span>Relatório Completo</span>
+    </a>
+    
+    <a href="{% url 'dashboard:comparative-report' %}?year={{ year }}" class="quick-action">
+        <i class="fas fa-balance-scale quick-action-icon"></i>
+        <span>Análise Comparativa</span>
+    </a>
+    
+    <a href="{% url 'dashboard:report-history' %}" class="quick-action">
+        <i class="fas fa-history quick-action-icon"></i>
+        <span>Histórico</span>
+    </a>
+</div>
+
+<style>
+.insight-box {
+    padding: 1.5rem;
+    border-radius: 8px;
+    background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%);
+    border: 1px solid rgba(255,255,255,0.1);
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.insight-box:hover {
+    transform: translateY(-5px);
+    border-color: var(--binance-yellow);
+    box-shadow: 0 8px 20px rgba(240, 185, 11, 0.2);
+}
+
+.insight-icon {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+}
+
+.insight-box h4 {
+    color: var(--binance-text);
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+}
+
+.insight-box p {
+    font-size: 0.9rem;
+    margin: 0;
+}
+
+.badge-binance {
+    background: var(--binance-yellow);
+    color: var(--binance-dark);
+    font-weight: 600;
+    padding: 0.4rem 0.8rem;
+}
+
+.bg-warning {
+    background-color: #FF6600 !important;
+}
+
+.bg-danger {
+    background-color: #DC3545 !important;
+}
+</style>
+{% endblock %}
+
+{% block dashboard_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Gráfico de Tendência Mensal
+    const trendData = {{ dashboard_data.tendencia_mensal|safe|default:"[]" }};
+    
+    if (trendData && trendData.length > 0) {
+        const ctx = document.getElementById('trendChart');
+        if (ctx) {
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: trendData.map(item => `Mês ${item.mes}`),
+                    datasets: [{
+                        label: 'Evolução',
+                        data: trendData.map(item => item.valor),
+                        borderColor: 'rgb(240, 185, 11)',
+                        backgroundColor: 'rgba(240, 185, 11, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            ticks: {
+                                color: '#F0F0F0'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            ticks: {
+                                color: '#F0F0F0'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+    }
+});
+</script>
+{% endblock %}
+

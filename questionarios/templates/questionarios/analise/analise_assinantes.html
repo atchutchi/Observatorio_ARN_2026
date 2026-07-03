@@ -1,0 +1,136 @@
+{% extends 'questionarios/analise/base_analise.html' %}
+{% load static %}
+
+{% block specific_charts %}
+<div class="row mt-4">
+    <div class="col-lg-6 mb-3">
+        <h5>Assinantes Pré x Pós Pago (Anual)</h5>
+        <canvas id="prePostPaidChart"></canvas>
+    </div>
+    <div class="col-lg-6 mb-3">
+        <h5>Assinantes Internet Móvel x Fixo (Anual)</h5>
+        <canvas id="internetTypeChart"></canvas>
+    </div>
+</div>
+{% endblock %}
+
+{% block data_table %}
+<div class="card mt-4">
+    <div class="card-header">
+        Dados Detalhados - {{ ano_selecionado }}
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover">
+                <thead class="table-light">
+                    <tr>
+                        <th>Operadora</th>
+                        <th>Período</th>
+                        <th>Pré-Pago</th>
+                        <th>Pós-Pago</th>
+                        <th>Fixo</th>
+                        <th>Internet Móvel</th>
+                        <th>Internet Fixo</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for op, op_data in analysis_data.items %}
+                        {% if op != 'TOTAL' %}
+                            <!-- Annual Data -->
+                            <tr class="table-primary">
+                                <td rowspan="5">{{ op }}</td>
+                                <td><b>Anual</b></td>
+                                <td>{{ op_data.annual.total_assinantes_pre_pago|floatformat:0 }}</td>
+                                <td>{{ op_data.annual.total_assinantes_pos_pago|floatformat:0 }}</td>
+                                <td>{{ op_data.annual.total_assinantes_fixo|floatformat:0 }}</td>
+                                <td>{{ op_data.annual.total_assinantes_internet_movel|floatformat:0 }}</td>
+                                <td>{{ op_data.annual.total_assinantes_internet_fixa|floatformat:0 }}</td>
+                            </tr>
+                            <!-- Quarterly Data -->
+                            {% for q, q_data in op_data.quarterly.items %}
+                            <tr>
+                                <td><b>{{ q }}</b></td>
+                                <td>{{ q_data.total_assinantes_pre_pago|floatformat:0 }}</td>
+                                <td>{{ q_data.total_assinantes_pos_pago|floatformat:0 }}</td>
+                                <td>{{ q_data.total_assinantes_fixo|floatformat:0 }}</td>
+                                <td>{{ q_data.total_assinantes_internet_movel|floatformat:0 }}</td>
+                                <td>{{ q_data.total_assinantes_internet_fixa|floatformat:0 }}</td>
+                            </tr>
+                            {% endfor %}
+                        {% endif %}
+                    {% endfor %}
+                    <!-- Total Market -->
+                     <tr class="table-dark">
+                        <td rowspan="5"><b>TOTAL Mercado</b></td>
+                        <td><b>Anual</b></td>
+                        <td>{{ analysis_data.TOTAL.annual.total_assinantes_pre_pago|floatformat:0 }}</td>
+                        <td>{{ analysis_data.TOTAL.annual.total_assinantes_pos_pago|floatformat:0 }}</td>
+                        <td>{{ analysis_data.TOTAL.annual.total_assinantes_fixo|floatformat:0 }}</td>
+                        <td>{{ analysis_data.TOTAL.annual.total_assinantes_internet_movel|floatformat:0 }}</td>
+                        <td>{{ analysis_data.TOTAL.annual.total_assinantes_internet_fixa|floatformat:0 }}</td>
+                    </tr>
+                    {% for q, q_data in analysis_data.TOTAL.quarterly.items %}
+                    <tr class="table-secondary">
+                         <td><b>{{ q }}</b></td>
+                         <td>{{ q_data.total_assinantes_pre_pago|floatformat:0 }}</td>
+                         <td>{{ q_data.total_assinantes_pos_pago|floatformat:0 }}</td>
+                         <td>{{ q_data.total_assinantes_fixo|floatformat:0 }}</td>
+                         <td>{{ q_data.total_assinantes_internet_movel|floatformat:0 }}</td>
+                         <td>{{ q_data.total_assinantes_internet_fixa|floatformat:0 }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block specific_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const analysisData = window.getAnalysisData();
+    if (!analysisData) return;
+
+    const operators = Object.keys(analysisData).filter(op => op !== 'TOTAL');
+    const colors = window.getOperatorColors();
+
+    // Chart: Pre-paid vs Post-paid (Annual)
+    const prePostData = {
+        labels: operators,
+        datasets: [
+            {
+                label: 'Pré-Pago',
+                data: operators.map(op => analysisData[op]?.annual?.total_assinantes_pre_pago || 0),
+                backgroundColor: 'rgba(54, 162, 235, 0.6)', // Blue
+            },
+            {
+                label: 'Pós-Pago',
+                data: operators.map(op => analysisData[op]?.annual?.total_assinantes_pos_pago || 0),
+                backgroundColor: 'rgba(255, 99, 132, 0.6)', // Red
+            }
+        ]
+    };
+    window.createAnalysisChart('prePostPaidChart', 'bar', prePostData.labels, prePostData.datasets, { scales: { x: { stacked: true }, y: { stacked: true } } });
+
+    // Chart: Mobile Internet vs Fixed Internet (Annual)
+    const internetTypeData = {
+        labels: operators,
+        datasets: [
+            {
+                label: 'Internet Móvel',
+                data: operators.map(op => analysisData[op]?.annual?.total_assinantes_internet_movel || 0),
+                backgroundColor: 'rgba(75, 192, 192, 0.6)', // Teal
+            },
+             {
+                label: 'Internet Fixo',
+                data: operators.map(op => analysisData[op]?.annual?.total_assinantes_internet_fixa || 0),
+                backgroundColor: 'rgba(153, 102, 255, 0.6)', // Purple
+            }
+        ]
+    };
+     window.createAnalysisChart('internetTypeChart', 'bar', internetTypeData.labels, internetTypeData.datasets, { scales: { x: { stacked: true }, y: { stacked: true } } });
+
+});
+</script>
+{% endblock %} 

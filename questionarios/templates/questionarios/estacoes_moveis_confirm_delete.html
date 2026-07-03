@@ -1,0 +1,166 @@
+{% extends "questionarios/base_questionarios.html" %}
+{% load static %}
+
+{% block questionario_title %}Confirmar Exclusão{% endblock %}
+
+{% block questionario_content %}
+<!-- Header de Confirmação -->
+<div class="questionario-header">
+    <div class="text-center">
+        <h1 class="questionario-title">
+            <i class="fas fa-exclamation-triangle me-2"></i>
+            Confirmar Exclusão
+        </h1>
+        <p class="questionario-subtitle">Esta ação não pode ser desfeita</p>
+    </div>
+</div>
+
+<!-- Informações do Item a Ser Excluído -->
+<div class="platform-card mb-4">
+    <div class="card-header">
+        <h3 class="card-title">
+            <i class="fas fa-info-circle me-2"></i>
+            Item a Ser Excluído
+        </h3>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-3">
+                <div class="detail-info-item">
+                    <div class="detail-info-icon">
+                        {% if object.operadora == 'ORANGE' %}
+                            <i class="fas fa-signal" style="color: #FF6600;"></i>
+                        {% elif object.operadora == 'TELECEL' %}
+                            <i class="fas fa-broadcast-tower" style="color: #DC3545;"></i>
+                        {% else %}
+                            <i class="fas fa-tower-cell"></i>
+                        {% endif %}
+                    </div>
+                    <div class="detail-info-content">
+                        <strong>Operadora</strong>
+                        <p class="operadora-badge {{ object.operadora|lower }}">{{ object.operadora }}</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-3">
+                <div class="detail-info-item">
+                    <div class="detail-info-icon">
+                        <i class="fas fa-calendar"></i>
+                    </div>
+                    <div class="detail-info-content">
+                        <strong>Ano</strong>
+                        <p>{{ object.ano }}</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-3">
+                <div class="detail-info-item">
+                    <div class="detail-info-icon">
+                        <i class="fas fa-calendar-alt"></i>
+                    </div>
+                    <div class="detail-info-content">
+                        <strong>Trimestre</strong>
+                        <p>{{ object.trimestre }}º Trimestre</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-3">
+                <div class="detail-info-item">
+                    <div class="detail-info-icon">
+                        <i class="fas fa-mobile-alt"></i>
+                    </div>
+                    <div class="detail-info-content">
+                        <strong>Estações Ativas</strong>
+                        <p>{{ object.calcular_total_estacoes_moveis|floatformat:0 }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Aviso de Confirmação -->
+<div class="platform-card mb-4">
+    <div class="card-body">
+        <div class="alert-questionario alert-questionario-danger">
+            <i class="fas fa-exclamation-triangle"></i>
+            <div>
+                <strong>⚠️ ATENÇÃO!</strong>
+                <p class="mt-2 mb-2">
+                    Você está prestes a excluir permanentemente o indicador de <strong>Estações Móveis</strong> 
+                    da operadora <strong>{{ object.operadora }}</strong> referente ao 
+                    <strong>{{ object.trimestre }}º trimestre de {{ object.ano }}</strong>.
+                </p>
+                <p class="mb-0">
+                    <strong>Esta ação é irreversível</strong> e todos os dados relacionados serão perdidos.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Dados que Serão Perdidos -->
+<div class="platform-card mb-4">
+    <div class="card-header">
+        <h4 class="card-title">
+            <i class="fas fa-database me-2"></i>
+            Dados que Serão Perdidos
+        </h4>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-6">
+                <h6 style="color: var(--binance-yellow);">📊 Totais Calculados</h6>
+                <ul style="color: var(--binance-text-muted);">
+                    <li>Total 3G: {{ object.calcular_total_3g|floatformat:0 }}</li>
+                    <li>Total 4G: {{ object.calcular_total_4g|floatformat:0 }}</li>
+                    <li>Banda Larga: {{ object.calcular_total_banda_larga|floatformat:0 }}</li>
+                    <li>Mobile Money: {{ object.calcular_total_utilizadores|floatformat:0 }}</li>
+                </ul>
+            </div>
+            
+            <div class="col-md-6">
+                <h6 style="color: var(--binance-warning);">🔢 Campos Individuais</h6>
+                <p style="color: var(--binance-text-muted);">
+                    + Mais de 20 campos detalhados de utilizadores, carregamentos, levantamentos, 
+                    transferências e dados técnicos das tecnologias 3G e 4G.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Botões de Confirmação -->
+<div class="platform-card">
+    <div class="card-body">
+        <form method="post" class="text-center">
+    {% csrf_token %}
+            
+            <div class="d-flex gap-3 justify-content-center">
+                <a href="{% url 'questionarios:estacoes_moveis_list' %}" class="btn btn-outline">
+                    <i class="fas fa-arrow-left me-2"></i>Cancelar e Voltar
+                </a>
+                
+                <a href="{% url 'questionarios:estacoes_moveis_detail' object.pk %}" class="btn btn-outline">
+                    <i class="fas fa-eye me-2"></i>Ver Detalhes
+                </a>
+                
+                <button type="submit" class="btn btn-danger" 
+                        onclick="return confirm('⚠️ CONFIRMAÇÃO FINAL\n\nTem absoluta certeza que deseja excluir este indicador?\n\nEsta ação é IRREVERSÍVEL!')">
+                    <i class="fas fa-trash me-2"></i>Confirmar Exclusão
+                </button>
+            </div>
+            
+            <div class="mt-4">
+                <p style="color: var(--binance-text-muted); font-size: 0.875rem;">
+                    💡 <strong>Dica:</strong> Se não tem certeza, use "Ver Detalhes" para revisar os dados 
+                    ou "Cancelar" para voltar à lista sem fazer alterações.
+                </p>
+            </div>
+</form>
+    </div>
+</div>
+{% endblock %}

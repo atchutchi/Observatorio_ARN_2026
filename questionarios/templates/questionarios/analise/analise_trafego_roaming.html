@@ -1,0 +1,159 @@
+{% extends 'questionarios/analise/base_analise.html' %}
+{% load static %}
+
+{% block specific_charts %}
+<div class="row mt-4">
+    <div class="col-lg-6 mb-3">
+        <h5>Roaming OUT (Voz x SMS x Dados - Anual Mercado)</h5>
+        <div style="position: relative; height:300px; width:100%">
+            <canvas id="roamingOutTipoChart"></canvas>
+        </div>
+    </div>
+     <div class="col-lg-6 mb-3">
+        <h5>Roaming IN (Voz x SMS x Dados - Anual Mercado)</h5>
+        <div style="position: relative; height:300px; width:100%">
+            <canvas id="roamingInTipoChart"></canvas>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block data_table %}
+<div class="card mt-4">
+    <div class="card-header">
+        Dados Detalhados de Tráfego Roaming - {{ ano_selecionado }}
+    </div>
+    <div class="card-body">
+         <div class="table-responsive">
+            <table class="table table-bordered table-hover">
+                <thead class="table-light">
+                    <tr>
+                        <th>Operadora</th>
+                        <th>Período</th>
+                        <th>Roaming OUT Assinantes</th>
+                        <th>Roaming OUT Voz (Min)</th>
+                        <th>Roaming OUT SMS</th>
+                        <th>Roaming OUT Dados (MB)</th>
+                        <th>Roaming IN Visitantes</th>
+                        <th>Roaming IN Voz (Min)</th>
+                        <th>Roaming IN SMS</th>
+                        <th>Roaming IN Dados (MB)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for op, op_data in analysis_data.items %}
+                        {% if op != 'TOTAL' %}
+                            <!-- Annual Data -->
+                            <tr class="table-primary">
+                                <td rowspan="5">{{ op }}</td>
+                                <td><b>Anual</b></td>
+                                <td>{{ op_data.annual.total_roaming_out_total_assinantes|floatformat:0 }}</td>
+                                <td>{{ op_data.annual.total_roaming_out_voz_minutos|floatformat:0 }}</td>
+                                <td>{{ op_data.annual.total_roaming_out_sms_unidades|floatformat:0 }}</td>
+                                <td>{{ op_data.annual.total_roaming_out_dados_mb|floatformat:2 }}</td>
+                                <td>{{ op_data.annual.total_roaming_in_total_visitantes|floatformat:0 }}</td>
+                                <td>{{ op_data.annual.total_roaming_in_voz_minutos|floatformat:0 }}</td>
+                                <td>{{ op_data.annual.total_roaming_in_sms_unidades|floatformat:0 }}</td>
+                                <td>{{ op_data.annual.total_roaming_in_dados_mb|floatformat:2 }}</td>
+                            </tr>
+                            <!-- Quarterly Data -->
+                            {% for q, q_data in op_data.quarterly.items %}
+                            <tr>
+                                <td><b>{{ q }}</b></td>
+                                <td>{{ q_data.total_roaming_out_total_assinantes|floatformat:0 }}</td>
+                                <td>{{ q_data.total_roaming_out_voz_minutos|floatformat:0 }}</td>
+                                <td>{{ q_data.total_roaming_out_sms_unidades|floatformat:0 }}</td>
+                                <td>{{ q_data.total_roaming_out_dados_mb|floatformat:2 }}</td>
+                                <td>{{ q_data.total_roaming_in_total_visitantes|floatformat:0 }}</td>
+                                <td>{{ q_data.total_roaming_in_voz_minutos|floatformat:0 }}</td>
+                                <td>{{ q_data.total_roaming_in_sms_unidades|floatformat:0 }}</td>
+                                <td>{{ q_data.total_roaming_in_dados_mb|floatformat:2 }}</td>
+                            </tr>
+                            {% endfor %}
+                        {% endif %}
+                    {% endfor %}
+                    <!-- Total Market -->
+                     <tr class="table-dark">
+                        <td rowspan="5"><b>TOTAL Mercado</b></td>
+                        <td><b>Anual</b></td>
+                         <td>{{ analysis_data.TOTAL.annual.total_roaming_out_total_assinantes|floatformat:0 }}</td>
+                         <td>{{ analysis_data.TOTAL.annual.total_roaming_out_voz_minutos|floatformat:0 }}</td>
+                         <td>{{ analysis_data.TOTAL.annual.total_roaming_out_sms_unidades|floatformat:0 }}</td>
+                         <td>{{ analysis_data.TOTAL.annual.total_roaming_out_dados_mb|floatformat:2 }}</td>
+                         <td>{{ analysis_data.TOTAL.annual.total_roaming_in_total_visitantes|floatformat:0 }}</td>
+                         <td>{{ analysis_data.TOTAL.annual.total_roaming_in_voz_minutos|floatformat:0 }}</td>
+                         <td>{{ analysis_data.TOTAL.annual.total_roaming_in_sms_unidades|floatformat:0 }}</td>
+                         <td>{{ analysis_data.TOTAL.annual.total_roaming_in_dados_mb|floatformat:2 }}</td>
+                    </tr>
+                    {% for q, q_data in analysis_data.TOTAL.quarterly.items %}
+                    <tr class="table-secondary">
+                         <td><b>{{ q }}</b></td>
+                         <td>{{ q_data.total_roaming_out_total_assinantes|floatformat:0 }}</td>
+                         <td>{{ q_data.total_roaming_out_voz_minutos|floatformat:0 }}</td>
+                         <td>{{ q_data.total_roaming_out_sms_unidades|floatformat:0 }}</td>
+                         <td>{{ q_data.total_roaming_out_dados_mb|floatformat:2 }}</td>
+                         <td>{{ q_data.total_roaming_in_total_visitantes|floatformat:0 }}</td>
+                         <td>{{ q_data.total_roaming_in_voz_minutos|floatformat:0 }}</td>
+                         <td>{{ q_data.total_roaming_in_sms_unidades|floatformat:0 }}</td>
+                         <td>{{ q_data.total_roaming_in_dados_mb|floatformat:2 }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block specific_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const analysisData = window.getAnalysisData();
+    if (!analysisData) return;
+    console.log("Trafego Roaming Data:", analysisData);
+
+    const operators = Object.keys(analysisData).filter(op => op !== 'TOTAL');
+    const colors = window.getOperatorColors();
+    const marketAnnual = analysisData['TOTAL']?.annual || {};
+
+    // Chart: Roaming OUT by Type (Annual - Market)
+    const roamingOutData = {
+        labels: ['Voz (Minutos)', 'SMS (Unidades)', 'Dados (MB)'],
+        datasets: [{
+            label: 'Roaming OUT por Tipo (Anual)',
+            data: [
+                marketAnnual.total_roaming_out_voz_minutos || 0,
+                marketAnnual.total_roaming_out_sms_unidades || 0,
+                marketAnnual.total_roaming_out_dados_mb || 0,
+            ],
+            backgroundColor: [
+                'rgba(54, 162, 235, 0.6)',
+                'rgba(255, 206, 86, 0.6)',
+                'rgba(75, 192, 192, 0.6)',
+             ],
+        }]
+    };
+    window.createAnalysisChart('roamingOutTipoChart', 'pie', roamingOutData.labels, roamingOutData.datasets);
+
+    // Chart: Roaming IN by Type (Annual - Market)
+    const roamingInData = {
+        labels: ['Voz (Minutos)', 'SMS (Unidades)', 'Dados (MB)'],
+        datasets: [{
+            label: 'Roaming IN por Tipo (Anual)',
+            data: [
+                marketAnnual.total_roaming_in_voz_minutos || 0,
+                marketAnnual.total_roaming_in_sms_unidades || 0,
+                marketAnnual.total_roaming_in_dados_mb || 0,
+            ],
+             backgroundColor: [
+                'rgba(54, 162, 235, 0.6)',
+                'rgba(255, 206, 86, 0.6)',
+                'rgba(75, 192, 192, 0.6)',
+             ],
+        }]
+    };
+    window.createAnalysisChart('roamingInTipoChart', 'doughnut', roamingInData.labels, roamingInData.datasets);
+
+});
+</script>
+{% endblock %} 

@@ -1,0 +1,135 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4">Resumo de Tráfego de Roaming Internacional - {{ ano }}</h2>
+
+    <!-- Filtro de Operadora -->
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+            Filtrar por Operadora
+        </div>
+        <div class="card-body">
+            <form method="get" class="form-inline">
+                <div class="row align-items-center">
+                    <div class="col-auto">
+                        <select name="operadora" class="form-control">
+                            <option value="">Todas</option>
+                            <option value="orange" {% if operadora_selecionada == 'orange' %}selected{% endif %}>Orange</option>
+                            <option value="telecel" {% if operadora_selecionada == 'telecel' %}selected{% endif %}>TELECEL</option>
+                        </select>
+                    </div>
+                    <div class="col-auto">
+                        <button type="submit" class="btn btn-primary">Filtrar</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    {% if operadora_selecionada %}
+    <div class="alert alert-info">
+        Mostrando dados da operadora: {{ operadora_selecionada|upper }}
+    </div>
+    {% endif %}
+
+    <h3>Totais Trimestrais</h3>
+    {% for trimestre in totais_trimestrais %}
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+            {{ trimestre.trimestre }}º Trimestre
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <!-- IN -->
+                <div class="col-md-6">
+                    <h5>Roaming IN</h5>
+                    <p><strong>Total Chamadas:</strong> {{ trimestre.total_chamadas_in }}</p>
+                    <p><strong>Total Minutos:</strong> {{ trimestre.total_minutos_in }}</p>
+                    <p><strong>Total Mensagens:</strong> {{ trimestre.total_mensagens_in }}</p>
+                    <p><strong>Total Sessões Internet:</strong> {{ trimestre.total_sessoes_in }}</p>
+                    <p><strong>Volume Internet:</strong> {{ trimestre.total_volume_in }} Mbit</p>
+                </div>
+                <!-- OUT -->
+                <div class="col-md-6">
+                    <h5>Roaming OUT</h5>
+                    <p><strong>Total Chamadas:</strong> {{ trimestre.total_chamadas_out }}</p>
+                    <p><strong>Total Minutos:</strong> {{ trimestre.total_minutos_out }}</p>
+                    <p><strong>Total Mensagens:</strong> {{ trimestre.total_mensagens_out }}</p>
+                    <p><strong>Total Sessões Internet:</strong> {{ trimestre.total_sessoes_out }}</p>
+                    <p><strong>Volume Internet:</strong> {{ trimestre.total_volume_out }} Mbit</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+
+    <h3>Totais Anuais</h3>
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+            Ano {{ ano }}{% if operadora_selecionada %} - {{ operadora_selecionada|upper }}{% endif %}
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <!-- IN -->
+                <div class="col-md-6">
+                    <h5>Roaming IN</h5>
+                    <p><strong>Total Chamadas:</strong> {{ total_chamadas_in_anual }}</p>
+                    <p><strong>Total Minutos:</strong> {{ total_minutos_in_anual }}</p>
+                    <p><strong>Total Mensagens:</strong> {{ total_mensagens_in_anual }}</p>
+                    <p><strong>Total Sessões Internet:</strong> {{ total_sessoes_in_anual }}</p>
+                    <p><strong>Volume Internet:</strong> {{ total_volume_in_anual }} Mbit</p>
+                </div>
+                <!-- OUT -->
+                <div class="col-md-6">
+                    <h5>Roaming OUT</h5>
+                    <p><strong>Total Chamadas:</strong> {{ total_chamadas_out_anual }}</p>
+                    <p><strong>Total Minutos:</strong> {{ total_minutos_out_anual }}</p>
+                    <p><strong>Total Mensagens:</strong> {{ total_mensagens_out_anual }}</p>
+                    <p><strong>Total Sessões Internet:</strong> {{ total_sessoes_out_anual }}</p>
+                    <p><strong>Volume Internet:</strong> {{ total_volume_out_anual }} Mbit</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <h3>Detalhes Mensais</h3>
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Mês</th>
+                    <th>Operadora</th>
+                    <th>Total Chamadas IN</th>
+                    <th>Total Minutos IN</th>
+                    <th>Total Chamadas OUT</th>
+                    <th>Total Minutos OUT</th>
+                    <th>Acordos</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for indicador in indicadores %}
+                <tr>
+                    <td>{{ indicador.get_mes_display }}</td>
+                    <td>{{ indicador.get_operadora_display }}</td>
+                    <td>{{ indicador.chamadas_originadas_rede }}</td>
+                    <td>{{ indicador.minutos_originados_rede }}</td>
+                    <td>{{ indicador.chamadas_originadas_operador_roaming }}</td>
+                    <td>{{ indicador.minutos_originados_operador_roaming }}</td>
+                    <td>{{ indicador.acordos_roaming_internacional }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="mt-4 mb-4">
+        <a href="{% url 'questionarios:trafego_roaming_internacional_list' %}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Voltar para a Lista
+        </a>
+        <button class="btn btn-primary" onclick="window.print()">
+            <i class="fas fa-print"></i> Imprimir Relatório
+        </button>
+    </div>
+</div>
+{% endblock %}

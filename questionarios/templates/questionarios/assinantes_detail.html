@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4">Detalhes do Indicador de Assinantes</h2>
+
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+            Informações Gerais
+        </div>
+        <div class="card-body">
+            <p><strong>Operadora:</strong> {{ indicador.get_operadora_display }}</p>
+            <p><strong>Ano:</strong> {{ indicador.ano }}</p>
+            <p><strong>Mês:</strong> {{ indicador.mes }}</p>
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+            Assinantes
+        </div>
+        <div class="card-body">
+            <p><strong>Pré-pago:</strong> {{ indicador.assinantes_pre_pago|default:"N/A" }}</p>
+            <p><strong>Pós-pago:</strong> {{ indicador.assinantes_pos_pago|default:"N/A" }}</p>
+            <p><strong>Telefonia Fixa:</strong> {{ indicador.assinantes_fixo|default:"N/A" }}</p>
+            <p><strong>Internet Móvel:</strong> {{ indicador.assinantes_internet_movel|default:"N/A" }}</p>
+            <p><strong>Internet Fixa:</strong> {{ indicador.assinantes_internet_fixa|default:"N/A" }}</p>
+        </div>
+    </div>
+
+    <a href="{% url 'questionarios:assinantes_update' indicador.pk %}" class="btn btn-primary">Editar</a>
+    <a href="{% url 'questionarios:assinantes_list' %}" class="btn btn-secondary">Voltar para a Lista</a>
+</div>
+{% endblock %} 

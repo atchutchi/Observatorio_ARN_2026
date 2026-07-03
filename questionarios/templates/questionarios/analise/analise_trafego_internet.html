@@ -1,0 +1,183 @@
+{% extends 'questionarios/analise/base_analise.html' %}
+{% load static %}
+
+{% block specific_charts %}
+<div class="row mt-4">
+    <div class="col-lg-6 mb-3">
+        <h5>Tráfego Internet por Tecnologia (Anual - Mercado)</h5>
+         <div style="position: relative; height:300px; width:100%">
+            <canvas id="internetTecnologiaChart"></canvas>
+        </div>
+    </div>
+     <div class="col-lg-6 mb-3">
+        <h5>Tráfego Internet por Categoria (Anual - Mercado)</h5>
+         <div style="position: relative; height:300px; width:100%">
+            <canvas id="internetCategoriaChart"></canvas>
+        </div>
+    </div>
+</div>
+<div class="row mt-4">
+    <div class="col-lg-12 mb-3">
+        <h5>Tráfego Total por Operadora (Anual)</h5>
+        <canvas id="trafegoInternetOperadoraChart"></canvas>
+    </div>
+</div>
+{% endblock %}
+
+{% block data_table %}
+<div class="card mt-4">
+    <div class="card-header">
+        Dados Detalhados de Tráfego Internet - {{ ano_selecionado }}
+    </div>
+    <div class="card-body">
+         <div class="table-responsive">
+            <table class="table table-bordered table-hover table-sm">
+                <thead class="table-light">
+                    <tr>
+                        <th>Operadora</th>
+                        <th>Período</th>
+                        <th>Total (GB)</th>
+                        <th>Satélite (GB)</th>
+                        <th>Hertziano (GB)</th>
+                        <th>Fibra (GB)</th>
+                        <th>Banda Larga Total (GB)</th>
+                        <th>Residencial (GB)</th>
+                        <th>Corporativo (GB)</th>
+                        <th>Bissau (GB)</th> 
+                        {# Add more relevant headers as needed #}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for op, op_data in analysis_data.items %}
+                        {% if op != 'TOTAL' %}
+                            <!-- Annual Data -->
+                            <tr class="table-primary">
+                                <td rowspan="5">{{ op }}</td>
+                                <td><b>Anual</b></td>
+                                <td>{{ op_data.annual.total_trafego_total|floatformat:2 }}</td>
+                                <td>{{ op_data.annual.total_por_via_satelite|floatformat:2 }}</td>
+                                <td>{{ op_data.annual.total_por_sistema_hertziano_fixo_terra|floatformat:2 }}</td>
+                                <td>{{ op_data.annual.total_fibra_otica|floatformat:2 }}</td>
+                                <td>{{ op_data.annual.total_banda_larga_total|floatformat:2 }}</td>
+                                <td>{{ op_data.annual.total_residencial|floatformat:2 }}</td>
+                                <td>{{ op_data.annual.total_corporativo_empresarial|floatformat:2 }}</td>
+                                <td>{{ op_data.annual.total_cidade_bissau|floatformat:2 }}</td>
+                            </tr>
+                            <!-- Quarterly Data -->
+                            {% for q, q_data in op_data.quarterly.items %}
+                            <tr>
+                                <td><b>{{ q }}</b></td>
+                                <td>{{ q_data.total_trafego_total|floatformat:2 }}</td>
+                                <td>{{ q_data.total_por_via_satelite|floatformat:2 }}</td>
+                                <td>{{ q_data.total_por_sistema_hertziano_fixo_terra|floatformat:2 }}</td>
+                                <td>{{ q_data.total_fibra_otica|floatformat:2 }}</td>
+                                <td>{{ q_data.total_banda_larga_total|floatformat:2 }}</td>
+                                <td>{{ q_data.total_residencial|floatformat:2 }}</td>
+                                <td>{{ q_data.total_corporativo_empresarial|floatformat:2 }}</td>
+                                <td>{{ q_data.total_cidade_bissau|floatformat:2 }}</td>
+                            </tr>
+                            {% endfor %}
+                        {% endif %}
+                    {% endfor %}
+                    <!-- Total Market -->
+                     <tr class="table-dark">
+                        <td rowspan="5"><b>TOTAL Mercado</b></td>
+                        <td><b>Anual</b></td>
+                        <td>{{ analysis_data.TOTAL.annual.total_trafego_total|floatformat:2 }}</td>
+                        <td>{{ analysis_data.TOTAL.annual.total_por_via_satelite|floatformat:2 }}</td>
+                        <td>{{ analysis_data.TOTAL.annual.total_por_sistema_hertziano_fixo_terra|floatformat:2 }}</td>
+                        <td>{{ analysis_data.TOTAL.annual.total_fibra_otica|floatformat:2 }}</td>
+                        <td>{{ analysis_data.TOTAL.annual.total_banda_larga_total|floatformat:2 }}</td>
+                        <td>{{ analysis_data.TOTAL.annual.total_residencial|floatformat:2 }}</td>
+                        <td>{{ analysis_data.TOTAL.annual.total_corporativo_empresarial|floatformat:2 }}</td>
+                        <td>{{ analysis_data.TOTAL.annual.total_cidade_bissau|floatformat:2 }}</td>
+                    </tr>
+                    {% for q, q_data in analysis_data.TOTAL.quarterly.items %}
+                    <tr class="table-secondary">
+                         <td><b>{{ q }}</b></td>
+                        <td>{{ q_data.total_trafego_total|floatformat:2 }}</td>
+                        <td>{{ q_data.total_por_via_satelite|floatformat:2 }}</td>
+                        <td>{{ q_data.total_por_sistema_hertziano_fixo_terra|floatformat:2 }}</td>
+                        <td>{{ q_data.total_fibra_otica|floatformat:2 }}</td>
+                        <td>{{ q_data.total_banda_larga_total|floatformat:2 }}</td>
+                        <td>{{ q_data.total_residencial|floatformat:2 }}</td>
+                        <td>{{ q_data.total_corporativo_empresarial|floatformat:2 }}</td>
+                        <td>{{ q_data.total_cidade_bissau|floatformat:2 }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <small class="text-muted">* Valores em Gigabytes (GB) (presumido).</small>
+    </div>
+</div>
+{% endblock %}
+
+{% block specific_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const analysisData = window.getAnalysisData();
+    if (!analysisData) return;
+    console.log("Trafego Internet Data:", analysisData);
+
+    const operators = Object.keys(analysisData).filter(op => op !== 'TOTAL');
+    const colors = window.getOperatorColors();
+    const marketAnnual = analysisData['TOTAL']?.annual || {};
+
+    // Chart: Tráfego Internet por Tecnologia (Anual - Mercado)
+    const tecnologiaData = {
+        labels: ['Satélite', 'Hertziano', 'Fibra Ótica'],
+        datasets: [{
+            label: 'Tráfego por Tecnologia (GB - Anual)',
+            data: [
+                marketAnnual.total_por_via_satelite || 0,
+                marketAnnual.total_por_sistema_hertziano_fixo_terra || 0,
+                marketAnnual.total_fibra_otica || 0,
+            ],
+            backgroundColor: [
+                'rgba(54, 162, 235, 0.6)',
+                'rgba(255, 206, 86, 0.6)',
+                'rgba(75, 192, 192, 0.6)',
+             ],
+        }]
+    };
+    window.createAnalysisChart('internetTecnologiaChart', 'pie', tecnologiaData.labels, tecnologiaData.datasets);
+
+    // Chart: Tráfego Internet por Categoria (Anual - Mercado)
+    const categoriaData = {
+        labels: ['Residencial', 'Corporativo', 'Público', 'Ensino', 'Saúde', 'ONG/Outros'],
+        datasets: [{
+            label: 'Tráfego por Categoria (GB - Anual)',
+            data: [
+                marketAnnual.total_residencial || 0,
+                marketAnnual.total_corporativo_empresarial || 0,
+                marketAnnual.total_instituicoes_publicas || 0,
+                marketAnnual.total_instituicoes_ensino || 0,
+                marketAnnual.total_instituicoes_saude || 0,
+                marketAnnual.total_ong_outros || 0,
+            ],
+             backgroundColor: [
+                'rgba(54, 162, 235, 0.6)',
+                'rgba(255, 99, 132, 0.6)',
+                'rgba(75, 192, 192, 0.6)',
+                'rgba(153, 102, 255, 0.6)',
+                'rgba(255, 159, 64, 0.6)',
+                'rgba(201, 203, 207, 0.6)'
+             ],
+        }]
+    };
+    window.createAnalysisChart('internetCategoriaChart', 'doughnut', categoriaData.labels, categoriaData.datasets);
+
+    // Chart: Tráfego Total por Operadora (Anual)
+    const trafegoOpData = {
+        labels: operators,
+        datasets: [{
+            label: 'Tráfego Internet Total (GB - Anual)',
+            data: operators.map(op => analysisData[op]?.annual?.total_trafego_total || 0),
+            backgroundColor: operators.map(op => colors[op] || '#cccccc'),
+        }]
+    };
+    window.createAnalysisChart('trafegoInternetOperadoraChart', 'bar', trafegoOpData.labels, trafegoOpData.datasets);
+});
+</script>
+{% endblock %} 

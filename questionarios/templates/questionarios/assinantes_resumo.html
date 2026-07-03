@@ -1,0 +1,147 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/style.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2>Resumo Anual {{ ano }} - Assinantes</h2>
+            {% if operadora_selecionada %}
+                <p class="text-muted">Operadora: {{ operadora_selecionada|upper }}</p>
+            {% endif %}
+        </div>
+        <a href="{% url 'questionarios:assinantes_list' %}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Voltar à Lista
+        </a>
+    </div>
+
+    <!-- Resumo Anual -->
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0"><i class="fas fa-chart-bar me-2"></i>Totais Anuais</h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-2">
+                    <div class="text-center">
+                        <h6>Pré-pago</h6>
+                        <h4 class="text-primary">{{ total_pre_pago_anual|floatformat:0 }}</h4>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="text-center">
+                        <h6>Pós-pago</h6>
+                        <h4 class="text-success">{{ total_pos_pago_anual|floatformat:0 }}</h4>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="text-center">
+                        <h6>Fixo</h6>
+                        <h4 class="text-info">{{ total_fixo_anual|floatformat:0 }}</h4>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="text-center">
+                        <h6>Internet Móvel</h6>
+                        <h4 class="text-warning">{{ total_internet_movel_anual|floatformat:0 }}</h4>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="text-center">
+                        <h6>Internet Fixa</h6>
+                        <h4 class="text-secondary">{{ total_internet_fixa_anual|floatformat:0 }}</h4>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="text-center border-start">
+                        <h6>Total Geral</h6>
+                        <h3 class="text-dark"><strong>{{ total_geral_anual|floatformat:0 }}</strong></h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Resumo Trimestral -->
+    <div class="card mb-4">
+        <div class="card-header bg-light">
+            <h5 class="mb-0"><i class="fas fa-chart-line me-2"></i>Resumo Trimestral</h5>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-striped mb-0">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Trimestre</th>
+                            <th>Pré-pago</th>
+                            <th>Pós-pago</th>
+                            <th>Fixo</th>
+                            <th>Internet Móvel</th>
+                            <th>Internet Fixa</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for trimestre in totais_trimestrais %}
+                        <tr>
+                            <td><strong>{{ trimestre.trimestre }}º Trimestre</strong></td>
+                            <td>{{ trimestre.total_pre_pago|floatformat:0 }}</td>
+                            <td>{{ trimestre.total_pos_pago|floatformat:0 }}</td>
+                            <td>{{ trimestre.total_fixo|floatformat:0 }}</td>
+                            <td>{{ trimestre.total_internet_movel|floatformat:0 }}</td>
+                            <td>{{ trimestre.total_internet_fixa|floatformat:0 }}</td>
+                            <td><strong>{{ trimestre.total_geral|floatformat:0 }}</strong></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dados Mensais -->
+    <div class="card">
+        <div class="card-header bg-light">
+            <h5 class="mb-0"><i class="fas fa-calendar me-2"></i>Dados Mensais</h5>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-striped mb-0">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Mês</th>
+                            <th>Operadora</th>
+                            <th>Pré-pago</th>
+                            <th>Pós-pago</th>
+                            <th>Fixo</th>
+                            <th>Internet Móvel</th>
+                            <th>Internet Fixa</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for indicador in indicadores %}
+                        <tr>
+                            <td>{{ indicador.get_mes_display }}</td>
+                            <td>{{ indicador.get_operadora_display }}</td>
+                            <td>{{ indicador.assinantes_pre_pago|default:"-" }}</td>
+                            <td>{{ indicador.assinantes_pos_pago|default:"-" }}</td>
+                            <td>{{ indicador.assinantes_fixo|default:"-" }}</td>
+                            <td>{{ indicador.assinantes_internet_movel|default:"-" }}</td>
+                            <td>{{ indicador.assinantes_internet_fixa|default:"-" }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="7" class="text-center text-muted py-3">Nenhum dado encontrado para o ano {{ ano }}.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

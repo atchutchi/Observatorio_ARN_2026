@@ -1,0 +1,489 @@
+/* Estilos gerais */
+:root {
+    --primary-color: #3498db;
+    --secondary-color: #2980b9;
+    --accent-color: #f39c12;
+    --text-color: #333;
+    --light-color: #f8f9fa;
+    --dark-color: #343a40;
+    --success-color: #28a745;
+    --danger-color: #dc3545;
+    --warning-color: #ffc107;
+    --info-color: #17a2b8;
+    --orange-primary: #FF6600;   /* Orange (primary) */
+    --yellow-primary: #DC3545;   /* TELECEL Yellow */
+    --red-primary: #DC3545;      /* TELECEL red */
+    --green-primary: #00AA55;    /* Telecom green */
+    --red-accent: #FF4444;       /* Accent color */
+    --dark-bg: #212529;          /* Dark background */
+    --light-bg: #F8F9FA;         /* Light background */
+    --text-dark: #343A40;        /* Dark text */
+    --text-light: #F8F9FA;       /* Light text */
+    --border-light: #DEE2E6;     /* Light border */
+}
+
+body {
+    font-family: 'Roboto', sans-serif;
+    color: var(--text-dark);
+    background-color: #f5f7fa;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    color: var(--light-bg);
+}
+
+main {
+    flex: 1;
+}
+
+/* Ajustes da Navbar */
+.navbar-brand {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    font-size: 1.4rem;
+}
+
+.navbar-dark.bg-primary {
+    background-color: var(--primary-color) !important;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Cards e Componentes */
+.card {
+    border-radius: 8px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+    border: none;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+}
+
+.card-header {
+    background-color: rgba(52, 152, 219, 0.1);
+    border-bottom: 1px solid rgba(52, 152, 219, 0.2);
+    font-weight: 600;
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.btn-primary:hover, .btn-primary:focus {
+    background-color: var(--secondary-color);
+    border-color: var(--secondary-color);
+}
+
+/* Dashboard e gráficos */
+.stats-card {
+    border-left: 4px solid var(--primary-color);
+    background-color: white;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    transition: transform 0.3s ease;
+}
+
+.stats-card:hover {
+    transform: translateY(-5px);
+}
+
+.stats-card .stats-icon {
+    font-size: 2.5rem;
+    color: var(--primary-color);
+    opacity: 0.8;
+}
+
+.stats-card.orange {
+    border-left-color: var(--accent-color);
+}
+
+.stats-card.orange .stats-icon {
+    color: var(--accent-color);
+}
+
+.stats-card.green {
+    border-left-color: var(--success-color);
+}
+
+.stats-card.green .stats-icon {
+    color: var(--success-color);
+}
+
+.stats-card.red {
+    border-left-color: var(--danger-color);
+}
+
+.stats-card.red .stats-icon {
+    color: var(--danger-color);
+}
+
+.chart-container {
+    position: relative;
+    background-color: white;
+    padding: 1rem;
+    border-radius: 8px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+    margin-bottom: 1.5rem;
+}
+
+/* Tabelas */
+.table {
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+}
+
+.table thead th {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+}
+
+.table-hover tbody tr:hover {
+    background-color: rgba(52, 152, 219, 0.05);
+}
+
+/* Formulários */
+.form-control, .form-select {
+    border-radius: 5px;
+    border: 1px solid #dce1e4;
+    padding: 0.5rem 0.75rem;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.25rem rgba(52, 152, 219, 0.25);
+}
+
+/* Footer */
+footer {
+    margin-top: auto;
+    background-color: var(--dark-color);
+}
+
+footer a {
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+footer a:hover {
+    color: var(--accent-color) !important;
+    text-decoration: none;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .container {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+    
+    .stats-card {
+        padding: 1rem;
+    }
+    
+    .stats-card .stats-icon {
+        font-size: 2rem;
+    }
+}
+
+/* Animações */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.fade-in {
+    animation: fadeIn 0.5s ease forwards;
+}
+
+/* Estilos para operadoras */
+.operadora-logo {
+    max-height: 50px;
+    object-fit: contain;
+}
+
+.operadora-card {
+    border-top: 4px solid var(--primary-color);
+}
+
+.operadora-card.orange {
+    border-top-color: var(--accent-color);
+}
+
+.operadora-card.green {
+    border-top-color: var(--success-color);
+}
+
+.operadora-card.red {
+    border-top-color: var(--danger-color);
+}
+
+/* Personalização do tema claro/escuro */
+@media (prefers-color-scheme: dark) {
+    body.theme-auto {
+        background-color: #1a1a1a;
+        color: #f5f5f5;
+    }
+    
+    body.theme-auto .card,
+    body.theme-auto .chart-container,
+    body.theme-auto .stats-card {
+        background-color: #2c2c2c;
+        color: #f5f5f5;
+    }
+    
+    body.theme-auto h1, 
+    body.theme-auto h2, 
+    body.theme-auto h3, 
+    body.theme-auto h4, 
+    body.theme-auto h5, 
+    body.theme-auto h6 {
+        color: #f5f5f5;
+    }
+}
+
+/* Hero Section Full Height - REVERTED */
+.hero-section {
+    /* min-height: 100vh; */ /* Reverted */
+    /* display: flex; */ /* Reverted */
+    /* align-items: center; */ /* Reverted */
+    /* justify-content: center; */ /* Reverted */
+    /* width: 100%; */ /* Reverted */
+    /* background: linear-gradient(135deg, #f89b29, #ff4e50); */ /* Reverted - Keep original background */
+    /* color: white; */ /* Reverted - Keep original color */
+    /* Add back original padding/margins if they were in hero.css or here before */
+    padding: 5rem 0; /* Example padding */
+    margin-bottom: 3rem; /* Example margin */
+    /* Restore any other original styles for .hero-section */
+}
+
+/* Remove or comment out these rules */
+/*
+.hero-section .row {
+   min-height: inherit; 
+}
+.hero-content-column {
+    display: flex;
+    flex-direction: column;
+    justify-content: center; 
+}
+.hero-image-column {
+     min-height: 300px; 
+}
+.hero-image {
+    max-height: 80vh; 
+    object-fit: contain; 
+}
+*/
+
+/* Keep existing hero title, subtitle, buttons styles (assume they are in hero.css) */
+
+/* Stats Cards */
+.stats-card {
+    background-color: white;
+    border-radius: 1rem;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.08);
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border-left: 5px solid var(--blue-primary);
+}
+
+.stats-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 1rem 2rem rgba(0, 0, 0, 0.12);
+}
+
+.stats-card.orange {
+    border-left-color: var(--orange-primary);
+}
+
+.stats-card.yellow {
+    border-left-color: var(--yellow-primary);
+}
+
+.stats-card.green {
+    border-left-color: var(--green-primary);
+}
+
+.stats-card.red {
+    border-left-color: var(--red-accent);
+}
+
+.stats-icon {
+    width: 48px;
+    height: 48px;
+    background-color: #f0f0f0;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    color: var(--text-dark);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .hero-title {
+        font-size: 2.25rem;
+    }
+    
+    .hero-section {
+        padding: 3rem 0;
+    }
+}
+
+/* Section styling */
+.section-title {
+    position: relative;
+    margin-bottom: 2rem;
+    font-weight: 700;
+    color: var(--text-dark);
+}
+
+.section-title::after {
+    content: '';
+    display: block;
+    width: 80px;
+    height: 4px;
+    background: var(--orange-primary);
+    margin-top: 0.75rem;
+}
+
+.section {
+    padding: 4rem 0;
+}
+
+.section-light {
+    background-color: var(--light-bg);
+}
+
+/* Card styling */
+.custom-card {
+    border-radius: 1rem;
+    border: none;
+    box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.08);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    overflow: hidden;
+}
+
+.custom-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.12);
+}
+
+.card-img-container {
+    height: 180px;
+    overflow: hidden;
+}
+
+.card-img-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+}
+
+.custom-card:hover .card-img-container img {
+    transform: scale(1.1);
+}
+
+.custom-card .card-body {
+    padding: 1.5rem;
+}
+
+/* Custom button styling */
+.btn-custom {
+    border-radius: 2rem;
+    padding: 0.5rem 1.5rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.btn-custom:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+.btn-primary {
+    background-color: var(--blue-primary);
+    border-color: var(--blue-primary);
+}
+
+.btn-primary:hover {
+    background-color: #0055aa;
+    border-color: #0055aa;
+}
+
+.btn-outline-primary {
+    color: var(--blue-primary);
+    border-color: var(--blue-primary);
+}
+
+.btn-outline-primary:hover {
+    background-color: var(--blue-primary);
+}
+
+/* Ensure container within hero takes height if needed */
+.hero-section > .container {
+     width: 100%; /* Allow container to stretch */
+}
+
+/* Footer Styles */
+footer a.text-light:hover {
+    color: #adb5bd !important;
+    text-decoration: underline;
+}
+
+footer hr {
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Card styles */
+.card {
+    border: 1px solid var(--border-light);
+    transition: box-shadow 0.3s ease-in-out, transform 0.3s ease-in-out;
+}
+
+.card:hover {
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+    transform: translateY(-5px);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .section-title {
+        font-size: 2rem;
+    }
+}
+
+/* Floating Action Button (FAB) for Chatbot */
+.fab-chatbot {
+    position: fixed;
+    bottom: 25px;
+    right: 25px;
+    width: 60px;
+    height: 60px;
+    font-size: 1.5rem; /* Adjust icon size */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1999; /* Increased z-index significantly */
+    background-color: var(--blue-primary);
+    border: none;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.fab-chatbot:hover {
+    background-color: #0a58ca; /* Darker shade on hover */
+    transform: scale(1.1);
+} 

@@ -1,0 +1,26 @@
+{% extends "questionarios/partials/base_list.html" %}
+
+{% block indicator_title %}Indicadores de Tráfego Terminado{% endblock %}
+{% block indicator_subtitle %}Gestão e controle de dados de tráfego terminado por operadora{% endblock %}
+
+{% block create_url %}{% url 'questionarios:trafego_terminado_create' %}{% endblock %}
+
+{% block table_headers %}
+<th>Rede Própria</th>
+<th>Outras Redes</th>
+<th>Total</th>
+{% endblock %}
+
+{% block table_row_data %}
+<td>{{ indicador.trafego_rede_propria|default:"-" }}</td>
+<td>{{ indicador.trafego_outras_redes|default:"-" }}</td>
+<td><strong>{{ indicador.calcular_total_trafego|default:"-" }}</strong></td>
+{% endblock %}
+
+{% block detail_url %}{% url 'questionarios:trafego_terminado_detail' indicador.pk %}{% endblock %}
+{% block update_url %}{% url 'questionarios:trafego_terminado_update' indicador.pk %}{% endblock %}
+{% block delete_url %}{% url 'questionarios:trafego_terminado_delete' indicador.pk %}{% endblock %}
+
+{% block table_colspan %}7{% endblock %}
+
+{% block resumo_url %}{% url 'questionarios:trafego_terminado_resumo' 2024 %}{% endblock %}

@@ -1,0 +1,309 @@
+{% extends "dashboard/base_dashboard.html" %}
+{% load static %}
+{% load humanize %}
+
+{% block dashboard_title %}Relatório de Mercado {{ year }}{% endblock %}
+
+{% block dashboard_content %}
+<!-- Header do Relatório -->
+<div class="platform-card mb-4">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <div>
+            <h2 class="card-title mb-0">
+                <i class="fas fa-chart-area me-2"></i>
+                Relatório de Mercado de Telecomunicações
+            </h2>
+            <p class="card-subtitle">Análise completa do mercado - {{ year }}</p>
+        </div>
+        <div class="export-buttons">
+            <a href="#" class="btn-export" data-format="pdf" data-report-type="market">
+                <i class="fas fa-file-pdf"></i> PDF
+            </a>
+            <a href="#" class="btn-export" data-format="excel" data-report-type="market">
+                <i class="fas fa-file-excel"></i> Excel
+            </a>
+            <a href="#" class="btn-export" data-format="csv" data-report-type="market">
+                <i class="fas fa-file-csv"></i> CSV
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Filtros -->
+<div class="dashboard-filters">
+    <h5 class="dashboard-filters-title">Filtros de Análise</h5>
+    <form method="get" class="dashboard-filter-group">
+        <div class="form-group">
+            <label class="form-label">Ano</label>
+            <select name="year" class="form-select-questionario dashboard-filter">
+                {% for ano in anos_disponiveis %}
+                <option value="{{ ano }}" {% if ano == year %}selected{% endif %}>{{ ano }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group">
+            <label class="form-label">Seção</label>
+            <select name="section" class="form-select-questionario dashboard-filter">
+                <option value="">Todas as seções</option>
+                <option value="panorama">Panorama Geral</option>
+                <option value="trafego">Tráfego de Voz</option>
+                <option value="banda_larga">Banda Larga</option>
+                <option value="receitas">Receitas</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <button type="submit" class="btn-binance">
+                <i class="fas fa-filter me-2"></i>Aplicar Filtros
+            </button>
+        </div>
+    </form>
+</div>
+
+<!-- KPIs Principais -->
+<div class="dashboard-kpis">
+    {% with panorama=report_data.panorama_geral %}
+    <div class="kpi-card kpi-primary">
+        <div class="kpi-icon">
+            <i class="fas fa-users"></i>
+        </div>
+        <div class="kpi-value" data-value="{{ panorama.total_assinantes }}">
+            {{ panorama.total_assinantes|floatformat:0 }}
+        </div>
+        <div class="kpi-label">Total de Assinantes</div>
+        <div class="kpi-change {% if panorama.crescimento_percentual > 0 %}positive{% elif panorama.crescimento_percentual < 0 %}negative{% else %}neutral{% endif %}">
+            <i class="fas fa-{% if panorama.crescimento_percentual > 0 %}arrow-up{% elif panorama.crescimento_percentual < 0 %}arrow-down{% else %}minus{% endif %}"></i>
+            {{ panorama.crescimento_percentual }}%
+        </div>
+    </div>
+    
+    <div class="kpi-card kpi-info">
+        <div class="kpi-icon">
+            <i class="fas fa-chart-pie"></i>
+        </div>
+        <div class="kpi-value">{{ panorama.taxa_penetracao }}%</div>
+        <div class="kpi-label">Taxa de Penetração</div>
+        <div class="kpi-change neutral">
+            <i class="fas fa-chart-line"></i>
+            Estável
+        </div>
+    </div>
+    
+    <div class="kpi-card kpi-success">
+        <div class="kpi-icon">
+            <i class="fas fa-dollar-sign"></i>
+        </div>
+        <div class="kpi-value" data-value="{{ report_data.receitas.volume_total }}">
+            {{ report_data.receitas.volume_total|floatformat:0|default:"0" }}M
+        </div>
+        <div class="kpi-label">Receitas (FCFA)</div>
+        <div class="kpi-change {% if report_data.receitas.crescimento_percentual > 0 %}positive{% else %}negative{% endif %}">
+            <i class="fas fa-arrow-up"></i>
+            {{ report_data.receitas.crescimento_percentual|default:"0" }}%
+        </div>
+    </div>
+    
+    <div class="kpi-card kpi-warning">
+        <div class="kpi-icon">
+            <i class="fas fa-phone"></i>
+        </div>
+        <div class="kpi-value" data-value="{{ report_data.trafego_voz.volume_total }}">
+            {{ report_data.trafego_voz.volume_total|floatformat:0|default:"0" }}
+        </div>
+        <div class="kpi-label">Volume Tráfego (min)</div>
+        <div class="kpi-change positive">
+            <i class="fas fa-arrow-up"></i>
+            +28%
+        </div>
+    </div>
+    {% endwith %}
+</div>
+
+<!-- Gráficos Principais -->
+<div class="dashboard-widgets">
+    <!-- Market Share -->
+    <div class="widget-card">
+        <div class="widget-header">
+            <h3 class="widget-title">Quota de Mercado por Operadora</h3>
+            <p class="widget-subtitle">Distribuição de assinantes - {{ year }}</p>
+        </div>
+        <div class="widget-body">
+            <div class="dashboard-chart-container">
+                <canvas id="marketShareChart"></canvas>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Resumo por Operadora -->
+    <div class="widget-card">
+        <div class="widget-header">
+            <h3 class="widget-title">Resumo por Operadora</h3>
+            <p class="widget-subtitle">Principais indicadores</p>
+        </div>
+        <div class="widget-body">
+            <div class="table-responsive">
+                <table class="dashboard-table">
+                    <thead>
+                        <tr>
+                            <th>Operadora</th>
+                            <th>Assinantes</th>
+                            <th>Market Share</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in report_data.panorama_geral.dados_por_operadora %}
+                        <tr>
+                            <td>
+                                <span class="operadora-badge {{ item.operadora|lower }}">
+                                    {{ item.operadora }}
+                                </span>
+                            </td>
+                            <td>{{ item.assinantes|floatformat:0 }}</td>
+                            <td>{{ item.percentual|floatformat:1 }}%</td>
+                            <td>
+                                <span class="status-indicator online"></span>
+                                Ativa
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Análise de Tráfego -->
+<div class="platform-card">
+    <div class="card-header">
+        <h3 class="card-title">
+            <i class="fas fa-phone me-2"></i>
+            Análise de Tráfego de Voz
+        </h3>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="dashboard-chart-container">
+                    <h5 class="dashboard-chart-title">Distribuição de Tráfego</h5>
+                    <canvas id="trafficDistributionChart"></canvas>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <h5 class="mb-3">Estatísticas de Tráfego</h5>
+                {% with trafego=report_data.trafego_voz.distribuicao_percentual %}
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        <span>On-Net</span>
+                        <span class="fw-bold">{{ trafego.on_net|default:"0" }}%</span>
+                    </div>
+                    <div class="progress" style="height: 8px;">
+                        <div class="progress-bar" style="width: {{ trafego.on_net|default:"0" }}%; background-color: var(--binance-success);"></div>
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        <span>Off-Net</span>
+                        <span class="fw-bold">{{ trafego.off_net|default:"0" }}%</span>
+                    </div>
+                    <div class="progress" style="height: 8px;">
+                        <div class="progress-bar" style="width: {{ trafego.off_net|default:"0" }}%; background-color: var(--binance-warning);"></div>
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        <span>Internacional</span>
+                        <span class="fw-bold">{{ trafego.internacional|default:"0" }}%</span>
+                    </div>
+                    <div class="progress" style="height: 8px;">
+                        <div class="progress-bar" style="width: {{ trafego.internacional|default:"0" }}%; background-color: var(--binance-info);"></div>
+                    </div>
+                </div>
+                {% endwith %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="quick-actions">
+    <a href="{% url 'dashboard:comparative-report' %}?year={{ year }}" class="quick-action">
+        <i class="fas fa-balance-scale quick-action-icon"></i>
+        <span>Análise Comparativa</span>
+    </a>
+    
+    <a href="{% url 'dashboard:executive-dashboard' %}?year={{ year }}" class="quick-action">
+        <i class="fas fa-crown quick-action-icon"></i>
+        <span>Dashboard Executivo</span>
+    </a>
+    
+    <a href="{% url 'dashboard:report-history' %}" class="quick-action">
+        <i class="fas fa-history quick-action-icon"></i>
+        <span>Histórico de Relatórios</span>
+    </a>
+</div>
+
+<!-- Dados JSON para JavaScript -->
+<script id="market-share-data" type="application/json">
+    {{ report_data.panorama_geral.market_share|safe }}
+</script>
+
+<script id="traffic-data" type="application/json">
+    {{ report_data.trafego_voz.por_operadora|safe }}
+</script>
+{% endblock %}
+
+{% block dashboard_js %}
+<script>
+    // Inicializar gráficos específicos deste relatório
+    document.addEventListener('DOMContentLoaded', function() {
+        initializeMarketReportCharts();
+    });
+    
+    function initializeMarketReportCharts() {
+        // Traffic Distribution Chart
+        const trafficCtx = document.getElementById('trafficDistributionChart');
+        if (trafficCtx) {
+            const trafficData = {{ report_data.trafego_voz.distribuicao_percentual|safe }};
+            
+            new Chart(trafficCtx, {
+                type: 'pie',
+                data: {
+                    labels: ['On-Net', 'Off-Net', 'Internacional'],
+                    datasets: [{
+                        data: [
+                            trafficData.on_net || 0,
+                            trafficData.off_net || 0,
+                            trafficData.internacional || 0
+                        ],
+                        backgroundColor: [
+                            'var(--binance-success)',
+                            'var(--binance-warning)',
+                            'var(--binance-info)'
+                        ],
+                        borderColor: '#161A1E',
+                        borderWidth: 3
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                color: '#F0F0F0',
+                                usePointStyle: true,
+                                padding: 20,
+                                font: { family: 'Inter' }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+    }
+</script>
+{% endblock %}

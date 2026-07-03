@@ -1,0 +1,176 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+   <h2 class="mb-4">Resumo Tarifário TELECEL - {{ ano }}</h2>
+
+   <!-- Resumo Trimestral -->
+   <div class="row mb-4">
+       {% for trimestre in totais_trimestrais %}
+       <div class="col-md-6 mb-4">
+           <div class="card">
+               <div class="card-header bg-primary text-white">
+                   {{ trimestre.trimestre }}º Trimestre
+               </div>
+               <div class="card-body">
+                   <!-- Equipamentos -->
+                   <h5 class="card-title">Equipamentos</h5>
+                   <p><strong>Total Equipamentos:</strong> {{ trimestre.total_equipamentos }}</p>
+
+                   <!-- Pacotes -->
+                   <h5 class="card-title mt-3">Pacotes de Internet</h5>
+                   <p><strong>Total Pacotes Diários:</strong> {{ trimestre.total_pacotes_diarios }}</p>
+                   <p><strong>Total Pacotes Semanais:</strong> {{ trimestre.total_pacotes_semanais }}</p>
+                   <p><strong>Total Pacotes Mensais:</strong> {{ trimestre.total_pacotes_mensais }}</p>
+                   <p><strong>Total Pacotes Y'ello:</strong> {{ trimestre.total_pacotes_yello }}</p>
+                   <p><strong>Total Pacotes Ilimitados:</strong> {{ trimestre.total_pacotes_ilimitados }}</p>
+
+                   <!-- Estatísticas -->
+                   <h5 class="card-title mt-3">Estatísticas</h5>
+                   <p><strong>Média de Consumo:</strong> {{ trimestre.media_consumo }} MB</p>
+                   <p><strong>Pacote Mais Vendido:</strong> {{ trimestre.pacote_mais_vendido }}</p>
+               </div>
+           </div>
+       </div>
+       {% endfor %}
+   </div>
+
+   <!-- Resumo Anual -->
+   <div class="card mb-4">
+       <div class="card-header bg-success text-white">
+           Resumo Anual {{ ano }}
+       </div>
+       <div class="card-body">
+           <!-- Equipamentos -->
+           <div class="row mb-4">
+               <div class="col-md-12">
+                   <h5>Equipamentos</h5>
+                   <p><strong>Total Equipamentos Anual:</strong> {{ total_equipamentos_anual }}</p>
+               </div>
+           </div>
+
+           <!-- Pacotes -->
+           <div class="row mb-4">
+               <div class="col-md-12">
+                   <h5>Pacotes de Internet</h5>
+                   <div class="table-responsive">
+                       <table class="table table-striped">
+                           <thead>
+                               <tr>
+                                   <th>Tipo de Pacote</th>
+                                   <th>Total Anual</th>
+                                   <th>Média Mensal</th>
+                                   <th>Percentual</th>
+                               </tr>
+                           </thead>
+                           <tbody>
+                               <tr>
+                                   <td>Pacotes Diários</td>
+                                   <td>{{ total_pacotes_diarios_anual }}</td>
+                                   <td>{{ media_pacotes_diarios }}</td>
+                                   <td>{{ percentual_pacotes_diarios }}%</td>
+                               </tr>
+                               <tr>
+                                   <td>Pacotes Semanais</td>
+                                   <td>{{ total_pacotes_semanais_anual }}</td>
+                                   <td>{{ media_pacotes_semanais }}</td>
+                                   <td>{{ percentual_pacotes_semanais }}%</td>
+                               </tr>
+                               <tr>
+                                   <td>Pacotes Mensais</td>
+                                   <td>{{ total_pacotes_mensais_anual }}</td>
+                                   <td>{{ media_pacotes_mensais }}</td>
+                                   <td>{{ percentual_pacotes_mensais }}%</td>
+                               </tr>
+                               <tr>
+                                   <td>Pacotes Y'ello</td>
+                                   <td>{{ total_pacotes_yello_anual }}</td>
+                                   <td>{{ media_pacotes_yello }}</td>
+                                   <td>{{ percentual_pacotes_yello }}%</td>
+                               </tr>
+                               <tr>
+                                   <td>Pacotes Ilimitados</td>
+                                   <td>{{ total_pacotes_ilimitados_anual }}</td>
+                                   <td>{{ media_pacotes_ilimitados }}</td>
+                                   <td>{{ percentual_pacotes_ilimitados }}%</td>
+                               </tr>
+                           </tbody>
+                       </table>
+                   </div>
+               </div>
+           </div>
+
+           <!-- Gráfico de Evolução Mensal -->
+           <div class="row mb-4">
+               <div class="col-md-12">
+                   <h5>Evolução Mensal</h5>
+                   <canvas id="evolucaoMensalChart" height="200"></canvas>
+               </div>
+           </div>
+
+           <!-- Estatísticas Gerais -->
+           <div class="row">
+               <div class="col-md-6">
+                   <h5>Estatísticas Gerais</h5>
+                   <p><strong>Mês com Maior Venda:</strong> {{ mes_maior_venda }}</p>
+                   <p><strong>Mês com Menor Venda:</strong> {{ mes_menor_venda }}</p>
+                   <p><strong>Pacote Mais Popular:</strong> {{ pacote_mais_popular }}</p>
+                   <p><strong>Média de Consumo Anual:</strong> {{ media_consumo_anual }} MB</p>
+               </div>
+               <div class="col-md-6">
+                   <h5>Comparativo Anterior</h5>
+                   <p><strong>Variação Equipamentos:</strong> {{ variacao_equipamentos }}%</p>
+                   <p><strong>Variação Pacotes:</strong> {{ variacao_pacotes }}%</p>
+                   <p><strong>Tendência:</strong> {{ tendencia }}</p>
+               </div>
+           </div>
+       </div>
+   </div>
+
+   <!-- Botões de Ação -->
+   <div class="mb-4">
+       <a href="{% url 'questionarios:tarifario_telecel_list' %}" class="btn btn-secondary">
+           <i class="fas fa-arrow-left"></i> Voltar para a Lista
+       </a>
+       <button class="btn btn-primary" onclick="window.print()">
+           <i class="fas fa-print"></i> Imprimir Relatório
+       </button>
+       <a href="#" class="btn btn-success" id="exportExcel">
+           <i class="fas fa-file-excel"></i> Exportar para Excel
+       </a>
+   </div>
+</div>
+
+{% block extra_js %}
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+   // Configuração do gráfico de evolução mensal
+   const ctx = document.getElementById('evolucaoMensalChart').getContext('2d');
+   new Chart(ctx, {
+       type: 'line',
+       data: {
+           labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'],
+           datasets: [{
+               label: 'Total de Pacotes',
+               data: {{ dados_mensais|safe }},
+               borderColor: 'rgb(75, 192, 192)',
+               tension: 0.1
+           }]
+       },
+       options: {
+           responsive: true,
+           plugins: {
+               legend: {
+                   position: 'top',
+               },
+               title: {
+                   display: true,
+                   text: 'Evolução Mensal de Vendas de Pacotes'
+               }
+           }
+       }
+   });
+</script>
+{% endblock %}
+{% endblock %}

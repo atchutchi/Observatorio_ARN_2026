@@ -1,0 +1,42 @@
+{% extends "account/base.html" %}
+{% load i18n %}
+
+{% block head_title %}Confirmar Email - {% trans "Confirm Email" %}{% endblock %}
+
+{% block auth_title %}Confirmar Email{% endblock %}
+{% block auth_subtitle %}Confirme seu endereço de email{% endblock %}
+
+{% block content %}
+<div class="text-center mb-4">
+    <div class="mb-3">
+        <i class="fas fa-envelope-open fa-3x text-primary"></i>
+    </div>
+    
+    {% if confirmation %}
+        <p class="text-muted">
+            Por favor, confirme que <strong>{{ confirmation.email_address.email }}</strong> 
+            é um endereço de email para o usuário {{ confirmation.email_address.user.get_full_name|default:confirmation.email_address.user.username }}.
+        </p>
+        
+        <form method="post" action="{% url 'account_confirm_email' confirmation.key %}">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-auth btn-success">
+                <i class="fas fa-check me-2"></i>Confirmar
+            </button>
+        </form>
+    {% else %}
+        <div class="alert alert-warning">
+            <i class="fas fa-exclamation-triangle me-2"></i>
+            Este link de confirmação expirou ou é inválido.
+        </div>
+    {% endif %}
+</div>
+
+<div class="auth-links">
+    <p class="mb-0">
+        <a href="{% url 'account_login' %}">
+            <i class="fas fa-arrow-left me-1"></i>Voltar ao Login
+        </a>
+    </p>
+</div>
+{% endblock %} 

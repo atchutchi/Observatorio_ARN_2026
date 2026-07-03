@@ -1,0 +1,512 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Análise de Mercado{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4">
+    <h1 class="mt-4">Análise de Mercado de Telecomunicações</h1>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item"><a href="{% url 'questionarios:index' %}">Home</a></li>
+        <li class="breadcrumb-item active">Análise de Mercado</li>
+    </ol>
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <i class="fas fa-chart-pie me-1"></i>
+            Participação de Mercado e Concentração
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-xl-6">
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <i class="fas fa-chart-pie me-1"></i>
+                            Participação de Mercado (Assinantes)
+                        </div>
+                        <div class="card-body">
+                            <select id="marketShareYear" class="form-select mb-3">
+                                {% for ano in anos %}
+                                <option value="{{ ano }}">{{ ano }}</option>
+                                {% endfor %}
+                            </select>
+                            <canvas id="chartMarketShare" width="100%" height="40"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-6">
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <i class="fas fa-chart-line me-1"></i>
+                            Índice HHI de Concentração de Mercado
+                        </div>
+                        <div class="card-body">
+                            <canvas id="chartHHI" width="100%" height="40"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <i class="fas fa-chart-bar me-1"></i>
+            Indicadores Financeiros por Operadora
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-xl-6">
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <i class="fas fa-chart-bar me-1"></i>
+                            Volume de Negócio (XOF)
+                        </div>
+                        <div class="card-body">
+                            <select id="volumeNegocioYear" class="form-select mb-3">
+                                {% for ano in anos %}
+                                <option value="{{ ano }}">{{ ano }}</option>
+                                {% endfor %}
+                            </select>
+                            <canvas id="chartVolumeNegocio" width="100%" height="40"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-6">
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <i class="fas fa-chart-bar me-1"></i>
+                            Investimentos (XOF)
+                        </div>
+                        <div class="card-body">
+                            <select id="investimentosYear" class="form-select mb-3">
+                                {% for ano in anos %}
+                                <option value="{{ ano }}">{{ ano }}</option>
+                                {% endfor %}
+                            </select>
+                            <canvas id="chartInvestimentos" width="100%" height="40"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <i class="fas fa-chart-bar me-1"></i>
+            Dados de Tráfego e Emprego
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-xl-6">
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <i class="fas fa-chart-bar me-1"></i>
+                            Tráfego de Dados (GB)
+                        </div>
+                        <div class="card-body">
+                            <select id="trafegoDadosYear" class="form-select mb-3">
+                                {% for ano in anos %}
+                                <option value="{{ ano }}">{{ ano }}</option>
+                                {% endfor %}
+                            </select>
+                            <canvas id="chartTrafegoDados" width="100%" height="40"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-6">
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <i class="fas fa-chart-bar me-1"></i>
+                            Emprego no Setor
+                        </div>
+                        <div class="card-body">
+                            <select id="empregoYear" class="form-select mb-3">
+                                {% for ano in anos %}
+                                <option value="{{ ano }}">{{ ano }}</option>
+                                {% endfor %}
+                            </select>
+                            <canvas id="chartEmprego" width="100%" height="40"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Dados recebidos do contexto Django
+    const anos = {{ anos|safe }};
+    const operadoras = {{ operadoras|safe }};
+    const marketShareData = {{ market_share_data|safe }};
+    const hhiData = {{ hhi_data|safe }};
+    const volumeNegocioData = {{ volume_negocio_data|safe }};
+    const investimentosData = {{ investimentos_data|safe }};
+    const trafegoDadosData = {{ trafego_dados_data|safe }};
+    const empregoData = {{ emprego_data|safe }};
+    
+    // Cores por operadora
+    const operadoraColors = {
+        'orange': 'rgba(255, 165, 0, 0.7)',
+        'telecel': 'rgba(255, 255, 0, 0.7)',
+        'telecel': 'rgba(0, 128, 0, 0.7)'
+    };
+    
+    // Função para formatar números grandes
+    function formatNumber(num) {
+        return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
+    }
+    
+    // Função para criar gráfico de pizza para market share
+    let marketShareChart = null;
+    function updateMarketShareChart(ano) {
+        const ctx = document.getElementById('chartMarketShare').getContext('2d');
+        
+        const data = marketShareData[ano] || {};
+        const labels = [];
+        const values = [];
+        const backgroundColor = [];
+        
+        for (const [operadora, share] of Object.entries(data)) {
+            labels.push(operadora);
+            values.push(share);
+            backgroundColor.push(operadoraColors[operadora]);
+        }
+        
+        if (marketShareChart) {
+            marketShareChart.destroy();
+        }
+        
+        marketShareChart = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: labels,
+                datasets: [{
+                    data: values,
+                    backgroundColor: backgroundColor
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return `${context.label}: ${context.raw.toFixed(2)}%`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+    
+    // Função para criar gráfico de linha para HHI
+    function createHHIChart() {
+        const ctx = document.getElementById('chartHHI').getContext('2d');
+        
+        const data = [];
+        const labels = [];
+        
+        for (const [ano, hhi] of Object.entries(hhiData)) {
+            labels.push(ano);
+            data.push(hhi);
+        }
+        
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Índice HHI',
+                    data: data,
+                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: false,
+                        title: {
+                            display: true,
+                            text: 'HHI (0-10.000)'
+                        }
+                    }
+                },
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                const value = context.raw;
+                                let concentrationLevel = '';
+                                
+                                if (value < 1500) {
+                                    concentrationLevel = 'Mercado não concentrado';
+                                } else if (value < 2500) {
+                                    concentrationLevel = 'Concentração moderada';
+                                } else {
+                                    concentrationLevel = 'Alta concentração';
+                                }
+                                
+                                return `HHI: ${value.toFixed(2)} - ${concentrationLevel}`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+    
+    // Função para criar gráfico de barras para dados financeiros
+    let volumeNegocioChart = null;
+    function updateVolumeNegocioChart(ano) {
+        const ctx = document.getElementById('chartVolumeNegocio').getContext('2d');
+        
+        const data = volumeNegocioData[ano] || {};
+        const labels = [];
+        const values = [];
+        const backgroundColor = [];
+        
+        for (const [operadora, valor] of Object.entries(data)) {
+            labels.push(operadora);
+            values.push(valor);
+            backgroundColor.push(operadoraColors[operadora]);
+        }
+        
+        if (volumeNegocioChart) {
+            volumeNegocioChart.destroy();
+        }
+        
+        volumeNegocioChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Volume de Negócio (XOF)',
+                    data: values,
+                    backgroundColor: backgroundColor
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                },
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return `${context.label}: ${formatNumber(context.raw)} XOF`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+    
+    // Função para criar gráfico de barras para investimentos
+    let investimentosChart = null;
+    function updateInvestimentosChart(ano) {
+        const ctx = document.getElementById('chartInvestimentos').getContext('2d');
+        
+        const data = investimentosData[ano] || {};
+        const labels = [];
+        const values = [];
+        const backgroundColor = [];
+        
+        for (const [operadora, valor] of Object.entries(data)) {
+            labels.push(operadora);
+            values.push(valor);
+            backgroundColor.push(operadoraColors[operadora]);
+        }
+        
+        if (investimentosChart) {
+            investimentosChart.destroy();
+        }
+        
+        investimentosChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Investimentos (XOF)',
+                    data: values,
+                    backgroundColor: backgroundColor
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                },
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return `${context.label}: ${formatNumber(context.raw)} XOF`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+    
+    // Função para criar gráfico de barras para tráfego de dados
+    let trafegoDadosChart = null;
+    function updateTrafegoDadosChart(ano) {
+        const ctx = document.getElementById('chartTrafegoDados').getContext('2d');
+        
+        const data = trafegoDadosData[ano] || {};
+        const labels = [];
+        const values = [];
+        const backgroundColor = [];
+        
+        for (const [operadora, valor] of Object.entries(data)) {
+            labels.push(operadora);
+            values.push(valor);
+            backgroundColor.push(operadoraColors[operadora]);
+        }
+        
+        if (trafegoDadosChart) {
+            trafegoDadosChart.destroy();
+        }
+        
+        trafegoDadosChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Tráfego de Dados (GB)',
+                    data: values,
+                    backgroundColor: backgroundColor
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                },
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return `${context.label}: ${formatNumber(context.raw)} GB`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+    
+    // Função para criar gráfico de barras para emprego
+    let empregoChart = null;
+    function updateEmpregoChart(ano) {
+        const ctx = document.getElementById('chartEmprego').getContext('2d');
+        
+        const data = empregoData[ano] || {};
+        const labels = [];
+        const values = [];
+        const backgroundColor = [];
+        
+        for (const [operadora, valor] of Object.entries(data)) {
+            labels.push(operadora);
+            values.push(valor);
+            backgroundColor.push(operadoraColors[operadora]);
+        }
+        
+        if (empregoChart) {
+            empregoChart.destroy();
+        }
+        
+        empregoChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Empregados',
+                    data: values,
+                    backgroundColor: backgroundColor
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                },
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return `${context.label}: ${formatNumber(context.raw)} empregados`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+    
+    // Inicializar gráficos quando o DOM estiver pronto
+    document.addEventListener('DOMContentLoaded', function() {
+        // Selecionar o ano mais recente para os selects
+        const anoMaisRecente = anos[anos.length - 1];
+        
+        document.getElementById('marketShareYear').value = anoMaisRecente;
+        document.getElementById('volumeNegocioYear').value = anoMaisRecente;
+        document.getElementById('investimentosYear').value = anoMaisRecente;
+        document.getElementById('trafegoDadosYear').value = anoMaisRecente;
+        document.getElementById('empregoYear').value = anoMaisRecente;
+        
+        // Inicializar gráficos
+        updateMarketShareChart(anoMaisRecente);
+        createHHIChart();
+        updateVolumeNegocioChart(anoMaisRecente);
+        updateInvestimentosChart(anoMaisRecente);
+        updateTrafegoDadosChart(anoMaisRecente);
+        updateEmpregoChart(anoMaisRecente);
+        
+        // Adicionar event listeners aos selects
+        document.getElementById('marketShareYear').addEventListener('change', function(e) {
+            updateMarketShareChart(e.target.value);
+        });
+        
+        document.getElementById('volumeNegocioYear').addEventListener('change', function(e) {
+            updateVolumeNegocioChart(e.target.value);
+        });
+        
+        document.getElementById('investimentosYear').addEventListener('change', function(e) {
+            updateInvestimentosChart(e.target.value);
+        });
+        
+        document.getElementById('trafegoDadosYear').addEventListener('change', function(e) {
+            updateTrafegoDadosChart(e.target.value);
+        });
+        
+        document.getElementById('empregoYear').addEventListener('change', function(e) {
+            updateEmpregoChart(e.target.value);
+        });
+    });
+</script>
+{% endblock %} 

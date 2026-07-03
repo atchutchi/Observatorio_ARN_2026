@@ -1,0 +1,442 @@
+/* ===============================
+   DASHBOARD BINANCE STYLE
+   =============================== */
+
+/* DASHBOARD ESPECÍFICOS */
+.dashboard-container {
+    max-width: 100%;
+}
+
+/* KPIs DASHBOARD */
+.dashboard-kpis {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.kpi-card {
+    background-color: var(--binance-dark-light);
+    border: 1px solid var(--binance-border);
+    border-radius: 12px;
+    padding: 2rem;
+    text-align: center;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.kpi-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+}
+
+.kpi-card.kpi-success::before {
+    background: linear-gradient(90deg, var(--binance-success), #019A63);
+}
+
+.kpi-card.kpi-warning::before {
+    background: linear-gradient(90deg, var(--binance-warning), #D4A00A);
+}
+
+.kpi-card.kpi-info::before {
+    background: linear-gradient(90deg, var(--binance-info), #3E9CDB);
+}
+
+.kpi-card.kpi-primary::before {
+    background: linear-gradient(90deg, var(--binance-yellow), #D4A00A);
+}
+
+.kpi-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-dark);
+}
+
+.kpi-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    color: var(--binance-yellow);
+}
+
+.kpi-value {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--binance-text);
+    margin-bottom: 0.5rem;
+    line-height: 1;
+}
+
+.kpi-label {
+    color: var(--binance-text-muted);
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+}
+
+.kpi-change {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+}
+
+.kpi-change.positive {
+    color: var(--binance-success);
+}
+
+.kpi-change.negative {
+    color: var(--binance-danger);
+}
+
+.kpi-change.neutral {
+    color: var(--binance-text-muted);
+}
+
+/* DASHBOARD WIDGETS */
+.dashboard-widgets {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
+
+.widget-card {
+    background-color: var(--binance-dark-light);
+    border: 1px solid var(--binance-border);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: var(--shadow-light);
+}
+
+.widget-header {
+    background-color: var(--binance-hover);
+    padding: 1.5rem 2rem;
+    border-bottom: 1px solid var(--binance-border);
+}
+
+.widget-title {
+    color: var(--binance-text);
+    font-size: 1.125rem;
+    font-weight: 600;
+    margin: 0;
+}
+
+.widget-subtitle {
+    color: var(--binance-text-muted);
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+    margin-bottom: 0;
+}
+
+.widget-body {
+    padding: 2rem;
+}
+
+/* CHART CONTAINERS DASHBOARD */
+.dashboard-chart-container {
+    position: relative;
+    height: 350px;
+    background-color: var(--binance-dark);
+    border-radius: 8px;
+    padding: 1rem;
+}
+
+.dashboard-chart-title {
+    color: var(--binance-text);
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+/* TABELAS DASHBOARD */
+.dashboard-table {
+    width: 100%;
+    background-color: transparent;
+}
+
+.dashboard-table th {
+    background: linear-gradient(135deg, var(--binance-yellow) 0%, #D4A00A 100%);
+    color: var(--binance-dark);
+    font-weight: 600;
+    border: none;
+    padding: 1rem;
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.dashboard-table td {
+    padding: 1rem;
+    vertical-align: middle;
+    border-color: var(--binance-border);
+    color: var(--binance-text);
+    background-color: transparent;
+}
+
+.dashboard-table tbody tr {
+    transition: all 0.3s ease;
+    border-bottom: 1px solid var(--binance-border);
+}
+
+.dashboard-table tbody tr:hover {
+    background-color: var(--binance-hover);
+}
+
+/* OPERADORA BADGES */
+.operadora-badge {
+    padding: 0.375rem 0.75rem;
+    border-radius: 50px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.operadora-badge.telecel {
+    background-color: #DC3545;
+    color: #000;
+}
+
+.operadora-badge.orange {
+    background-color: #FF6600;
+    color: white;
+}
+
+.operadora-badge.telecel {
+    background-color: #DC3545;
+    color: white;
+}
+
+/* GROWTH INDICATORS */
+.growth-indicator {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.growth-indicator.positive {
+    background-color: rgba(2, 192, 118, 0.2);
+    color: var(--binance-success);
+}
+
+.growth-indicator.negative {
+    background-color: rgba(248, 64, 96, 0.2);
+    color: var(--binance-danger);
+}
+
+.growth-indicator.neutral {
+    background-color: rgba(183, 189, 198, 0.2);
+    color: var(--binance-text-muted);
+}
+
+/* QUICK ACTIONS */
+.quick-actions {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 2rem;
+}
+
+.quick-action {
+    background-color: var(--binance-dark-light);
+    border: 1px solid var(--binance-border);
+    border-radius: 8px;
+    padding: 1rem 1.5rem;
+    text-decoration: none;
+    color: var(--binance-text);
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.quick-action:hover {
+    background-color: var(--binance-hover);
+    transform: translateY(-2px);
+    color: var(--binance-yellow);
+    text-decoration: none;
+}
+
+.quick-action-icon {
+    font-size: 1.25rem;
+    color: var(--binance-yellow);
+}
+
+/* ACTIVITY FEED */
+.activity-feed {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.activity-item {
+    padding: 1rem;
+    border-bottom: 1px solid var(--binance-border);
+    display: flex;
+    gap: 1rem;
+}
+
+.activity-item:last-child {
+    border-bottom: none;
+}
+
+.activity-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.activity-icon.activity-success {
+    background-color: rgba(2, 192, 118, 0.2);
+    color: var(--binance-success);
+}
+
+.activity-icon.activity-info {
+    background-color: rgba(78, 174, 255, 0.2);
+    color: var(--binance-info);
+}
+
+.activity-icon.activity-warning {
+    background-color: rgba(240, 185, 11, 0.2);
+    color: var(--binance-warning);
+}
+
+.activity-content h6 {
+    color: var(--binance-text);
+    font-size: 0.875rem;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+}
+
+.activity-content p {
+    color: var(--binance-text-muted);
+    font-size: 0.75rem;
+    margin-bottom: 0.25rem;
+}
+
+.activity-time {
+    color: var(--binance-text-muted);
+    font-size: 0.75rem;
+}
+
+/* DASHBOARD FILTERS */
+.dashboard-filters {
+    background-color: var(--binance-hover);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.dashboard-filters-title {
+    color: var(--binance-text);
+    font-size: 1.125rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.dashboard-filter-group {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    align-items: end;
+}
+
+/* EXPORT BUTTONS */
+.export-buttons {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.btn-export {
+    background-color: var(--binance-dark);
+    color: var(--binance-text);
+    border: 1px solid var(--binance-border);
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.btn-export:hover {
+    background-color: var(--binance-hover);
+    border-color: var(--binance-yellow);
+    color: var(--binance-yellow);
+    text-decoration: none;
+}
+
+/* STATUS INDICATORS */
+.status-indicator {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 0.5rem;
+}
+
+.status-indicator.online {
+    background-color: var(--binance-success);
+}
+
+.status-indicator.offline {
+    background-color: var(--binance-danger);
+}
+
+.status-indicator.pending {
+    background-color: var(--binance-warning);
+}
+
+/* RESPONSIVO DASHBOARD */
+@media (max-width: 768px) {
+    .dashboard-kpis {
+        grid-template-columns: 1fr;
+    }
+    
+    .dashboard-widgets {
+        grid-template-columns: 1fr;
+    }
+    
+    .kpi-card {
+        padding: 1.5rem;
+    }
+    
+    .kpi-value {
+        font-size: 2rem;
+    }
+    
+    .dashboard-chart-container {
+        height: 250px;
+    }
+    
+    .quick-actions {
+        flex-direction: column;
+    }
+    
+    .dashboard-filter-group {
+        grid-template-columns: 1fr;
+    }
+    
+    .export-buttons {
+        justify-content: center;
+    }
+}

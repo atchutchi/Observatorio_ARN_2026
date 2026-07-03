@@ -1,0 +1,296 @@
+{% extends "questionarios/partials/base_detail.html" %}
+{% load static %}
+
+{% block detail_title %}Detalhes de Estações Móveis{% endblock %}
+{% block detail_subtitle %}{{ object.operadora }} - {{ object.ano }}/{{ object.trimestre }}º Trimestre{% endblock %}
+
+{% block list_url %}{% url 'questionarios:estacoes_moveis_list' %}{% endblock %}
+{% block edit_url %}{% url 'questionarios:estacoes_moveis_update' object.pk %}{% endblock %}
+{% block delete_url %}{% url 'questionarios:estacoes_moveis_delete' object.pk %}{% endblock %}
+
+{% block detail_content %}
+<!-- Totais Calculados -->
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="detail-info-item">
+            <div class="detail-info-icon">
+                <i class="fas fa-signal"></i>
+            </div>
+            <div class="detail-info-content">
+                <strong>Total 3G</strong>
+                <p class="detail-value" data-value="{{ object.calcular_total_3g }}">{{ object.calcular_total_3g|floatformat:0 }}</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3">
+        <div class="detail-info-item">
+            <div class="detail-info-icon">
+                <i class="fas fa-broadcast-tower"></i>
+            </div>
+            <div class="detail-info-content">
+                <strong>Total 4G</strong>
+                <p class="detail-value" data-value="{{ object.calcular_total_4g }}">{{ object.calcular_total_4g|floatformat:0 }}</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3">
+        <div class="detail-info-item">
+            <div class="detail-info-icon">
+                <i class="fas fa-globe"></i>
+            </div>
+            <div class="detail-info-content">
+                <strong>Banda Larga</strong>
+                <p class="detail-value" data-value="{{ object.calcular_total_banda_larga }}">{{ object.calcular_total_banda_larga|floatformat:0 }}</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="detail-info-item">
+            <div class="detail-info-icon">
+                <i class="fas fa-mobile-alt"></i>
+            </div>
+            <div class="detail-info-content">
+                <strong>Estações Ativas</strong>
+                <p class="detail-value" data-value="{{ object.calcular_total_estacoes_moveis }}">{{ object.calcular_total_estacoes_moveis|floatformat:0 }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Utilizadores de Serviço -->
+<div class="platform-card mb-4">
+    <div class="card-header">
+        <h4 class="card-title">
+            <i class="fas fa-users me-2"></i>
+            Utilizadores de Serviço
+        </h4>
+        </div>
+        <div class="card-body">
+        <div class="row">
+            <div class="col-md-3">
+                <div class="detail-info-item">
+                    <div class="detail-info-icon">
+                        <i class="fas fa-sms"></i>
+                    </div>
+                    <div class="detail-info-content">
+                        <strong>SMS</strong>
+                        <p>{{ object.sms|floatformat:0|default:"N/A" }}</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-3">
+                <div class="detail-info-item">
+                    <div class="detail-info-icon">
+                        <i class="fas fa-image"></i>
+                    </div>
+                    <div class="detail-info-content">
+                        <strong>MMS</strong>
+                        <p>{{ object.mms|floatformat:0|default:"N/A" }}</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-3">
+                <div class="detail-info-item">
+                    <div class="detail-info-icon">
+                        <i class="fas fa-tv"></i>
+                    </div>
+                    <div class="detail-info-content">
+                        <strong>Mobile TV</strong>
+                        <p>{{ object.mobile_tv|floatformat:0|default:"N/A" }}</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-3">
+                <div class="detail-info-item">
+                    <div class="detail-info-icon">
+                        <i class="fas fa-globe-americas"></i>
+                    </div>
+                    <div class="detail-info-content">
+                        <strong>Roaming Internacional</strong>
+                        <p>{{ object.roaming_internacional_out_parc_roaming_out|floatformat:0|default:"N/A" }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+    </div>
+
+<!-- Tecnologia 3G -->
+<div class="platform-card mb-4">
+    <div class="card-header">
+        <h4 class="card-title">
+            <i class="fas fa-signal me-2"></i>
+            Tecnologia 3G
+        </h4>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-4">
+                <div class="detail-info-item">
+                    <div class="detail-info-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="detail-info-content">
+                        <strong>Utilizadores 3G</strong>
+                        <p>{{ object.utilizadores_servico_3g_upgrades|floatformat:0|default:"N/A" }}</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="detail-info-item">
+                    <div class="detail-info-icon">
+                        <i class="fas fa-tv"></i>
+                    </div>
+                    <div class="detail-info-content">
+                        <strong>Placas Box 3G</strong>
+                        <p>{{ object.utilizadores_3g_placas_box|floatformat:0|default:"N/A" }}</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="detail-info-item">
+                    <div class="detail-info-icon">
+                        <i class="fas fa-usb"></i>
+                    </div>
+                    <div class="detail-info-content">
+                        <strong>Placas USB 3G</strong>
+                        <p>{{ object.utilizadores_3g_placas_usb|floatformat:0|default:"N/A" }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Tecnologia 4G -->
+<div class="platform-card mb-4">
+    <div class="card-header">
+        <h4 class="card-title">
+            <i class="fas fa-broadcast-tower me-2"></i>
+            Tecnologia 4G
+        </h4>
+        </div>
+        <div class="card-body">
+        <div class="row">
+            <div class="col-md-4">
+                <div class="detail-info-item">
+                    <div class="detail-info-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="detail-info-content">
+                        <strong>Utilizadores 4G</strong>
+                        <p>{{ object.utilizadores_servico_4g|floatformat:0|default:"N/A" }}</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="detail-info-item">
+                    <div class="detail-info-icon">
+                        <i class="fas fa-tv"></i>
+                    </div>
+                    <div class="detail-info-content">
+                        <strong>Placas Box 4G</strong>
+                        <p>{{ object.utilizadores_4g_placas_box|floatformat:0|default:"N/A" }}</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="detail-info-item">
+                    <div class="detail-info-icon">
+                        <i class="fas fa-usb"></i>
+                    </div>
+                    <div class="detail-info-content">
+                        <strong>Placas USB 4G</strong>
+                        <p>{{ object.utilizadores_4g_placas_usb|floatformat:0|default:"N/A" }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+    </div>
+
+<!-- Mobile Money Detalhado -->
+<div class="platform-card mb-4">
+    <div class="card-header">
+        <h4 class="card-title">
+            <i class="fas fa-money-bill-wave me-2"></i>
+            Mobile Money - Detalhes
+        </h4>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-4">
+                <h6 style="color: var(--binance-yellow);">👥 Utilizadores</h6>
+                <div class="detail-info-item">
+                    <div class="detail-info-content">
+                        <strong>Total:</strong> {{ object.numero_utilizadores|floatformat:0|default:"N/A" }}<br>
+                        <strong>Mulher:</strong> {{ object.numero_utilizadores_mulher|floatformat:0|default:"N/A" }}<br>
+                        <strong>Homem:</strong> {{ object.numero_utilizadores_homem|floatformat:0|default:"N/A" }}
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <h6 style="color: var(--binance-success);">💰 Carregamentos</h6>
+                <div class="detail-info-item">
+                    <div class="detail-info-content">
+                        <strong>Total:</strong> {{ object.total_carregamentos|floatformat:0|default:"N/A" }}<br>
+                        <strong>Mulher:</strong> {{ object.total_carregamentos_mulher|floatformat:0|default:"N/A" }}<br>
+                        <strong>Homem:</strong> {{ object.total_carregamentos_homem|floatformat:0|default:"N/A" }}
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <h6 style="color: var(--binance-info);">💸 Levantamentos</h6>
+                <div class="detail-info-item">
+                    <div class="detail-info-content">
+                        <strong>Total:</strong> {{ object.total_levantamentos|floatformat:0|default:"N/A" }}<br>
+                        <strong>Mulher:</strong> {{ object.total_levantamentos_mulher|floatformat:0|default:"N/A" }}<br>
+                        <strong>Homem:</strong> {{ object.total_levantamentos_homem|floatformat:0|default:"N/A" }}
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row mt-3">
+            <div class="col-md-12">
+                <h6 style="color: var(--binance-warning);">🔄 Transferências</h6>
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="detail-info-item">
+                            <div class="detail-info-content">
+                                <strong>Total:</strong> {{ object.total_transferencias|floatformat:0|default:"N/A" }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="detail-info-item">
+                            <div class="detail-info-content">
+                                <strong>Mulher:</strong> {{ object.total_transferencias_mulher|floatformat:0|default:"N/A" }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="detail-info-item">
+                            <div class="detail-info-content">
+                                <strong>Homem:</strong> {{ object.total_transferencias_homem|floatformat:0|default:"N/A" }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

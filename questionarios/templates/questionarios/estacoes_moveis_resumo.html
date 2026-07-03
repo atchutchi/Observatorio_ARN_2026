@@ -1,0 +1,663 @@
+{% extends "questionarios/base_questionarios.html" %}
+{% load static %}
+{% load humanize %}
+
+{% block questionario_title %}Resumo Anual KPI ARN - {{ ano }}{% endblock %}
+
+{% block questionario_content %}
+<!-- Header do Resumo -->
+<div class="questionario-header">
+    <div class="d-flex justify-content-between align-items-start">
+        <div>
+            <h1 class="questionario-title">Resumo Anual de Estações Móveis - {{ ano }}</h1>
+            <p class="questionario-subtitle">Análise consolidada dos indicadores KPI ARN por operadora e trimestre</p>
+        </div>
+        <div class="questionario-actions">
+            <button onclick="window.print()" class="btn btn-outline me-2">
+                <i class="fas fa-print me-2"></i>Imprimir
+            </button>
+            <button onclick="exportToExcel()" class="btn btn-outline me-2">
+                <i class="fas fa-file-excel me-2"></i>Exportar Excel
+            </button>
+            <a href="{% url 'questionarios:estacoes_moveis_list' %}" class="btn btn-outline">
+                <i class="fas fa-arrow-left me-2"></i>Voltar à Lista
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Filtros -->
+<div class="questionario-filters">
+    <h5 class="questionario-filters-title">
+        <i class="fas fa-filter me-2"></i>
+        Filtros de Análise
+    </h5>
+    <form method="get" class="questionario-filter-group">
+        <div class="form-group-questionario">
+            <label class="form-label-questionario">Operadora</label>
+            <select name="operadora" class="form-select-questionario" onchange="this.form.submit()">
+                <option value="">Todas as operadoras</option>
+                {% for op in operadoras_disponiveis %}
+                <option value="{{ op }}" {% if operadora_selecionada == op %}selected{% endif %}>{{ op }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group-questionario">
+            <label class="form-label-questionario">Ano Comparativo</label>
+            <select name="ano_comparativo" class="form-select-questionario">
+                <option value="">Sem comparação</option>
+                {% for year in anos_disponiveis %}
+                <option value="{{ year }}" {% if ano_comparativo == year %}selected{% endif %}>{{ year }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group-questionario">
+            <button type="submit" class="btn-binance">
+                <i class="fas fa-filter me-2"></i>Aplicar Filtros
+            </button>
+        </div>
+    </form>
+</div>
+
+<!-- Indicadores Anuais Consolidados -->
+<div class="platform-card mb-4">
+    <div class="card-header">
+        <h3 class="card-title">
+            <i class="fas fa-chart-bar me-2"></i>
+            Totais Anuais Consolidados - {{ ano }}
+            {% if operadora_selecionada %}
+                <span class="badge bg-warning ms-2">{{ operadora_selecionada }}</span>
+            {% else %}
+                <span class="badge bg-secondary ms-2">Todas Operadoras</span>
+            {% endif %}
+        </h3>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <!-- SEÇÃO 1: Estações Móveis -->
+            <div class="col-md-6 col-lg-3 mb-4">
+                <div class="annual-stat-card">
+                    <div class="annual-stat-header bg-primary">
+                        <i class="fas fa-mobile-alt"></i>
+                        <span>Estações Móveis</span>
+                    </div>
+                    <div class="annual-stat-body">
+                        <div class="annual-stat-value">
+                            {{ total_estacoes_moveis_anual|intcomma }}
+                        </div>
+                        <div class="annual-stat-details">
+                            <small>Pós-pagos: {{ total_pos_pagos_anual|default:0|intcomma }}</small><br>
+                            <small>Pré-pagos: {{ total_pre_pagos_anual|default:0|intcomma }}</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- SEÇÃO 2: Banda Larga -->
+            <div class="col-md-6 col-lg-3 mb-4">
+                <div class="annual-stat-card">
+                    <div class="annual-stat-header bg-success">
+                        <i class="fas fa-wifi"></i>
+                        <span>Banda Larga</span>
+                    </div>
+                    <div class="annual-stat-body">
+                        <div class="annual-stat-value">
+                            {{ total_banda_larga_anual|intcomma }}
+                        </div>
+                        <div class="annual-stat-details">
+                            <small>3G: {{ total_3g_anual|intcomma }}</small><br>
+                            <small>4G: {{ total_4g_anual|intcomma }}</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- SEÇÃO 3: Mobile Money -->
+            <div class="col-md-6 col-lg-3 mb-4">
+                <div class="annual-stat-card">
+                    <div class="annual-stat-header bg-info">
+                        <i class="fas fa-money-bill-wave"></i>
+                        <span>Mobile Money</span>
+                    </div>
+                    <div class="annual-stat-body">
+                        <div class="annual-stat-value">
+                            {{ total_utilizadores_anual|intcomma }}
+                        </div>
+                        <div class="annual-stat-details">
+                            <small>utilizadores ativos</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- SEÇÃO 4: Volume Financeiro -->
+            <div class="col-md-6 col-lg-3 mb-4">
+                <div class="annual-stat-card">
+                    <div class="annual-stat-header bg-warning">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Volume Total</span>
+                    </div>
+                    <div class="annual-stat-body">
+                        <div class="annual-stat-value" style="font-size: 1.2rem;">
+                            {{ total_volume_financeiro_anual|floatformat:2|intcomma }}
+                        </div>
+                        <div class="annual-stat-details">
+                            <small>C+L+T (valores monetários)</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Valores Monetários Detalhados -->
+        <div class="row mt-4">
+            <div class="col-md-4">
+                <div class="money-stat">
+                    <span class="money-label">Total Carregamentos:</span>
+                    <span class="money-value text-success">{{ total_carregamentos_anual|floatformat:2|intcomma }}</span>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="money-stat">
+                    <span class="money-label">Total Levantamentos:</span>
+                    <span class="money-value text-info">{{ total_levantamentos_anual|floatformat:2|intcomma }}</span>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="money-stat">
+                    <span class="money-label">Total Transferências:</span>
+                    <span class="money-value text-warning">{{ total_transferencias_anual|floatformat:2|intcomma }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Análise Trimestral -->
+<div class="platform-card mb-4">
+    <div class="card-header">
+        <h3 class="card-title">
+            <i class="fas fa-chart-line me-2"></i>
+            Evolução Trimestral - {{ ano }}
+        </h3>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            {% for trimestre in totais_trimestrais %}
+            <div class="col-md-6 col-lg-3 mb-4">
+                <div class="trimestre-card {% if not trimestre.tem_dados %}no-data{% endif %}">
+                    <div class="trimestre-header">
+                        <h5>{{ trimestre.trimestre }}º Trimestre</h5>
+                        {% if not trimestre.tem_dados %}
+                            <span class="badge bg-secondary">Sem dados</span>
+                        {% endif %}
+                    </div>
+                    {% if trimestre.tem_dados %}
+                    <div class="trimestre-body">
+                        <div class="trimestre-section">
+                            <h6><i class="fas fa-mobile-alt"></i> Estações</h6>
+                            <div class="trimestre-stat">
+                                <span class="trimestre-label">Total:</span>
+                                <span class="trimestre-value">{{ trimestre.total_estacoes_moveis|intcomma }}</span>
+                            </div>
+                        </div>
+                        
+                        <div class="trimestre-section">
+                            <h6><i class="fas fa-wifi"></i> Banda Larga</h6>
+                            <div class="trimestre-stat">
+                                <span class="trimestre-label">3G:</span>
+                                <span class="trimestre-value">{{ trimestre.total_3g|intcomma }}</span>
+                            </div>
+                            <div class="trimestre-stat">
+                                <span class="trimestre-label">4G:</span>
+                                <span class="trimestre-value">{{ trimestre.total_4g|intcomma }}</span>
+                            </div>
+                        </div>
+                        
+                        <div class="trimestre-section">
+                            <h6><i class="fas fa-money-bill-wave"></i> Mobile Money</h6>
+                            <div class="trimestre-stat">
+                                <span class="trimestre-label">Utilizadores:</span>
+                                <span class="trimestre-value">{{ trimestre.total_utilizadores|intcomma }}</span>
+                            </div>
+                            <div class="trimestre-stat small">
+                                <span class="trimestre-label">Carregamentos:</span>
+                                <span class="trimestre-value">{{ trimestre.total_carregamentos|floatformat:0|intcomma }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="trimestre-body no-data">
+                        <p class="text-muted text-center mb-0">
+                            <i class="fas fa-inbox fa-2x mb-2"></i><br>
+                            Dados não disponíveis
+                        </p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <!-- Gráfico de Evolução -->
+        <div class="mt-4">
+            <canvas id="evolutionChart" height="100"></canvas>
+        </div>
+    </div>
+</div>
+
+<!-- Tabela Detalhada Mensal -->
+<div class="platform-card mb-4">
+    <div class="card-header">
+        <h3 class="card-title">
+            <i class="fas fa-table me-2"></i>
+            Detalhamento Mensal - {{ ano }}
+        </h3>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="questionario-table" id="monthlyTable">
+                <thead>
+                    <tr>
+                        <th rowspan="2">Mês</th>
+                        <th rowspan="2">Operadora</th>
+                        <th colspan="2" class="text-center">Estações Móveis</th>
+                        <th colspan="2" class="text-center">Banda Larga</th>
+                        <th colspan="2" class="text-center">Mobile Money</th>
+                        <th rowspan="2">SMS</th>
+                        <th rowspan="2">Linhas</th>
+                        <th rowspan="2">Ações</th>
+                    </tr>
+                    <tr>
+                        <th>Pós</th>
+                        <th>Pré</th>
+                        <th>3G</th>
+                        <th>4G</th>
+                        <th>Users</th>
+                        <th>Volume</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for indicador in indicadores %}
+                    <tr data-month="{{ indicador.mes }}" data-operator="{{ indicador.operadora }}">
+                        <td>
+                            <span class="badge bg-secondary">{{ indicador.get_mes_display|default:indicador.mes }}</span>
+                        </td>
+                        <td>
+                            <div class="operadora-display">
+                                <div class="operadora-icon {{ indicador.operadora|lower }}">
+                                    {% if indicador.operadora == 'ORANGE' %}
+                                        <i class="fas fa-signal"></i>
+                                    {% elif indicador.operadora == 'TELECEL' %}
+                                        <i class="fas fa-broadcast-tower"></i>
+                                    {% endif %}
+                                </div>
+                                <div class="operadora-name">{{ indicador.operadora }}</div>
+                            </div>
+                        </td>
+                        <td class="text-end">{{ indicador.afectos_planos_pos_pagos|intcomma }}</td>
+                        <td class="text-end">{{ indicador.afectos_planos_pre_pagos|intcomma }}</td>
+                        <td class="text-end">{{ indicador.utilizadores_servico_3g_upgrades|intcomma }}</td>
+                        <td class="text-end">{{ indicador.utilizadores_servico_4g|intcomma }}</td>
+                        <td class="text-end">{{ indicador.numero_utilizadores|intcomma }}</td>
+                        <td class="text-end">{{ indicador.total_carregamentos|floatformat:0|intcomma }}</td>
+                        <td class="text-end">{{ indicador.sms|intcomma }}</td>
+                        <td class="text-end">
+                            {% if indicador.calcular_total_linhas_alugadas > 0 %}
+                                {{ indicador.calcular_total_linhas_alugadas }}
+                            {% else %}
+                                -
+                            {% endif %}
+                        </td>
+                        <td>
+                            <div class="btn-group" role="group">
+                                <a href="{% url 'questionarios:estacoes_moveis_detail' indicador.pk %}" 
+                                   class="btn-questionario btn-questionario-info"
+                                   title="Ver detalhes">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                <a href="{% url 'questionarios:estacoes_moveis_update' indicador.pk %}" 
+                                   class="btn-questionario btn-questionario-warning"
+                                   title="Editar">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="11" class="text-center py-4">
+                            <div class="empty-state">
+                                <i class="fas fa-inbox fa-3x mb-3"></i>
+                                <h5>Nenhum dado encontrado</h5>
+                                <p>Não há indicadores para o ano {{ ano }}{% if operadora_selecionada %} da operadora {{ operadora_selecionada }}{% endif %}.</p>
+                                <a href="{% url 'questionarios:estacoes_moveis_create' %}" class="btn-binance mt-3">
+                                    <i class="fas fa-plus me-2"></i>Adicionar Indicador
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+                <tfoot>
+                    <tr class="table-summary">
+                        <th colspan="2">TOTAIS</th>
+                        <th class="text-end">{{ total_pos_pagos_anual|default:0|intcomma }}</th>
+                        <th class="text-end">{{ total_pre_pagos_anual|default:0|intcomma }}</th>
+                        <th class="text-end">{{ total_3g_anual|intcomma }}</th>
+                        <th class="text-end">{{ total_4g_anual|intcomma }}</th>
+                        <th class="text-end">{{ total_utilizadores_anual|intcomma }}</th>
+                        <th class="text-end">{{ total_carregamentos_anual|floatformat:0|intcomma }}</th>
+                        <th class="text-end">{{ total_sms_anual|intcomma }}</th>
+                        <th class="text-end">{{ total_linhas_anual|default:0|intcomma }}</th>
+                        <th></th>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Análise Comparativa (se houver ano comparativo) -->
+{% if ano_comparativo %}
+<div class="platform-card mb-4">
+    <div class="card-header">
+        <h3 class="card-title">
+            <i class="fas fa-exchange-alt me-2"></i>
+            Análise Comparativa: {{ ano }} vs {{ ano_comparativo }}
+        </h3>
+    </div>
+    <div class="card-body">
+        <!-- Implementar comparação aqui -->
+        <p class="text-muted">Funcionalidade de comparação em desenvolvimento...</p>
+    </div>
+</div>
+{% endif %}
+
+<!-- Ações Finais -->
+<div class="platform-card">
+    <div class="card-body">
+        <div class="d-flex gap-3 justify-content-center">
+            <a href="{% url 'questionarios:estacoes_moveis_list' %}" class="btn btn-outline">
+                <i class="fas fa-list me-2"></i>Voltar para Lista
+            </a>
+            <button class="btn btn-outline" onclick="window.print()">
+                <i class="fas fa-print me-2"></i>Imprimir Relatório
+            </button>
+            <button class="btn btn-outline" onclick="exportToExcel()">
+                <i class="fas fa-file-excel me-2"></i>Exportar Excel
+            </button>
+            <a href="{% url 'questionarios:estacoes_moveis_create' %}" class="btn-binance">
+                <i class="fas fa-plus me-2"></i>Novo Indicador
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block questionario_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+// Dados para o gráfico
+const trimestralData = {
+    labels: ['1º Trim', '2º Trim', '3º Trim', '4º Trim'],
+    datasets: [
+        {
+            label: 'Estações Móveis',
+            data: [
+                {% for t in totais_trimestrais %}{{ t.total_estacoes_moveis }}{% if not forloop.last %},{% endif %}{% endfor %}
+            ],
+            borderColor: 'rgb(240, 185, 11)',
+            backgroundColor: 'rgba(240, 185, 11, 0.1)',
+            tension: 0.4
+        },
+        {
+            label: 'Mobile Money',
+            data: [
+                {% for t in totais_trimestrais %}{{ t.total_utilizadores }}{% if not forloop.last %},{% endif %}{% endfor %}
+            ],
+            borderColor: 'rgb(0, 171, 85)',
+            backgroundColor: 'rgba(0, 171, 85, 0.1)',
+            tension: 0.4
+        }
+    ]
+};
+
+// Configuração do gráfico
+const config = {
+    type: 'line',
+    data: trimestralData,
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                display: true,
+                position: 'top',
+                labels: {
+                    color: '#B7BDC6'
+                }
+            },
+            title: {
+                display: true,
+                text: 'Evolução Trimestral dos Principais Indicadores',
+                color: '#B7BDC6',
+                font: {
+                    size: 16
+                }
+            }
+        },
+        scales: {
+            y: {
+                beginAtZero: true,
+                grid: {
+                    color: 'rgba(183, 189, 198, 0.1)'
+                },
+                ticks: {
+                    color: '#B7BDC6',
+                    callback: function(value) {
+                        return value.toLocaleString('pt-BR');
+                    }
+                }
+            },
+            x: {
+                grid: {
+                    color: 'rgba(183, 189, 198, 0.1)'
+                },
+                ticks: {
+                    color: '#B7BDC6'
+                }
+            }
+        }
+    }
+};
+
+// Renderizar gráfico
+const ctx = document.getElementById('evolutionChart');
+if (ctx) {
+    new Chart(ctx, config);
+}
+
+// Função para exportar para Excel
+function exportToExcel() {
+    // Implementação simplificada - usar biblioteca como SheetJS em produção
+    const table = document.getElementById('monthlyTable');
+    const wb = XLSX.utils.table_to_book(table, {sheet: "Dados Mensais"});
+    XLSX.writeFile(wb, `KPI_ARN_{{ ano }}.xlsx`);
+}
+
+// Estilos específicos
+const styles = `
+.annual-stat-card {
+    background: var(--binance-dark);
+    border: 1px solid var(--binance-border);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.annual-stat-header {
+    padding: 1rem;
+    color: white;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 600;
+}
+
+.annual-stat-body {
+    padding: 1.5rem 1rem;
+    text-align: center;
+}
+
+.annual-stat-value {
+    font-size: 2rem;
+    font-weight: bold;
+    color: var(--binance-yellow);
+    margin-bottom: 0.5rem;
+}
+
+.annual-stat-details {
+    color: var(--binance-text-muted);
+    font-size: 0.875rem;
+}
+
+.trimestre-card {
+    background: var(--binance-dark);
+    border: 1px solid var(--binance-border);
+    border-radius: 8px;
+    overflow: hidden;
+    height: 100%;
+}
+
+.trimestre-card.no-data {
+    opacity: 0.5;
+}
+
+.trimestre-header {
+    background: linear-gradient(135deg, var(--binance-yellow) 0%, #D4A00A 100%);
+    color: var(--binance-dark);
+    padding: 1rem;
+    text-align: center;
+}
+
+.trimestre-header h5 {
+    margin: 0;
+    font-weight: 600;
+    color: var(--binance-dark) !important;
+}
+
+.trimestre-body {
+    padding: 1rem;
+}
+
+.trimestre-body.no-data {
+    padding: 2rem 1rem;
+}
+
+.trimestre-section {
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--binance-border);
+}
+
+.trimestre-section:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+.trimestre-section h6 {
+    color: var(--binance-yellow);
+    font-size: 0.875rem;
+    margin-bottom: 0.5rem;
+}
+
+.trimestre-stat {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.25rem 0;
+}
+
+.trimestre-stat.small {
+    font-size: 0.875rem;
+}
+
+.trimestre-label {
+    color: var(--binance-text-muted);
+    font-size: 0.875rem;
+}
+
+.trimestre-value {
+    color: var(--binance-text);
+    font-weight: 600;
+}
+
+.money-stat {
+    padding: 0.75rem;
+    background: var(--binance-dark);
+    border-radius: 6px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.money-label {
+    color: var(--binance-text-muted);
+}
+
+.money-value {
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+
+.table-summary {
+    background: var(--binance-dark);
+    font-weight: bold;
+}
+
+.table-summary th {
+    color: var(--binance-yellow);
+}
+
+@media print {
+    .questionario-filters,
+    .questionario-actions,
+    .btn-group {
+        display: none !important;
+    }
+    
+    .platform-card {
+        break-inside: avoid;
+    }
+}
+`;
+
+// Adicionar estilos
+const styleSheet = document.createElement('style');
+styleSheet.textContent = styles;
+document.head.appendChild(styleSheet);
+
+// Adicionar números com dados disponíveis
+document.addEventListener('DOMContentLoaded', function() {
+    const monthsWithData = {{ num_meses_com_dados }};
+    const totalMonths = 12;
+    const coveragePercent = (monthsWithData / totalMonths * 100).toFixed(1);
+    
+    // Adicionar indicador de cobertura
+    const header = document.querySelector('.questionario-header');
+    if (header && monthsWithData > 0) {
+        const coverage = document.createElement('div');
+        coverage.className = 'alert alert-info mt-3';
+        coverage.innerHTML = `
+            <i class="fas fa-info-circle me-2"></i>
+            Cobertura de dados: <strong>${monthsWithData} de ${totalMonths} meses (${coveragePercent}%)</strong>
+        `;
+        header.appendChild(coverage);
+    }
+});
+</script>
+
+<!-- Incluir SheetJS para exportação Excel (opcional) -->
+<script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
+{% endblock %}

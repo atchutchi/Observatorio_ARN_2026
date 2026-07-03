@@ -1,0 +1,486 @@
+{% extends "dashboard/base_dashboard.html" %}
+{% load static %}
+
+{% block dashboard_title %}Previsões ML - {{ year }}{% endblock %}
+
+{% block dashboard_content %}
+<!-- Header do Dashboard -->
+<div class="platform-card mb-4">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <div>
+            <h2 class="card-title mb-0">
+                <i class="fas fa-chart-line me-2"></i>
+                Previsões com Machine Learning
+            </h2>
+            <p class="card-subtitle">Análise preditiva baseada em dados históricos</p>
+        </div>
+        <div class="export-buttons">
+            <a href="{% url 'dashboard:advanced-dashboard' %}" class="btn-binance-outline">
+                <i class="fas fa-arrow-left"></i> Voltar
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Filtros -->
+<div class="dashboard-filters">
+    <h5 class="dashboard-filters-title">Filtros de Análise</h5>
+    <form method="get" class="dashboard-filter-group">
+        <div class="form-group">
+            <label class="form-label">Horizonte de Previsão</label>
+            <select name="months" class="form-select-questionario dashboard-filter" id="monthsSelect">
+                <option value="3" {% if months_ahead == 3 %}selected{% endif %}>3 meses</option>
+                <option value="6" {% if months_ahead == 6 %}selected{% endif %}>6 meses</option>
+                <option value="12" {% if months_ahead == 12 %}selected{% endif %}>12 meses</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label class="form-label">Ano Base</label>
+            <select name="year" class="form-select-questionario dashboard-filter" id="yearSelect">
+                {% for y in "2021 2022 2023 2024 2025"|make_list %}
+                    <option value="{{ y }}" {% if y|add:0 == year %}selected{% endif %}>{{ y }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group">
+            <button type="submit" class="btn-binance">
+                <i class="fas fa-sync me-2"></i>Atualizar
+            </button>
+        </div>
+    </form>
+</div>
+
+<!-- Saturação de Mercado -->
+{% if market_saturation %}
+<div class="platform-card mb-4">
+    <div class="card-header">
+        <h4 class="card-title mb-0">
+            <i class="fas fa-tachometer-alt me-2"></i>
+            Saturação de Mercado
+        </h4>
+        <p class="card-subtitle">Análise da maturidade do mercado de telecomunicações</p>
+    </div>
+    <div class="card-body">
+        <div class="dashboard-kpis">
+            <div class="kpi-card kpi-primary">
+                <div class="kpi-icon">
+                    <i class="fas fa-percentage"></i>
+                </div>
+                <div class="kpi-value">{{ market_saturation.penetration_rate }}%</div>
+                <div class="kpi-label">Taxa de Penetração</div>
+                <div class="kpi-change neutral">
+                    <span class="badge badge-{% if market_saturation.saturation_level == 'low' %}success{% elif market_saturation.saturation_level == 'medium' %}warning{% else %}danger{% endif %}">
+                        {{ market_saturation.saturation_level|upper }}
+                    </span>
+                </div>
+            </div>
+            
+            <div class="kpi-card kpi-info">
+                <div class="kpi-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <div class="kpi-value">{{ market_saturation.total_subscribers|floatformat:0 }}</div>
+                <div class="kpi-label">Assinantes Atuais</div>
+                <div class="kpi-change neutral">
+                    <i class="fas fa-info-circle"></i>
+                    Pop: {{ market_saturation.population|floatformat:0 }}
+                </div>
+            </div>
+            
+            <div class="kpi-card kpi-success">
+                <div class="kpi-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <div class="kpi-value">{{ market_saturation.potential_market|floatformat:0 }}</div>
+                <div class="kpi-label">Mercado Potencial</div>
+                <div class="kpi-change positive">
+                    <i class="fas fa-arrow-up"></i>
+                    Oportunidade
+                </div>
+            </div>
+            
+            <div class="kpi-card kpi-warning">
+                <div class="kpi-icon">
+                    <i class="fas fa-layer-group"></i>
+                </div>
+                <div class="kpi-value text-capitalize">{{ market_saturation.market_maturity }}</div>
+                <div class="kpi-label">Maturidade</div>
+                <div class="kpi-change neutral">
+                    <span class="badge badge-info">{{ market_saturation.growth_potential|upper }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- Previsão de Assinantes -->
+{% if subscriber_forecast and not subscriber_forecast.error %}
+<div class="platform-card mb-4">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <div>
+            <h4 class="card-title mb-0">
+                <i class="fas fa-users me-2"></i>
+                Previsão de Assinantes
+            </h4>
+            <p class="card-subtitle">Projeção de crescimento para os próximos {{ months_ahead }} meses</p>
+        </div>
+        <div>
+            <span class="confidence-badge confidence-{% if subscriber_forecast.confidence_score > 70 %}high{% elif subscriber_forecast.confidence_score > 40 %}medium{% else %}low{% endif %}">
+                <i class="fas fa-check-circle"></i> Confiança: {{ subscriber_forecast.confidence_score }}%
+            </span>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="dashboard-kpis mb-4">
+            <div class="kpi-card kpi-info">
+                <div class="kpi-icon">
+                    <i class="fas fa-user-check"></i>
+                </div>
+                <div class="kpi-value">{{ subscriber_forecast.current_subscribers|floatformat:0 }}</div>
+                <div class="kpi-label">Assinantes Atuais</div>
+            </div>
+            
+            <div class="kpi-card kpi-primary">
+                <div class="kpi-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <div class="kpi-value">{{ subscriber_forecast.predictions|last|get:"predicted_subscribers"|floatformat:0 }}</div>
+                <div class="kpi-label">Projeção ({{ months_ahead }} meses)</div>
+            </div>
+            
+            <div class="kpi-card kpi-{% if subscriber_forecast.projected_growth_rate > 0 %}success{% else %}warning{% endif %}">
+                <div class="kpi-icon">
+                    <i class="fas fa-arrow-{% if subscriber_forecast.projected_growth_rate > 0 %}up{% else %}down{% endif %}"></i>
+                </div>
+                <div class="kpi-value">
+                    {% if subscriber_forecast.projected_growth_rate > 0 %}+{% endif %}{{ subscriber_forecast.projected_growth_rate }}%
+                </div>
+                <div class="kpi-label">Crescimento Esperado</div>
+                <div class="kpi-change {% if subscriber_forecast.projected_growth_rate > 0 %}positive{% else %}negative{% endif %}">
+                    <i class="fas fa-arrow-{% if subscriber_forecast.projected_growth_rate > 0 %}up{% else %}down{% endif %}"></i>
+                    {% if subscriber_forecast.projected_growth_rate > 0 %}Crescimento{% else %}Declínio{% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <div class="dashboard-chart-container">
+            <canvas id="subscribersChart"></canvas>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- Previsão de Receitas -->
+{% if revenue_forecast and not revenue_forecast.error %}
+<div class="platform-card mb-4">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <div>
+            <h4 class="card-title mb-0">
+                <i class="fas fa-dollar-sign me-2"></i>
+                Previsão de Receitas
+            </h4>
+            <p class="card-subtitle">Tendências de receita em FCFA</p>
+        </div>
+        <div>
+            <span class="confidence-badge confidence-medium">
+                <i class="fas fa-chart-line"></i> Confiança: {{ revenue_forecast.confidence_score }}%
+            </span>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="dashboard-kpis mb-4">
+            <div class="kpi-card kpi-success">
+                <div class="kpi-icon">
+                    <i class="fas fa-money-bill-wave"></i>
+                </div>
+                <div class="kpi-value">{{ revenue_forecast.current_revenue|floatformat:0 }}</div>
+                <div class="kpi-label">Receita Atual (FCFA)</div>
+            </div>
+            
+            <div class="kpi-card kpi-primary">
+                <div class="kpi-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <div class="kpi-value">{{ revenue_forecast.predictions|last|get:"predicted_revenue"|floatformat:0 }}</div>
+                <div class="kpi-label">Projeção ({{ months_ahead }} meses)</div>
+            </div>
+            
+            <div class="kpi-card kpi-{% if revenue_forecast.projected_growth_rate > 0 %}success{% else %}warning{% endif %}">
+                <div class="kpi-icon">
+                    <i class="fas fa-arrow-{% if revenue_forecast.trend == 'increasing' %}up{% else %}down{% endif %}"></i>
+                </div>
+                <div class="kpi-value">
+                    {% if revenue_forecast.projected_growth_rate > 0 %}+{% endif %}{{ revenue_forecast.projected_growth_rate }}%
+                </div>
+                <div class="kpi-label">Crescimento Esperado</div>
+                <div class="kpi-change {% if revenue_forecast.projected_growth_rate > 0 %}positive{% else %}negative{% endif %}">
+                    <i class="fas fa-arrow-{% if revenue_forecast.trend == 'increasing' %}up{% else %}down{% endif %}"></i>
+                    Tendência {{ revenue_forecast.trend }}
+                </div>
+            </div>
+        </div>
+        
+        <div class="dashboard-chart-container">
+            <canvas id="revenueChart"></canvas>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- Previsão de Tráfego -->
+{% if traffic_forecast and not traffic_forecast.error %}
+<div class="platform-card mb-4">
+    <div class="card-header">
+        <h4 class="card-title mb-0">
+            <i class="fas fa-wifi me-2"></i>
+            Previsão de Tráfego de Dados
+        </h4>
+        <p class="card-subtitle">Crescimento de tráfego móvel em GB</p>
+    </div>
+    <div class="card-body">
+        <div class="dashboard-kpis mb-4">
+            <div class="kpi-card kpi-info">
+                <div class="kpi-icon">
+                    <i class="fas fa-database"></i>
+                </div>
+                <div class="kpi-value">{{ traffic_forecast.current_traffic_gb|floatformat:2 }} GB</div>
+                <div class="kpi-label">Tráfego Atual</div>
+            </div>
+            
+            <div class="kpi-card kpi-primary">
+                <div class="kpi-icon">
+                    <i class="fas fa-chart-area"></i>
+                </div>
+                <div class="kpi-value">{{ traffic_forecast.predictions|last|get:"predicted_traffic_gb"|floatformat:2 }} GB</div>
+                <div class="kpi-label">Projeção ({{ months_ahead }} meses)</div>
+            </div>
+            
+            <div class="kpi-card kpi-success">
+                <div class="kpi-icon">
+                    <i class="fas fa-arrow-up"></i>
+                </div>
+                <div class="kpi-value">+{{ traffic_forecast.avg_monthly_growth|floatformat:2 }} GB</div>
+                <div class="kpi-label">Crescimento Mensal Médio</div>
+                <div class="kpi-change positive">
+                    <i class="fas fa-arrow-up"></i>
+                    Por mês
+                </div>
+            </div>
+        </div>
+        
+        <div class="dashboard-chart-container">
+            <canvas id="trafficChart"></canvas>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- Insights -->
+{% if insights %}
+<div class="platform-card">
+    <div class="card-header">
+        <h4 class="card-title mb-0">
+            <i class="fas fa-lightbulb me-2"></i>
+            Insights Automáticos
+        </h4>
+        <p class="card-subtitle">Análises geradas por IA baseadas nas previsões</p>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            {% for insight in insights %}
+            <div class="col-md-6 mb-3">
+                <div class="platform-alert platform-alert-{% if insight.type == 'positive' %}success{% elif insight.type == 'warning' %}warning{% else %}info{% endif %}">
+                    <div class="alert-icon">
+                        <i class="fas fa-{% if insight.type == 'positive' %}check-circle{% elif insight.type == 'warning' %}exclamation-triangle{% else %}info-circle{% endif %}"></i>
+                    </div>
+                    <div class="alert-content">
+                        <h6 class="alert-title">{{ insight.title }}</h6>
+                        <p class="alert-message">{{ insight.message }}</p>
+                        <small class="alert-meta">
+                            <i class="fas fa-tag me-1"></i>{{ insight.category }} | 
+                            <span class="badge badge-{{ insight.priority }}">{{ insight.priority|upper }}</span>
+                        </small>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .confidence-badge {
+        display: inline-block;
+        padding: 6px 14px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 600;
+    }
+    
+    .confidence-high {
+        background-color: var(--binance-success);
+        color: white;
+    }
+    
+    .confidence-medium {
+        background-color: var(--binance-warning);
+        color: var(--binance-dark);
+    }
+    
+    .confidence-low {
+        background-color: var(--binance-danger);
+        color: white;
+    }
+    
+    .badge-success { background-color: var(--binance-success) !important; }
+    .badge-warning { background-color: var(--binance-warning) !important; }
+    .badge-danger { background-color: var(--binance-danger) !important; }
+    .badge-info { background-color: var(--binance-info) !important; }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Configuração comum dos gráficos
+    const chartConfig = {
+        borderColor: 'rgba(240, 185, 11, 1)',
+        backgroundColor: 'rgba(240, 185, 11, 0.1)',
+        tension: 0.4,
+        pointRadius: 5,
+        pointHoverRadius: 7
+    };
+
+    {% if subscriber_forecast and not subscriber_forecast.error %}
+    // Gráfico de Assinantes
+    const subscribersCtx = document.getElementById('subscribersChart').getContext('2d');
+    new Chart(subscribersCtx, {
+        type: 'line',
+        data: {
+            labels: [{% for p in subscriber_forecast.predictions %}'Mês +{{ p.month_offset }}'{% if not forloop.last %},{% endif %}{% endfor %}],
+            datasets: [{
+                label: 'Previsão de Assinantes',
+                data: [{% for p in subscriber_forecast.predictions %}{{ p.predicted_subscribers }}{% if not forloop.last %},{% endif %}{% endfor %}],
+                ...chartConfig,
+                fill: true
+            }, {
+                label: 'Limite Superior',
+                data: [{% for p in subscriber_forecast.predictions %}{{ p.upper_bound }}{% if not forloop.last %},{% endif %}{% endfor %}],
+                borderColor: 'rgba(240, 185, 11, 0.3)',
+                borderDash: [5, 5],
+                fill: false,
+                pointRadius: 0
+            }, {
+                label: 'Limite Inferior',
+                data: [{% for p in subscriber_forecast.predictions %}{{ p.lower_bound }}{% if not forloop.last %},{% endif %}{% endfor %}],
+                borderColor: 'rgba(240, 185, 11, 0.3)',
+                borderDash: [5, 5],
+                fill: false,
+                pointRadius: 0
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { labels: { color: '#EAECEF' } }
+            },
+            scales: {
+                y: { 
+                    ticks: { 
+                        color: '#EAECEF',
+                        callback: function(value) {
+                            return value.toLocaleString('pt-BR');
+                        }
+                    }, 
+                    grid: { color: 'rgba(71, 77, 87, 0.3)' } 
+                },
+                x: { ticks: { color: '#EAECEF' }, grid: { color: 'rgba(71, 77, 87, 0.3)' } }
+            }
+        }
+    });
+    {% endif %}
+
+    {% if revenue_forecast and not revenue_forecast.error %}
+    // Gráfico de Receitas
+    const revenueCtx = document.getElementById('revenueChart').getContext('2d');
+    new Chart(revenueCtx, {
+        type: 'bar',
+        data: {
+            labels: [{% for p in revenue_forecast.predictions %}'Mês +{{ p.month_offset }}'{% if not forloop.last %},{% endif %}{% endfor %}],
+            datasets: [{
+                label: 'Receita Prevista (FCFA)',
+                data: [{% for p in revenue_forecast.predictions %}{{ p.predicted_revenue }}{% if not forloop.last %},{% endif %}{% endfor %}],
+                backgroundColor: 'rgba(14, 203, 129, 0.6)',
+                borderColor: 'rgba(14, 203, 129, 1)',
+                borderWidth: 2
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { labels: { color: '#EAECEF' } }
+            },
+            scales: {
+                y: { 
+                    ticks: { 
+                        color: '#EAECEF',
+                        callback: function(value) {
+                            return value.toLocaleString('pt-BR') + ' FCFA';
+                        }
+                    }, 
+                    grid: { color: 'rgba(71, 77, 87, 0.3)' } 
+                },
+                x: { ticks: { color: '#EAECEF' }, grid: { color: 'rgba(71, 77, 87, 0.3)' } }
+            }
+        }
+    });
+    {% endif %}
+
+    {% if traffic_forecast and not traffic_forecast.error %}
+    // Gráfico de Tráfego
+    const trafficCtx = document.getElementById('trafficChart').getContext('2d');
+    new Chart(trafficCtx, {
+        type: 'line',
+        data: {
+            labels: [{% for p in traffic_forecast.predictions %}'Mês +{{ p.month_offset }}'{% if not forloop.last %},{% endif %}{% endfor %}],
+            datasets: [{
+                label: 'Tráfego Previsto (GB)',
+                data: [{% for p in traffic_forecast.predictions %}{{ p.predicted_traffic_gb }}{% if not forloop.last %},{% endif %}{% endfor %}],
+                borderColor: 'rgba(0, 123, 255, 1)',
+                backgroundColor: 'rgba(0, 123, 255, 0.1)',
+                tension: 0.4,
+                fill: true,
+                pointRadius: 5
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { labels: { color: '#EAECEF' } }
+            },
+            scales: {
+                y: { 
+                    ticks: { 
+                        color: '#EAECEF',
+                        callback: function(value) {
+                            return value.toFixed(2) + ' GB';
+                        }
+                    }, 
+                    grid: { color: 'rgba(71, 77, 87, 0.3)' } 
+                },
+                x: { ticks: { color: '#EAECEF' }, grid: { color: 'rgba(71, 77, 87, 0.3)' } }
+            }
+        }
+    });
+    {% endif %}
+});
+</script>
+{% endblock %}

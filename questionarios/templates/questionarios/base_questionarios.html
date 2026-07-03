@@ -1,0 +1,249 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/binance-style.css' %}">
+<link rel="stylesheet" href="{% static 'questionarios/css/questionarios-binance.css' %}">
+{% endblock %}
+
+{# Esconder navbar e footer padrão #}
+{% block navbar %}{% endblock %}
+{% block footer %}{% endblock %}
+{% block main_container %}
+
+{% block content %}
+<div class="platform-container">
+    <!-- SIDEBAR QUESTIONÁRIOS -->
+    <nav class="platform-sidebar" id="sidebar">
+        <!-- Header da Sidebar -->
+        <div class="sidebar-header">
+            <a href="{% url 'questionarios:data_management' %}" class="sidebar-logo">
+                <i class="fas fa-chart-network"></i>
+                ARN Platform
+            </a>
+        </div>
+        
+        <!-- Navegação da Sidebar -->
+        <div class="sidebar-nav">
+            <!-- Análises -->
+            <div class="sidebar-nav-item">
+                <button class="sidebar-nav-link" type="button" data-bs-toggle="collapse" data-bs-target="#analysisMenu" aria-expanded="false">
+                    <i class="fas fa-chart-bar"></i>
+                    Análises de Dados
+                    <i class="fas fa-chevron-down ms-auto"></i>
+                </button>
+                <div class="collapse sidebar-dropdown" id="analysisMenu">
+                    <a href="{% url 'questionarios:analise_assinantes' %}" class="sidebar-dropdown-link">
+                        <i class="fas fa-users"></i>
+                        Assinantes
+                    </a>
+                    <a href="{% url 'questionarios:analise_receitas' %}" class="sidebar-dropdown-link">
+                        <i class="fas fa-dollar-sign"></i>
+                        Receitas
+                    </a>
+                    <a href="{% url 'questionarios:analise_investimento' %}" class="sidebar-dropdown-link">
+                        <i class="fas fa-chart-pie"></i>
+                        Investimento
+                    </a>
+                    <a href="{% url 'questionarios:analise_emprego' %}" class="sidebar-dropdown-link">
+                        <i class="fas fa-briefcase"></i>
+                        Emprego
+                    </a>
+                    <a href="{% url 'questionarios:analise_trafego_originado' %}" class="sidebar-dropdown-link">
+                        <i class="fas fa-phone"></i>
+                        Tráfego Originado
+                    </a>
+                    <a href="{% url 'questionarios:analise_trafego_terminado' %}" class="sidebar-dropdown-link">
+                        <i class="fas fa-phone-incoming"></i>
+                        Tráfego Terminado
+                    </a>
+                    <a href="{% url 'questionarios:analise_trafego_roaming' %}" class="sidebar-dropdown-link">
+                        <i class="fas fa-globe-americas"></i>
+                        Tráfego Roaming
+                    </a>
+                    <a href="{% url 'questionarios:analise_lbi' %}" class="sidebar-dropdown-link">
+                        <i class="fas fa-broadcast-tower"></i>
+                        LBI
+                    </a>
+                    <a href="{% url 'questionarios:analise_trafego_internet' %}" class="sidebar-dropdown-link">
+                        <i class="fas fa-globe"></i>
+                        Tráfego Internet
+                    </a>
+                    <a href="{% url 'questionarios:analise_internet_fixo' %}" class="sidebar-dropdown-link">
+                        <i class="fas fa-ethernet"></i>
+                        Internet Fixo
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Gestão de Dados -->
+            {% if user.is_authenticated and user.is_staff %}
+            <div class="sidebar-nav-item">
+                <button class="sidebar-nav-link" type="button" data-bs-toggle="collapse" data-bs-target="#dataManagement" aria-expanded="false">
+                    <i class="fas fa-database"></i>
+                    Gestão de Dados
+                    <i class="fas fa-chevron-down ms-auto"></i>
+                </button>
+                <div class="collapse sidebar-dropdown" id="dataManagement">
+                    <a href="{% url 'questionarios:estacoes_moveis_list' %}" class="sidebar-dropdown-link">
+                        <i class="fas fa-signal"></i>
+                        Estações Móveis
+                    </a>
+                    <a href="{% url 'questionarios:assinantes_list' %}" class="sidebar-dropdown-link">
+                        <i class="fas fa-users"></i>
+                        Assinantes
+                    </a>
+                    <a href="{% url 'questionarios:receitas_list' %}" class="sidebar-dropdown-link">
+                        <i class="fas fa-dollar-sign"></i>
+                        Receitas
+                    </a>
+                    <a href="{% url 'questionarios:trafego_originado_list' %}" class="sidebar-dropdown-link">
+                        <i class="fas fa-phone"></i>
+                        Tráfego Originado
+                    </a>
+                    <a href="{% url 'questionarios:trafego_terminado_list' %}" class="sidebar-dropdown-link">
+                        <i class="fas fa-phone-incoming"></i>
+                        Tráfego Terminado
+                    </a>
+                    <a href="{% url 'questionarios:trafego_roaming_internacional_list' %}" class="sidebar-dropdown-link">
+                        <i class="fas fa-globe-americas"></i>
+                        Tráfego Roaming
+                    </a>
+                    <a href="{% url 'questionarios:lbi_list' %}" class="sidebar-dropdown-link">
+                        <i class="fas fa-broadcast-tower"></i>
+                        LBI
+                    </a>
+                    <a href="{% url 'questionarios:trafego_internet_list' %}" class="sidebar-dropdown-link">
+                        <i class="fas fa-globe"></i>
+                        Tráfego Internet
+                    </a>
+                    <a href="{% url 'questionarios:internet_fixo_list' %}" class="sidebar-dropdown-link">
+                        <i class="fas fa-ethernet"></i>
+                        Internet Fixo
+                    </a>
+                    <a href="{% url 'questionarios:investimento_list' %}" class="sidebar-dropdown-link">
+                        <i class="fas fa-chart-line"></i>
+                        Investimento
+                    </a>
+                    <a href="{% url 'questionarios:emprego_list' %}" class="sidebar-dropdown-link">
+                        <i class="fas fa-briefcase"></i>
+                        Emprego
+                    </a>
+                    <div class="sidebar-divider"></div>
+                    <a href="{% url 'questionarios:tarifario_orange_list' %}" class="sidebar-dropdown-link">
+                        <i class="fas fa-phone-square"></i>
+                        Tarifário Orange
+                    </a>
+                    <a href="{% url 'questionarios:tarifario_telecel_list' %}" class="sidebar-dropdown-link">
+                        <i class="fas fa-phone-square"></i>
+                        Tarifário MTN
+                    </a>
+                    <a href="{% url 'questionarios:tarifario_telecel_list' %}" class="sidebar-dropdown-link">
+                        <i class="fas fa-phone-square"></i>
+                        Tarifário TELECEL
+                    </a>
+                    <div class="sidebar-divider"></div>
+                    <a href="{% url 'questionarios:upload_excel' %}" class="sidebar-dropdown-link">
+                        <i class="fas fa-file-excel"></i>
+                        Upload Excel
+                    </a>
+                </div>
+            </div>
+            {% endif %}
+            
+            <!-- Dashboard Principal -->
+            <div class="sidebar-nav-item">
+                <a href="{% url 'dashboard:home' %}" class="sidebar-nav-link">
+                    <i class="fas fa-tachometer-alt"></i>
+                    Dashboard Principal
+                </a>
+            </div>
+            
+            <!-- Home -->
+            <div class="sidebar-nav-item">
+                <a href="/" class="sidebar-nav-link">
+                    <i class="fas fa-home"></i>
+                    Início
+                </a>
+            </div>
+            
+            <!-- Relatórios -->
+            <div class="sidebar-nav-item">
+                <a href="{% url 'dashboard:market-report' %}" class="sidebar-nav-link">
+                    <i class="fas fa-file-alt"></i>
+                    Relatórios
+                </a>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- CONTEÚDO PRINCIPAL -->
+    <div class="platform-content">
+        <!-- NAVBAR SUPERIOR -->
+        <header class="platform-navbar">
+            <div class="d-flex align-items-center">
+                <button class="navbar-btn d-md-none" id="sidebarToggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <h1 class="h4 mb-0 ms-2">{% block questionario_title %}Gestão de Dados{% endblock %}</h1>
+            </div>
+            
+            <!-- Busca -->
+            <div class="navbar-search d-none d-md-block">
+                <input type="text" class="search-input" placeholder="Buscar dados, indicadores...">
+            </div>
+            
+            <!-- Ações da Navbar -->
+            <div class="navbar-actions">
+                <!-- Menu do Usuário -->
+                <div class="user-menu dropdown">
+                    <div class="user-avatar" data-bs-toggle="dropdown" aria-expanded="false">
+                        {{ user.first_name.0|default:user.email.0|upper }}
+                    </div>
+                    <ul class="dropdown-menu dropdown-menu-end" style="background-color: var(--binance-dark-light); border-color: var(--binance-border);">
+                        <li><a class="dropdown-item" href="/accounts/profile/" style="color: var(--binance-text);">
+                            <i class="fas fa-user me-2"></i>Perfil
+                        </a></li>
+                        <li><a class="dropdown-item" href="#" style="color: var(--binance-text);">
+                            <i class="fas fa-cog me-2"></i>Configurações
+                        </a></li>
+                        <li><hr class="dropdown-divider" style="border-color: var(--binance-border);"></li>
+                        <li><a class="dropdown-item" href="/accounts/logout/" style="color: var(--binance-danger);">
+                            <i class="fas fa-sign-out-alt me-2"></i>Sair
+                        </a></li>
+                    </ul>
+                </div>
+            </div>
+        </header>
+        
+        <!-- ÁREA DE CONTEÚDO -->
+        <main class="platform-main">
+            {% if messages %}
+            <div class="notification-container">
+                {% for message in messages %}
+                <div class="notification notification-{{ message.tags }}">
+                    <div>
+                        <i class="fas fa-info-circle"></i>
+                    </div>
+                    <div>
+                        <strong>{{ message.tags|title }}</strong>
+                        <p class="mb-0 mt-1">{{ message }}</p>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+            
+            {% block questionario_content %}{% endblock %}
+        </main>
+    </div>
+</div>
+{% endblock %}
+
+{% endblock %} {# Fechar main_container #}
+
+{% block extra_js %}
+<script src="{% static 'js/platform.js' %}"></script>
+<script src="{% static 'questionarios/js/questionarios-binance.js' %}"></script>
+{% block questionario_js %}{% endblock %}
+{% endblock %}

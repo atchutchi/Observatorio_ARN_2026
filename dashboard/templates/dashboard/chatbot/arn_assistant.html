@@ -1,0 +1,207 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+
+{% block dashboard_title %}Assistente ARN Analytics{% endblock %}
+
+{% block dashboard_content %}
+<!-- Header do Assistente -->
+<div class="platform-card mb-4">
+    <div class="card-header">
+        <h2 class="card-title mb-0">
+            <i class="fas fa-robot me-2"></i>
+            Assistente ARN Analytics
+        </h2>
+        <p class="card-subtitle">IA integrada aos dados de telecomunicações da Guiné-Bissau</p>
+    </div>
+</div>
+
+<!-- Interface do Chat -->
+<div class="arn-chat-container">
+    <!-- Chat Messages Area -->
+    <div class="arn-chat-messages" id="chatMessages">
+        <!-- Welcome Message -->
+        <div class="arn-message bot-message">
+            <div class="message-avatar">
+                <i class="fas fa-robot"></i>
+            </div>
+            <div class="message-content">
+                <div class="message-text">
+                    <p>👋 Olá! Sou o <strong>Assistente ARN Analytics</strong>, sua IA especializada em dados de telecomunicações.</p>
+                    <p>Posso ajudar você com:</p>
+                    <ul>
+                        <li>📊 Análises de market share e assinantes</li>
+                        <li>📞 Dados de tráfego de voz</li>
+                        <li>💰 Receitas e faturamento</li>
+                        <li>📈 Comparações entre operadoras</li>
+                        <li>📉 Tendências e evolução do mercado</li>
+                    </ul>
+                    <p>Que dados gostaria de consultar?</p>
+                </div>
+                <div class="message-suggestions" id="initialSuggestions">
+                    <button class="suggestion-btn" data-suggestion="Qual a quota de mercado da Orange?">
+                        Quota de mercado da Orange
+                    </button>
+                    <button class="suggestion-btn" data-suggestion="Mostre os dados de assinantes de 2023">
+                        Assinantes 2023
+                    </button>
+                    <button class="suggestion-btn" data-suggestion="Compare TELECEL e Orange em receitas">
+                        Comparar receitas
+                    </button>
+                    <button class="suggestion-btn" data-suggestion="Como evoluiu o tráfego nos últimos anos?">
+                        Evolução do tráfego
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Chat Input Area -->
+    <div class="arn-chat-input">
+        <div class="chat-input-container">
+            <input type="text" 
+                   id="chatInput" 
+                   class="chat-input-field" 
+                   placeholder="Digite sua pergunta sobre dados de telecomunicações..."
+                   maxlength="500">
+            <button id="sendMessage" class="chat-send-btn">
+                <i class="fas fa-paper-plane"></i>
+            </button>
+        </div>
+        
+        <!-- Quick Actions -->
+        <div class="chat-quick-actions">
+            <button class="quick-action-btn" data-action="clear" title="Limpar conversa">
+                <i class="fas fa-trash"></i>
+            </button>
+            <button class="quick-action-btn" data-action="history" title="Ver histórico">
+                <i class="fas fa-history"></i>
+            </button>
+            <button class="quick-action-btn" data-action="export" title="Exportar conversa">
+                <i class="fas fa-download"></i>
+            </button>
+        </div>
+    </div>
+    
+    <!-- Loading Indicator -->
+    <div class="arn-loading" id="chatLoading" style="display: none;">
+        <div class="loading-content">
+            <div class="loading-spinner"></div>
+            <span>Analisando dados...</span>
+        </div>
+    </div>
+</div>
+
+<!-- Sidebar com informações -->
+<div class="arn-chat-sidebar">
+    <div class="platform-card">
+        <div class="card-header">
+            <h4 class="card-title">
+                <i class="fas fa-info-circle me-2"></i>
+                Status do Sistema
+            </h4>
+        </div>
+        <div class="card-body">
+            <div class="status-item">
+                <span class="status-indicator online"></span>
+                <span>Assistente Online</span>
+            </div>
+            <div class="status-item">
+                <span class="status-indicator online"></span>
+                <span>Base de Dados Conectada</span>
+            </div>
+            <div class="status-item">
+                <span class="status-indicator" id="aiStatus">pending</span>
+                <span>IA Avançada (HuggingFace)</span>
+            </div>
+            <div class="status-item">
+                <span class="status-indicator" id="deepseekStatus">pending</span>
+                <span>DeepSeek Reasoning</span>
+            </div>
+        </div>
+    </div>
+    
+    <div class="platform-card mt-3">
+        <div class="card-header">
+            <h4 class="card-title">
+                <i class="fas fa-chart-bar me-2"></i>
+                Dados Disponíveis
+            </h4>
+        </div>
+        <div class="card-body">
+            <div class="data-stats">
+                <div class="data-stat-item">
+                    <i class="fas fa-users"></i>
+                    <span>Assinantes por operadora</span>
+                </div>
+                <div class="data-stat-item">
+                    <i class="fas fa-phone"></i>
+                    <span>Tráfego de voz</span>
+                </div>
+                <div class="data-stat-item">
+                    <i class="fas fa-dollar-sign"></i>
+                    <span>Receitas e faturamento</span>
+                </div>
+                <div class="data-stat-item">
+                    <i class="fas fa-chart-pie"></i>
+                    <span>Market share</span>
+                </div>
+                <div class="data-stat-item">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Investimentos</span>
+                </div>
+                <div class="data-stat-item">
+                    <i class="fas fa-briefcase"></i>
+                    <span>Dados de emprego</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="platform-card mt-3">
+        <div class="card-header">
+            <h4 class="card-title">
+                <i class="fas fa-lightbulb me-2"></i>
+                Exemplos de Perguntas
+            </h4>
+        </div>
+        <div class="card-body">
+            <div class="example-questions">
+                <div class="example-category">
+                    <h6>📊 Market Share</h6>
+                    <ul>
+                        <li>"Qual a quota de mercado da Orange?"</li>
+                        <li>"Quem é líder do mercado?"</li>
+                    </ul>
+                </div>
+                
+                <div class="example-category">
+                    <h6>📞 Tráfego</h6>
+                    <ul>
+                        <li>"Volume de tráfego da TELECEL"</li>
+                        <li>"Análise de tráfego internacional"</li>
+                    </ul>
+                </div>
+                
+                <div class="example-category">
+                    <h6>⚖️ Comparações</h6>
+                    <ul>
+                        <li>"Compare TELECEL e Orange"</li>
+                        <li>"Diferença de receitas entre operadoras"</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block dashboard_js %}
+<script src="{% static 'dashboard/js/arn-assistant.js' %}"></script>
+<script>
+    // Inicializar assistente
+    document.addEventListener('DOMContentLoaded', function() {
+        window.ARNAssistant = new ARNAssistantInterface();
+        window.ARNAssistant.initialize();
+    });
+</script>
+{% endblock %}

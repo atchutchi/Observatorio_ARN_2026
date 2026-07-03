@@ -1,0 +1,268 @@
+{% extends "base.html" %}
+{% load static %}
+{% load humanize %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/binance-style.css' %}">
+<link rel="stylesheet" href="{% static 'home/css/home-binance.css' %}">
+{% endblock %}
+
+{# Esconder navbar e footer padrão #}
+{% block navbar %}{% endblock %}
+{% block footer %}{% endblock %}
+{% block main_container %}
+
+{% block content %}
+<div class="platform-container">
+    <!-- SIDEBAR HOME -->
+    <nav class="platform-sidebar" id="sidebar">
+        <!-- Header da Sidebar -->
+        <div class="sidebar-header">
+            <a href="/" class="sidebar-logo">
+                <i class="fas fa-chart-network"></i>
+                ARN Platform
+            </a>
+        </div>
+        
+        <!-- Navegação da Sidebar -->
+        <div class="sidebar-nav">
+            <div class="sidebar-nav-item">
+                <a href="/" class="sidebar-nav-link active">
+                    <i class="fas fa-home"></i>
+                    Início
+                </a>
+            </div>
+            
+            <!-- Dashboard Avançado -->
+            <div class="sidebar-nav-item">
+                <a href="{% url 'dashboard:home' %}" class="sidebar-nav-link">
+                    <i class="fas fa-tachometer-alt"></i>
+                    Dashboard Avançado
+                </a>
+            </div>
+            
+            <!-- Análises Completas -->
+            <div class="sidebar-nav-item">
+                <button class="sidebar-nav-link" type="button" data-bs-toggle="collapse" data-bs-target="#quickAnalysis" aria-expanded="false">
+                    <i class="fas fa-chart-bar"></i>
+                    Análises de Dados
+                    <i class="fas fa-chevron-down ms-auto"></i>
+                </button>
+                <div class="collapse sidebar-dropdown" id="quickAnalysis">
+                    <a href="{% url 'questionarios:analise_assinantes' %}" class="sidebar-dropdown-link">
+                        <i class="fas fa-users"></i>
+                        Assinantes
+                    </a>
+                    <a href="{% url 'questionarios:analise_receitas' %}" class="sidebar-dropdown-link">
+                        <i class="fas fa-dollar-sign"></i>
+                        Receitas
+                    </a>
+                    <a href="{% url 'questionarios:analise_investimento' %}" class="sidebar-dropdown-link">
+                        <i class="fas fa-chart-pie"></i>
+                        Investimento
+                    </a>
+                    <a href="{% url 'questionarios:analise_emprego' %}" class="sidebar-dropdown-link">
+                        <i class="fas fa-briefcase"></i>
+                        Emprego
+                    </a>
+                    <a href="{% url 'questionarios:analise_trafego_originado' %}" class="sidebar-dropdown-link">
+                        <i class="fas fa-phone"></i>
+                        Tráfego Originado
+                    </a>
+                    <a href="{% url 'questionarios:analise_trafego_terminado' %}" class="sidebar-dropdown-link">
+                        <i class="fas fa-phone-incoming"></i>
+                        Tráfego Terminado
+                    </a>
+                    <a href="{% url 'questionarios:analise_trafego_roaming' %}" class="sidebar-dropdown-link">
+                        <i class="fas fa-globe-americas"></i>
+                        Tráfego Roaming
+                    </a>
+                    <a href="{% url 'questionarios:analise_lbi' %}" class="sidebar-dropdown-link">
+                        <i class="fas fa-broadcast-tower"></i>
+                        LBI
+                    </a>
+                    <a href="{% url 'questionarios:analise_trafego_internet' %}" class="sidebar-dropdown-link">
+                        <i class="fas fa-globe"></i>
+                        Tráfego Internet
+                    </a>
+                    <a href="{% url 'questionarios:analise_internet_fixo' %}" class="sidebar-dropdown-link">
+                        <i class="fas fa-ethernet"></i>
+                        Internet Fixo
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Gestão de Dados -->
+            <div class="sidebar-nav-item">
+                <a href="{% url 'questionarios:data_management' %}" class="sidebar-nav-link">
+                    <i class="fas fa-database"></i>
+                    Gestão de Dados
+                </a>
+            </div>
+            
+            <!-- Relatórios -->
+            <div class="sidebar-nav-item">
+                <a href="{% url 'dashboard:market-report' %}" class="sidebar-nav-link">
+                    <i class="fas fa-file-alt"></i>
+                    Relatórios
+                </a>
+            </div>
+            
+            <!-- Assistente ARN -->
+            <div class="sidebar-nav-item">
+                <a href="{% url 'dashboard:arn-assistant' %}" class="sidebar-nav-link">
+                    <i class="fas fa-robot"></i>
+                    Assistente ARN Analytics
+                </a>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- CONTEÚDO PRINCIPAL -->
+    <div class="platform-content">
+        <!-- NAVBAR SUPERIOR -->
+        <header class="platform-navbar">
+            <div class="d-flex align-items-center">
+                <button class="navbar-btn d-md-none" id="sidebarToggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <h1 class="h4 mb-0 ms-2">ARN Platform</h1>
+            </div>
+            
+            <!-- Busca -->
+            <div class="navbar-search d-none d-md-block">
+                <input type="text" class="search-input" placeholder="Buscar dados, relatórios...">
+            </div>
+            
+            <!-- Ações da Navbar -->
+            <div class="navbar-actions">
+                <!-- Menu do Usuário -->
+                <div class="user-menu dropdown">
+                    <div class="user-avatar" data-bs-toggle="dropdown" aria-expanded="false">
+                        {{ user.first_name.0|default:user.email.0|upper }}
+                    </div>
+                    <ul class="dropdown-menu dropdown-menu-end" style="background-color: var(--binance-dark-light); border-color: var(--binance-border);">
+                        <li><a class="dropdown-item" href="/accounts/profile/" style="color: var(--binance-text);">
+                            <i class="fas fa-user me-2"></i>Perfil
+                        </a></li>
+                        <li><a class="dropdown-item" href="#" style="color: var(--binance-text);">
+                            <i class="fas fa-cog me-2"></i>Configurações
+                        </a></li>
+                        <li><hr class="dropdown-divider" style="border-color: var(--binance-border);"></li>
+                        <li><a class="dropdown-item" href="/accounts/logout/" style="color: var(--binance-danger);">
+                            <i class="fas fa-sign-out-alt me-2"></i>Sair
+                        </a></li>
+                    </ul>
+                </div>
+            </div>
+        </header>
+        
+        <!-- ÁREA DE CONTEÚDO -->
+        <main class="platform-main">
+            <!-- Hero Section da Plataforma -->
+            <div class="home-hero">
+                <div class="home-hero-content">
+                    <h1 class="home-hero-title">Bem-vindo à ARN Platform</h1>
+                    <p class="home-hero-subtitle">
+                        Plataforma completa para monitoramento e análise do mercado de telecomunicações da Guiné-Bissau
+                    </p>
+                    <a href="{% url 'dashboard:home' %}" class="home-hero-cta">
+                        <i class="fas fa-chart-line"></i>
+                        Acessar Dashboard Completo
+                    </a>
+                </div>
+            </div>
+
+            <!-- Estatísticas Principais -->
+            <div class="home-stats">
+                <h2 class="home-stats-title">Indicadores do Mercado</h2>
+                <div class="home-stats-grid">
+                    <div class="home-stat-item">
+                        <div class="home-stat-value">{{ total_assinantes|default:0|floatformat:0 }}</div>
+                        <div class="home-stat-label">Total de Assinantes</div>
+                    </div>
+                    <div class="home-stat-item">
+                        <div class="home-stat-value">{{ total_receitas|default:0|floatformat:0 }}M</div>
+                        <div class="home-stat-label">Receitas (FCFA)</div>
+                    </div>
+                    <div class="home-stat-item">
+                        <div class="home-stat-value">{{ total_investimento|default:0|floatformat:0 }}M</div>
+                        <div class="home-stat-label">Investimento (FCFA)</div>
+                    </div>
+                    <div class="home-stat-item">
+                        <div class="home-stat-value">{{ num_operadoras|default:0 }}</div>
+                        <div class="home-stat-label">Operadoras Ativas</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Features Principais -->
+            <div class="home-features">
+                <div class="home-feature-card">
+                    <div class="home-feature-icon">
+                        <i class="fas fa-chart-bar"></i>
+                    </div>
+                    <h3 class="home-feature-title">Análises Avançadas</h3>
+                    <p class="home-feature-description">
+                        Análises detalhadas de assinantes, receitas, tráfego e investimento com visualizações interativas.
+                    </p>
+                    <a href="{% url 'questionarios:analise_assinantes' %}" class="home-feature-link">
+                        Explorar Análises <i class="fas fa-arrow-right ms-2"></i>
+                    </a>
+                </div>
+                
+                <div class="home-feature-card">
+                    <div class="home-feature-icon">
+                        <i class="fas fa-database"></i>
+                    </div>
+                    <h3 class="home-feature-title">Gestão de Dados</h3>
+                    <p class="home-feature-description">
+                        Gerencie todos os indicadores de telecomunicações, formulários e uploads de dados das operadoras.
+                    </p>
+                    <a href="{% url 'questionarios:data_management' %}" class="home-feature-link">
+                        Acessar Dados <i class="fas fa-arrow-right ms-2"></i>
+                    </a>
+                </div>
+                
+                <div class="home-feature-card">
+                    <div class="home-feature-icon">
+                        <i class="fas fa-file-alt"></i>
+                    </div>
+                    <h3 class="home-feature-title">Relatórios Executivos</h3>
+                    <p class="home-feature-description">
+                        Relatórios completos do mercado, dashboards executivos e análises comparativas entre operadoras.
+                    </p>
+                    <a href="{% url 'dashboard:market-report' %}" class="home-feature-link">
+                        Ver Relatórios <i class="fas fa-arrow-right ms-2"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Call to Action -->
+            <div class="home-cta">
+                <h2 class="home-cta-title">Explore Todos os Recursos</h2>
+                <p class="home-cta-description">
+                    Acesse análises completas, gere relatórios personalizados e gerencie todos os dados do setor de telecomunicações.
+                </p>
+                <div class="home-cta-buttons">
+                    <a href="{% url 'dashboard:home' %}" class="home-cta-btn">
+                        <i class="fas fa-tachometer-alt"></i>
+                        Dashboard Completo
+                    </a>
+                    <a href="{% url 'questionarios:upload_excel' %}" class="home-cta-btn secondary">
+                        <i class="fas fa-file-excel"></i>
+                        Upload de Dados
+                    </a>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+{% endblock %}
+
+{% endblock %} {# Fechar main_container #}
+
+{% block extra_js %}
+<script src="{% static 'js/platform.js' %}"></script>
+<script src="{% static 'home/js/home-binance.js' %}"></script>
+{% endblock %}

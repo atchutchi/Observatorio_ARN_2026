@@ -1,0 +1,93 @@
+{% extends 'questionarios/base_questionarios.html' %}
+{% load static %}
+
+{% block title %}{{ analysis_title }} - {{ block.super }}{% endblock %}
+{% block questionario_title %}{{ analysis_title }}{% endblock %}
+
+{% block questionario_content %}
+<!-- Header da Análise -->
+<div class="questionario-header">
+    <div class="d-flex justify-content-between align-items-start">
+        <div>
+            <h1 class="questionario-title">{{ analysis_title }}</h1>
+            <p class="questionario-subtitle">Análise detalhada para {{ ano_selecionado }}</p>
+        </div>
+        <div class="questionario-actions">
+            <!-- Seletor de Ano -->
+            <form method="get" class="year-selector">
+                <div class="form-group-questionario">
+                    <label for="anoSelect" class="form-label-questionario">Ano de Análise</label>
+                    <select name="ano" id="anoSelect" class="form-select-questionario" onchange="this.form.submit()">
+                        {% for ano in anos_disponiveis %}
+                        <option value="{{ ano }}" {% if ano == ano_selecionado %}selected{% endif %}>{{ ano }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% if error %}
+    <div class="alert-questionario alert-questionario-warning">
+        <i class="fas fa-exclamation-triangle"></i>
+        <span>{{ error }}</span>
+    </div>
+{% else %}
+    <!-- Gráficos Principais -->
+    <div class="platform-card">
+        <div class="card-header">
+            <h3 class="card-title">
+                <i class="fas fa-chart-line me-2"></i>
+                Visão Geral Anual e Trimestral
+            </h3>
+            <p class="card-subtitle">{{ indicator_name }} - {{ ano_selecionado }}</p>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-lg-6 mb-4">
+                    <div class="chart-container">
+                        <h5 class="chart-title">Total Anual por Operadora</h5>
+                        <canvas id="annualOperatorChart"></canvas>
+                    </div>
+                </div>
+                <div class="col-lg-6 mb-4">
+                    <div class="chart-container">
+                        <h5 class="chart-title">Total Trimestral (Mercado)</h5>
+                        <canvas id="quarterlyTotalChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Gráficos Específicos -->
+            {% block specific_charts %}{% endblock %}
+        </div>
+    </div>
+
+    <!-- Tabela de Dados -->
+    <div class="platform-card">
+        <div class="card-header">
+            <h3 class="card-title">
+                <i class="fas fa-table me-2"></i>
+                Dados Detalhados
+            </h3>
+            <p class="card-subtitle">Informações completas por operadora e período</p>
+        </div>
+        <div class="card-body">
+            {% block data_table %}
+            <!-- Tabela padrão ou específica definida no template filho -->
+            {% endblock %}
+        </div>
+    </div>
+
+    <!-- Dados JSON para JavaScript -->
+    <script id="analysis-data" type="application/json">
+        {{ analysis_data_json|safe }}
+    </script>
+{% endif %}
+{% endblock %}
+
+{% block questionario_js %}
+<script src="{% static 'js/analise_charts.js' %}"></script>
+{% block specific_js %}{% endblock %}
+{% endblock %} 

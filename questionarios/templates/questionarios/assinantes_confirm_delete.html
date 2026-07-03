@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4">Confirmar Exclusão</h2>
+    <p>Tem certeza que deseja excluir o indicador de Assinantes para {{ object.get_operadora_display }} - {{ object.ano }}/{{ object.mes }}?</p>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">Confirmar Exclusão</button>
+        <a href="{% url 'questionarios:assinantes_list' %}" class="btn btn-secondary">Cancelar</a>
+    </form>
+</div>
+{% endblock %} 

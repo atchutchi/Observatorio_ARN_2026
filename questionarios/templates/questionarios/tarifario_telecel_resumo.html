@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4">Resumo do Tarifário TELECEL - {{ ano }}</h2>
+
+    <h3>Totais Trimestrais</h3>
+    {% for trimestre in totais_trimestrais %}
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+            {{ trimestre.trimestre }}º Trimestre
+        </div>
+        <div class="card-body">
+            <p><strong>Total Equipamentos:</strong> {{ trimestre.total_equipamentos|floatformat:2 }}</p>
+            <p><strong>Total Pacotes Diários:</strong> {{ trimestre.total_pacotes_diarios|floatformat:2 }}</p>
+            <p><strong>Total Pacotes Semanais:</strong> {{ trimestre.total_pacotes_semanais|floatformat:2 }}</p>
+            <p><strong>Total Pacotes Mensais:</strong> {{ trimestre.total_pacotes_mensais|floatformat:2 }}</p>
+            <p><strong>Total Pacotes Yello:</strong> {{ trimestre.total_pacotes_yello|floatformat:2 }}</p>
+            <p><strong>Total Pacotes Ilimitados:</strong> {{ trimestre.total_pacotes_ilimitados|floatformat:2 }}</p>
+        </div>
+    </div>
+    {% endfor %}
+
+    <h3>Totais Anuais</h3>
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+            Ano {{ ano }}
+        </div>
+         <div class="card-body">
+            <p><strong>Total Equipamentos:</strong> {{ total_equipamentos_anual|floatformat:2 }}</p>
+            <p><strong>Total Pacotes Diários:</strong> {{ total_pacotes_diarios_anual|floatformat:2 }}</p>
+            <p><strong>Total Pacotes Semanais:</strong> {{ total_pacotes_semanais_anual|floatformat:2 }}</p>
+            <p><strong>Total Pacotes Mensais:</strong> {{ total_pacotes_mensais_anual|floatformat:2 }}</p>
+            <p><strong>Total Pacotes Yello:</strong> {{ total_pacotes_yello_anual|floatformat:2 }}</p>
+            <p><strong>Total Pacotes Ilimitados:</strong> {{ total_pacotes_ilimitados_anual|floatformat:2 }}</p>
+        </div>
+    </div>
+
+    <!-- Botões de Ação -->
+    <div class="mt-4 mb-4">
+        <a href="{% url 'questionarios:tarifario_telecel_list' %}" class="btn btn-secondary">Voltar para a Lista</a>
+        <button class="btn btn-primary" onclick="window.print()">
+            <i class="fas fa-print"></i> Imprimir Relatório
+        </button>
+    </div>
+</div>
+{% endblock %} 

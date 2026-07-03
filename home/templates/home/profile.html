@@ -1,0 +1,196 @@
+{% extends 'base.html' %}
+
+{% block title %}Perfil - Observatório Telecom GB{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row">
+        <div class="col-lg-3">
+            <div class="card shadow-sm mb-4">
+                <div class="card-body text-center">
+                    <div class="mb-3">
+                        <div class="rounded-circle bg-light mx-auto p-3" style="width: 100px; height: 100px; display: flex; align-items: center; justify-content: center;">
+                            <i class="fas fa-user fa-3x text-primary"></i>
+                        </div>
+                    </div>
+                    {% if user.is_authenticated %}
+                        <h5 class="mb-1">{{ user.get_full_name|default:user.username }}</h5>
+                        <p class="text-muted">{{ user.email }}</p>
+                    {% else %}
+                        <h5 class="mb-1">Visitante</h5>
+                        <p class="text-muted">Usuário não autenticado</p>
+                    {% endif %}
+                    <div class="d-grid mt-3">
+                        <button class="btn btn-outline-primary">Editar Foto</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="list-group shadow-sm mb-4">
+                <a href="#" class="list-group-item list-group-item-action active">
+                    <i class="fas fa-user-circle me-2"></i> Informações Pessoais
+                </a>
+                <a href="#" class="list-group-item list-group-item-action">
+                    <i class="fas fa-bell me-2"></i> Notificações
+                </a>
+                <a href="#" class="list-group-item list-group-item-action">
+                    <i class="fas fa-cloud-download-alt me-2"></i> Meus Relatórios
+                </a>
+                <a href="#" class="list-group-item list-group-item-action">
+                    <i class="fas fa-chart-line me-2"></i> Análises Favoritas
+                </a>
+                <a href="#" class="list-group-item list-group-item-action">
+                    <i class="fas fa-cog me-2"></i> Configurações
+                </a>
+            </div>
+            
+            <div class="card shadow-sm mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Estatísticas de Uso</h5>
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between">
+                            <span>Visitas</span>
+                            <span class="fw-bold">27</span>
+                        </div>
+                        <div class="progress" style="height: 5px;">
+                            <div class="progress-bar" role="progressbar" style="width: 60%;" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between">
+                            <span>Relatórios baixados</span>
+                            <span class="fw-bold">8</span>
+                        </div>
+                        <div class="progress" style="height: 5px;">
+                            <div class="progress-bar bg-success" role="progressbar" style="width: 40%;" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="d-flex justify-content-between">
+                            <span>Contribuições</span>
+                            <span class="fw-bold">3</span>
+                        </div>
+                        <div class="progress" style="height: 5px;">
+                            <div class="progress-bar bg-warning" role="progressbar" style="width: 20%;" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-9">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0">Informações Pessoais</h5>
+                </div>
+                <div class="card-body">
+                    <form>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="nome" class="form-label">Nome</label>
+                                <input type="text" class="form-control" id="nome" value="{% if user.first_name %}{{ user.first_name }}{% else %}Nome{% endif %}">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="sobrenome" class="form-label">Sobrenome</label>
+                                <input type="text" class="form-control" id="sobrenome" value="{% if user.last_name %}{{ user.last_name }}{% else %}Sobrenome{% endif %}">
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="email" class="form-label">Email</label>
+                                <input type="email" class="form-control" id="email" value="{% if user.email %}{{ user.email }}{% else %}usuario@exemplo.com{% endif %}">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="telefone" class="form-label">Telefone</label>
+                                <input type="tel" class="form-control" id="telefone" placeholder="+245 955-123-456">
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="organizacao" class="form-label">Organização</label>
+                                <input type="text" class="form-control" id="organizacao" placeholder="Nome da organização">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="cargo" class="form-label">Cargo</label>
+                                <input type="text" class="form-control" id="cargo" placeholder="Seu cargo">
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="bio" class="form-label">Biografia</label>
+                            <textarea class="form-control" id="bio" rows="4" placeholder="Conte um pouco sobre você..."></textarea>
+                        </div>
+                        <hr>
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <button type="button" class="btn btn-outline-secondary me-md-2">Cancelar</button>
+                            <button type="submit" class="btn btn-primary">Salvar Alterações</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0">Alterar Senha</h5>
+                </div>
+                <div class="card-body">
+                    <form>
+                        <div class="mb-3">
+                            <label for="senha-atual" class="form-label">Senha Atual</label>
+                            <input type="password" class="form-control" id="senha-atual">
+                        </div>
+                        <div class="mb-3">
+                            <label for="nova-senha" class="form-label">Nova Senha</label>
+                            <input type="password" class="form-control" id="nova-senha">
+                        </div>
+                        <div class="mb-3">
+                            <label for="confirmar-senha" class="form-label">Confirmar Nova Senha</label>
+                            <input type="password" class="form-control" id="confirmar-senha">
+                        </div>
+                        <hr>
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <button type="button" class="btn btn-outline-secondary me-md-2">Cancelar</button>
+                            <button type="submit" class="btn btn-primary">Alterar Senha</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0">Preferências de Notificação</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="notificacao-relatorios" checked>
+                            <label class="form-check-label" for="notificacao-relatorios">Novos relatórios disponíveis</label>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="notificacao-estatisticas" checked>
+                            <label class="form-check-label" for="notificacao-estatisticas">Atualizações de estatísticas</label>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="notificacao-eventos">
+                            <label class="form-check-label" for="notificacao-eventos">Eventos e webinars</label>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="notificacao-newsletter" checked>
+                            <label class="form-check-label" for="notificacao-newsletter">Newsletter mensal</label>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <button type="button" class="btn btn-primary">Salvar Preferências</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

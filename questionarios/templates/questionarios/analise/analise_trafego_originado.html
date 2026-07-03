@@ -1,0 +1,152 @@
+{% extends 'questionarios/analise/base_analise.html' %}
+{% load static %}
+
+{% block specific_charts %}
+<div class="row mt-4">
+    <div class="col-lg-6 mb-3">
+        <h5>Chamadas On-Net vs Off-Net (Anual - Mercado)</h5>
+        <div style="position: relative; height:300px; width:100%">
+            <canvas id="chamadasOnOffNetChart"></canvas>
+        </div>
+    </div>
+     <div class="col-lg-6 mb-3">
+        <h5>Total Minutos por Operadora (Anual)</h5>
+        <canvas id="minutosOperadoraChart"></canvas>
+    </div>
+</div>
+{% endblock %}
+
+{% block data_table %}
+<div class="card mt-4">
+    <div class="card-header">
+        Dados Detalhados de Tráfego Originado - {{ ano_selecionado }}
+    </div>
+    <div class="card-body">
+         <div class="table-responsive">
+            <table class="table table-bordered table-hover">
+                <thead class="table-light">
+                    <tr>
+                        <th>Operadora</th>
+                        <th>Período</th>
+                        <th>Total Chamadas</th>
+                        <th>Total Minutos</th>
+                        <th>On-Net</th>
+                        <th>Off-Net Móvel</th>
+                        <th>Fixa Nac.</th>
+                        <th>Internac. Saída</th>
+                        <th>Roaming Out</th>
+                        <th>SMS Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for op, op_data in analysis_data.items %}
+                        {% if op != 'TOTAL' %}
+                            <!-- Annual Data -->
+                            <tr class="table-primary">
+                                <td rowspan="5">{{ op }}</td>
+                                <td><b>Anual</b></td>
+                                <td>{{ op_data.annual.total_total_chamadas|floatformat:0 }}</td>
+                                <td>{{ op_data.annual.total_total_minutos|floatformat:0 }}</td>
+                                <td>{{ op_data.annual.total_on_net_mesma_operadora|floatformat:0 }}</td>
+                                <td>{{ op_data.annual.total_off_net_outra_operadora_movel|floatformat:0 }}</td>
+                                <td>{{ op_data.annual.total_fixa_nacional|floatformat:0 }}</td>
+                                <td>{{ op_data.annual.total_internacional_saida|floatformat:0 }}</td>
+                                <td>{{ op_data.annual.total_roaming_out|floatformat:0 }}</td>
+                                <td>{{ op_data.annual.total_sms_total|floatformat:0 }}</td>
+                            </tr>
+                            <!-- Quarterly Data -->
+                            {% for q, q_data in op_data.quarterly.items %}
+                            <tr>
+                                <td><b>{{ q }}</b></td>
+                                <td>{{ q_data.total_total_chamadas|floatformat:0 }}</td>
+                                <td>{{ q_data.total_total_minutos|floatformat:0 }}</td>
+                                <td>{{ q_data.total_on_net_mesma_operadora|floatformat:0 }}</td>
+                                <td>{{ q_data.total_off_net_outra_operadora_movel|floatformat:0 }}</td>
+                                <td>{{ q_data.total_fixa_nacional|floatformat:0 }}</td>
+                                <td>{{ q_data.total_internacional_saida|floatformat:0 }}</td>
+                                <td>{{ q_data.total_roaming_out|floatformat:0 }}</td>
+                                <td>{{ q_data.total_sms_total|floatformat:0 }}</td>
+                            </tr>
+                            {% endfor %}
+                        {% endif %}
+                    {% endfor %}
+                    <!-- Total Market -->
+                     <tr class="table-dark">
+                        <td rowspan="5"><b>TOTAL Mercado</b></td>
+                        <td><b>Anual</b></td>
+                        <td>{{ analysis_data.TOTAL.annual.total_total_chamadas|floatformat:0 }}</td>
+                        <td>{{ analysis_data.TOTAL.annual.total_total_minutos|floatformat:0 }}</td>
+                        <td>{{ analysis_data.TOTAL.annual.total_on_net_mesma_operadora|floatformat:0 }}</td>
+                        <td>{{ analysis_data.TOTAL.annual.total_off_net_outra_operadora_movel|floatformat:0 }}</td>
+                        <td>{{ analysis_data.TOTAL.annual.total_fixa_nacional|floatformat:0 }}</td>
+                        <td>{{ analysis_data.TOTAL.annual.total_internacional_saida|floatformat:0 }}</td>
+                        <td>{{ analysis_data.TOTAL.annual.total_roaming_out|floatformat:0 }}</td>
+                        <td>{{ analysis_data.TOTAL.annual.total_sms_total|floatformat:0 }}</td>
+                    </tr>
+                    {% for q, q_data in analysis_data.TOTAL.quarterly.items %}
+                    <tr class="table-secondary">
+                         <td><b>{{ q }}</b></td>
+                         <td>{{ q_data.total_total_chamadas|floatformat:0 }}</td>
+                         <td>{{ q_data.total_total_minutos|floatformat:0 }}</td>
+                         <td>{{ q_data.total_on_net_mesma_operadora|floatformat:0 }}</td>
+                         <td>{{ q_data.total_off_net_outra_operadora_movel|floatformat:0 }}</td>
+                         <td>{{ q_data.total_fixa_nacional|floatformat:0 }}</td>
+                         <td>{{ q_data.total_internacional_saida|floatformat:0 }}</td>
+                         <td>{{ q_data.total_roaming_out|floatformat:0 }}</td>
+                         <td>{{ q_data.total_sms_total|floatformat:0 }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block specific_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const analysisData = window.getAnalysisData();
+    if (!analysisData) return;
+    console.log("Trafego Originado Data:", analysisData);
+
+    const operators = Object.keys(analysisData).filter(op => op !== 'TOTAL');
+    const colors = window.getOperatorColors();
+    const marketAnnual = analysisData['TOTAL']?.annual || {};
+
+    // Chart: Chamadas On-Net vs Off-Net (Anual - Mercado)
+    const onOffNetData = {
+        labels: ['On-Net', 'Off-Net Móvel', 'Fixa Nacional', 'Internacional', 'Roaming Out'],
+        datasets: [{
+            label: 'Tipos de Chamadas Originadas (Minutos Anual)',
+            data: [
+                marketAnnual.total_on_net_mesma_operadora || 0,
+                marketAnnual.total_off_net_outra_operadora_movel || 0,
+                marketAnnual.total_fixa_nacional || 0,
+                marketAnnual.total_internacional_saida || 0,
+                marketAnnual.total_roaming_out || 0
+            ],
+            backgroundColor: [
+                'rgba(54, 162, 235, 0.6)', 
+                'rgba(255, 99, 132, 0.6)', 
+                'rgba(75, 192, 192, 0.6)',
+                'rgba(153, 102, 255, 0.6)',
+                'rgba(255, 159, 64, 0.6)'
+                ]
+        }]
+    };
+    window.createAnalysisChart('chamadasOnOffNetChart', 'pie', onOffNetData.labels, onOffNetData.datasets);
+
+    // Chart: Total Minutos por Operadora (Anual)
+    const minutosOpData = {
+        labels: operators,
+        datasets: [{
+            label: 'Total Minutos Originados (Anual)',
+            data: operators.map(op => analysisData[op]?.annual?.total_total_minutos || 0),
+            backgroundColor: operators.map(op => colors[op] || '#cccccc'),
+        }]
+    };
+    window.createAnalysisChart('minutosOperadoraChart', 'bar', minutosOpData.labels, minutosOpData.datasets);
+});
+</script>
+{% endblock %} 

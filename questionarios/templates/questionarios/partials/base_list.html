@@ -1,0 +1,194 @@
+{% extends "questionarios/base_questionarios.html" %}
+{% load static %}
+
+{% block questionario_content %}
+<!-- Header do Indicador -->
+<div class="questionario-header">
+    <div class="d-flex justify-content-between align-items-start">
+        <div>
+            <h1 class="questionario-title">{% block indicator_title %}Indicadores{% endblock %}</h1>
+            <p class="questionario-subtitle">{% block indicator_subtitle %}Gestão e controle de dados{% endblock %}</p>
+        </div>
+        <div class="questionario-actions">
+            <a href="{% block create_url %}#{% endblock %}" class="btn-binance">
+                <i class="fas fa-plus me-2"></i>Adicionar Novo
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Filtros -->
+<div class="questionario-filters">
+    <h5 class="questionario-filters-title">
+        <i class="fas fa-filter me-2"></i>
+        Filtros de Pesquisa
+    </h5>
+    <div class="questionario-filter-group">
+        <div class="form-group-questionario">
+            <label class="form-label-questionario">Ano</label>
+            <select class="form-select-questionario filter-select" data-column="ano">
+                <option value="">Todos os anos</option>
+                <option value="2024">2024</option>
+                <option value="2023">2023</option>
+                <option value="2022">2022</option>
+                <option value="2021">2021</option>
+            </select>
+        </div>
+        <div class="form-group-questionario">
+            <label class="form-label-questionario">Operadora</label>
+            <select class="form-select-questionario filter-select" data-column="operadora">
+                <option value="">Todas as operadoras</option>
+                <option value="ORANGE">Orange</option>
+                <option value="TELECEL">TELECEL</option>
+            </select>
+        </div>
+        <div class="form-group-questionario">
+            <label class="form-label-questionario">Trimestre</label>
+            <select class="form-select-questionario filter-select" data-column="trimestre">
+                <option value="">Todos os trimestres</option>
+                <option value="1">1º Trimestre</option>
+                <option value="2">2º Trimestre</option>
+                <option value="3">3º Trimestre</option>
+                <option value="4">4º Trimestre</option>
+            </select>
+        </div>
+        <div class="form-group-questionario">
+            <label class="form-label-questionario">Buscar</label>
+            <input type="text" class="form-control-questionario filter-input" 
+                   data-column="all" placeholder="Buscar em todos os campos...">
+        </div>
+    </div>
+</div>
+
+<!-- Tabela de Resultados -->
+<div class="questionario-content">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">
+            <i class="fas fa-table me-2"></i>
+            Resultados dos Indicadores
+        </h5>
+        <div class="results-count">{{ object_list|length }} resultado(s)</div>
+    </div>
+    
+    <div class="table-responsive">
+        <table class="questionario-table">
+            <thead>
+                <tr>
+                    <th data-sortable>Operadora</th>
+                    <th data-sortable>Ano</th>
+                    <th data-sortable>Trimestre</th>
+                    {% block table_headers %}{% endblock %}
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for indicador in object_list %}
+                <tr>
+                    <td data-column="operadora">
+                        <div class="operadora-display">
+                            <div class="operadora-icon {{ indicador.operadora|lower }}">
+                                {% if indicador.operadora == 'ORANGE' %}
+                                    <i class="fas fa-signal"></i>
+                                {% elif indicador.operadora == 'TELECEL' %}
+                                    <i class="fas fa-broadcast-tower"></i>
+                                {% else %}
+                                    <i class="fas fa-tower-cell"></i>
+                                {% endif %}
+                            </div>
+                            <div class="operadora-name">{{ indicador.operadora }}</div>
+                        </div>
+                    </td>
+                    <td data-column="ano">{{ indicador.ano }}</td>
+                    <td data-column="trimestre">{{ indicador.trimestre }}º Trimestre</td>
+                    {% block table_row_data %}{% endblock %}
+                    <td>
+                        <div class="btn-group" role="group">
+                            <a href="{% block detail_url %}#{% endblock %}" 
+                               class="btn-questionario btn-questionario-info"
+                               title="Ver detalhes">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                            <a href="{% block update_url %}#{% endblock %}" 
+                               class="btn-questionario btn-questionario-warning"
+                               title="Editar">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <a href="{% block delete_url %}#{% endblock %}" 
+                               class="btn-questionario btn-questionario-danger"
+                               data-action="delete"
+                               data-item-name="{{ indicador.operadora }} - {{ indicador.ano }}/{{ indicador.trimestre }}"
+                               title="Excluir">
+                                <i class="fas fa-trash"></i>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="{% block table_colspan %}8{% endblock %}" class="text-center py-4">
+                        <div class="empty-state">
+                            <i class="fas fa-inbox fa-3x mb-3"></i>
+                            <h5>Nenhum registro encontrado</h5>
+                            <p>Não há dados para exibir no momento.</p>
+                            <a href="#" class="btn-binance mt-3" id="emptyStateCreateBtn">
+                                <i class="fas fa-plus me-2"></i>Adicionar Primeiro Registro
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    
+    <!-- Paginação -->
+    {% if is_paginated %}
+    <div class="pagination-questionario">
+        <nav aria-label="Navegação de páginas">
+            <ul class="pagination">
+                {% if page_obj.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page=1">&laquo; Primeira</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Anterior</a>
+                </li>
+                {% endif %}
+                
+                <li class="page-item active">
+                    <span class="page-link">
+                        Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}
+                    </span>
+                </li>
+                
+                {% if page_obj.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.next_page_number }}">Próxima</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">Última &raquo;</a>
+                </li>
+                {% endif %}
+            </ul>
+        </nav>
+    </div>
+    {% endif %}
+    
+    <!-- Ações do Footer -->
+    <div class="questionario-actions-footer">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <a href="{% block resumo_url %}#{% endblock %}" class="btn-questionario btn-questionario-info">
+                    <i class="fas fa-chart-bar me-2"></i>Ver Relatório
+                </a>
+            </div>
+            <div class="bulk-actions" style="display: none;">
+                <button type="button" class="btn-questionario btn-questionario-danger">
+                    <i class="fas fa-trash me-2"></i>Excluir Selecionados
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

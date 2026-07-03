@@ -1,456 +1,435 @@
-# Observatório ARN 2026
+# 🌍 Observatório do Mercado de Telecomunicações da Guiné-Bissau
 
-> Plataforma institucional para monitorização, análise e reporte do mercado de telecomunicações da Guiné-Bissau.
+[![Django](https://img.shields.io/badge/Django-4.2-green.svg)](https://www.djangoproject.com/)
+[![Python](https://img.shields.io/badge/Python-3.9+-blue.svg)](https://www.python.org/)
+[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Version](https://img.shields.io/badge/Version-1.1.0-orange.svg)](CHANGELOG.md)
 
-Última actualização: Maio de 2026.
+Uma plataforma web moderna para monitoramento e análise do mercado de telecomunicações da Guiné-Bissau, permitindo visualizar dados estatísticos das operadoras e tendências do setor.
 
-O `Observatório ARN 2026` é uma aplicação web desenvolvida para a Autoridade Reguladora Nacional (ARN). Centraliza a recolha, tratamento documental, validação, análise e publicação interna de indicadores do sector das telecomunicações, com suporte a dados por operador, dashboards comparativos, relatórios trimestrais e anuais, exportação documental e assistente de análise com IA.
+---
 
-Ambiente público do frontend: [https://observatorio-arn-2026.vercel.app](https://observatorio-arn-2026.vercel.app)
+## ✨ Características Principais
 
-## Visão Geral
+- 📊 **Dashboard Analítico**: Visualizações interativas de dados do mercado de telecomunicações
+- 📝 **Questionários KPI**: Sistema de coleta de dados via questionários padronizados ARN
+- 🤖 **Chatbot Inteligente**: Assistente virtual com IA para esclarecimento de dúvidas
+- 🔐 **Autenticação Segura**: Login com Google OAuth e sistema tradicional
+- ☁️ **Integração Supabase**: Armazenamento híbrido (local + cloud)
+- 🧠 **AI/ML**: Integração com Hugging Face para processamento de linguagem natural
+- 💰 **Gestão de Tarifários**: Módulo para gerenciamento de tarifários das operadoras
+- 📈 **Análise de Mercado**: Módulos de análise comparativa e relatórios
+- 📡 **Estações Móveis**: Monitoramento de cobertura territorial
+- 🌐 **Tráfego de Dados**: Análise de tráfego (originado, terminado, roaming)
+- 💼 **Indicadores Económicos**: Receitas, emprego e investimentos no setor
+- 🏥 **Health Monitoring**: Endpoints de monitoramento para produção
 
-O projecto responde a uma necessidade operacional da ARN: transformar ficheiros, entradas manuais e indicadores dispersos num sistema único, auditável e preparado para análise regulatória.
+---
 
-**Objectivos principais**
+## 🚀 Tecnologias Utilizadas
 
-- centralizar indicadores de operadores de telecomunicações
-- reduzir trabalho manual em folhas de cálculo
-- organizar documentos recebidos dos operadores antes da importação
-- permitir análise por operador, categoria, período e indicador
-- produzir relatórios descritivos com gráficos e narrativa técnica
-- apoiar a tomada de decisão com dashboards de mercado
-- manter controlo de acesso por perfil de utilizador
-- preparar a base para histórico plurianual e reporting institucional
+### Backend
+- **Framework**: Django 4.2.11 LTS
+- **Linguagem**: Python 3.9+
+- **API**: Django REST Framework
+- **Auth**: Django AllAuth + Google OAuth
 
-**Operadores suportados**
+### Frontend
+- **Framework CSS**: Bootstrap 5
+- **Gráficos**: Chart.js
+- **Icons**: Font Awesome
 
-| Operador | Tipo |
-| --- | --- |
-| Telecel | Operador móvel e terrestre |
-| Orange Bissau | Operador móvel e terrestre |
-| Starlink | Operador satélite e ISP |
-| Outros | Agregação para indicadores fora dos operadores principais |
+### Banco de Dados
+- **Desenvolvimento**: SQLite 3
+- **Produção**: PostgreSQL 12+
 
-## Funcionalidades Implementadas
+### Cloud & IA
+- **Storage**: Supabase
+- **AI/ML**: Hugging Face Transformers
+- **Chatbot**: BlenderBot 400M
 
-### Autenticação e perfis
+### DevOps
+- **Server**: Gunicorn
+- **Static Files**: WhiteNoise
+- **Container**: Docker + Docker Compose
+- **Deploy**: Heroku, Railway, AWS, VPS
 
-- login com JWT
-- refresh automático de sessão
-- perfil do utilizador autenticado
-- papéis para administração ARN, analistas ARN, operadores e visualizadores
-- restrição de dados por operador quando aplicável
-- criação automática de superuser em produção via variáveis de ambiente
+---
 
-### Entrada de dados
-
-- entrada manual de indicadores
-- escolha explícita de operadora na entrada manual
-- filtragem de indicadores aplicáveis por tipo de operador
-- importação de ficheiros Excel
-- pipeline ETL com validação e histórico de uploads
-- suporte a dados cumulativos e periódicos
-- normalização de operadores, incluindo mapeamentos históricos como MTN para Telecel
-
-### Upload Excel
-
-O upload aceita directamente os questionários oficiais enviados pelas operadoras, incluindo ficheiros da Orange e da Telecel/MTN com folhas como:
-
-- `Estações móveis`
-- `Trafego_originado`
-- `Trafego_Terminado`
-- `Trafego_Roaming_Internacional`
-- `Internet_Trafic`
-- `Internet_Fixo`
-- `LBI`
-- `RECEITAS`
-- `Empregos`
-- `Investimento`
-
-Na página `Entrada de Dados > Upload Excel`, seleccionar o operador, o tipo de ficheiro, o ano e o trimestre antes de carregar o ficheiro. A aplicação lê os meses do trimestre seleccionado e grava os dados na base para validação.
-
-Quando não existir questionário oficial, existe um modelo alternativo em `frontend/public/templates/modelo_upload_kpi_arn.xlsx`. O modelo pode ser regenerado a partir do catálogo de indicadores com:
+## ⚡ Quickstart
 
 ```bash
-cd backend
-USE_SQLITE=true DJANGO_SETTINGS_MODULE=config.settings.development ./venv/bin/python manage.py generate_upload_template
+# Clone o repositório
+git clone https://github.com/seu-usuario/observatorio-arn.git
+cd observatorio-arn
+
+# Configure e execute
+python -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+cp env.example .env  # Configure suas variáveis
+python manage.py migrate
+python manage.py createsuperuser
+python manage.py runserver
 ```
 
-### Documentos recebidos
+### 🔑 Criar ou resetar administrador
 
-- registo interno de questionários, resumos KPI e documentos de suporte recebidos
-- associação por operador, ano, trimestre, tipo de documento e ficheiro original
-- fila de tratamento com estados: recebido, em classificação, em extracção, em revisão, validado, importado e arquivado
-- prioridade, prazo interno, responsável ARN e notas internas
-- indicadores de gestão: total, documentos em aberto, atrasados e alta prioridade
-- filtros por operador, ano e estado
-- actualização rápida de estado e prioridade pela equipa ARN
-- página de detalhe do documento com ficheiro original, notas internas e última importação
-- envio do documento recebido para o pipeline de importação Excel existente
-- ligação entre documento recebido e upload/importação, incluindo log de processamento
+Se esqueceu a senha do administrador, pode criar/atualizar um superusuário sem apagar dados:
 
-### Indicadores e períodos
-
-- catálogo de categorias de indicadores
-- períodos mensais, trimestrais e anuais
-- relação entre indicadores e tipos de operador
-- validação de valores por indicador
-- suporte a indicadores de subscritores, tráfego, receitas, infraestrutura e mercado
-
-### Dashboard
-
-- resumo executivo com KPIs principais
-- evolução temporal por indicador
-- comparação entre operadores
-- quotas de mercado
-- HHI para leitura de concentração de mercado
-- liderança por segmento
-- tráfego de dados, internet fixa, assinaturas móveis e outros indicadores relevantes
-- sidebar colapsável para melhor uso do espaço de trabalho
-
-### Análise de dados
-
-- análise por categoria
-- filtro por operador
-- visão isolada de Orange
-- visão isolada de Telecel
-- visão isolada de Starlink
-- visão de Outros
-- visão geral com todos os operadores
-- comparativos por indicador, período e categoria
-
-### Relatórios
-
-- geração de relatórios por período
-- relatórios gerais com todos os operadores
-- relatórios isolados por Orange, Telecel, Starlink ou Outros
-- exportação em PDF, Excel e DOCX
-- gráficos integrados nos relatórios
-- narrativa descritiva inspirada no modelo institucional da ARN
-- indicadores, quotas, variações, concentração de mercado e leitura técnica
-- preparação para lógica trimestral e anual
-
-### Assistente IA
-
-- assistente com Google Gemini
-- contexto baseado nos dados do dashboard
-- histórico de sessões e mensagens
-- fallback quando a chave de IA não está configurada
-- apoio a perguntas sobre indicadores e comportamento do mercado
-
-### Exportação e ficheiros
-
-- PDF com WeasyPrint
-- Excel com openpyxl
-- DOCX com python-docx
-- armazenamento local em desenvolvimento
-- suporte opcional a storage S3 compatível em produção
-
-## Arquitectura
-
-```mermaid
-flowchart TD
-    A["Frontend Next.js"] --> B["API Django REST"]
-    B --> C["PostgreSQL"]
-    B --> D["Redis e Celery"]
-    B --> E["Gerador de Relatórios"]
-    E --> F["PDF, Excel e DOCX"]
-    B --> G["Gemini AI"]
-    B --> I["Documentos Recebidos"]
-    H["Operadores e ARN"] --> A
+```bash
+ADMIN_USERNAME=admin ADMIN_EMAIL=idrissa.a.so@arn.gw ADMIN_PASSWORD='troque-esta-senha' \
+  python manage.py create_admin_user --reset-password
 ```
 
-O repositório é um monorepo com backend Django e frontend Next.js.
+Também pode usar o modo seguro interativo, que não mostra a senha no terminal:
 
-```txt
-.
-├── backend/              # Django, DRF, modelos, serviços, relatórios e IA
-├── frontend/             # Next.js, TypeScript, dashboard e interface
-├── nginx/                # reverse proxy para ambiente Docker local
-├── docker-compose.yml    # ambiente local completo
-├── render.yaml           # Blueprint do backend e PostgreSQL no Render
-├── vercel.json           # configuração do frontend na Vercel
-└── start.sh              # script auxiliar para desenvolvimento local
+```bash
+python manage.py create_admin_user --interactive --reset-password
 ```
 
-## Stack Técnica
+Depois entre em `/accounts/login/` com o email configurado ou em `/admin/` com o username.
 
-| Camada | Tecnologia |
-| --- | --- |
-| Frontend | Next.js 14, React 18, TypeScript |
-| UI | Tailwind CSS, lucide-react |
-| Gráficos | Apache ECharts |
-| Estado cliente | Zustand |
-| Backend | Django 5, Django REST Framework |
-| Autenticação | Simple JWT |
-| Base de dados | PostgreSQL 16 |
-| Jobs | Celery, Redis |
-| Relatórios | WeasyPrint, openpyxl, python-docx, matplotlib, seaborn |
-| IA | Google Gemini |
-| Deploy frontend | Vercel |
-| Deploy backend | Render Docker Blueprint |
-| Static files | WhiteNoise |
-| Storage opcional | S3 compatível via django-storages |
 
-## Como Executar Localmente
+**Acesse:** http://127.0.0.1:8000
+
+📖 **Documentação completa:** [QUICKSTART.md](QUICKSTART.md) | [SETUP.md](SETUP.md)
+
+---
+
+## 🐳 Docker (Recomendado)
+
+```bash
+# Configure
+cp env.example .env
+
+# Execute
+docker-compose up
+
+# Migrations (novo terminal)
+docker-compose exec web python manage.py migrate
+docker-compose exec web python manage.py createsuperuser
+```
+
+**Acesse:** http://localhost:8000
+
+---
+
+## 📋 Versão 1.1.0 - Novidades
+
+### ✅ Atualizações
+- ✨ Django 3.2 → 4.2.11 LTS (suporte até 2026)
+- 🔒 Configurações de segurança avançadas
+- 🏥 Health check endpoints
+- 🐳 Containerização com Docker
+- 📚 Documentação completa
+
+### 🔐 Segurança
+- HTTPS/SSL redirect em produção
+- Content Security Policy (CSP)
+- CSRF protection avançada
+- Session security aprimorada
+- Cookies seguros (HttpOnly, SameSite)
+
+### 📊 Monitoramento
+- `GET /health/` - Status básico
+- `GET /health/detailed/` - Status completo
+- `GET /health/ready/` - Readiness probe
+- `GET /health/alive/` - Liveness probe
+
+Veja o [CHANGELOG.md](CHANGELOG.md) para detalhes completos.
+
+---
+
+## 📚 Documentação
+
+| Documento | Descrição |
+|-----------|-----------|
+| [QUICKSTART.md](QUICKSTART.md) | Guia rápido (5 minutos) |
+| [SETUP.md](SETUP.md) | Instalação detalhada |
+| [DEPLOYMENT.md](DEPLOYMENT.md) | Guia de deploy (Heroku, AWS, VPS) |
+| [UPGRADE_GUIDE.md](UPGRADE_GUIDE.md) | Migração Django 3.2 → 4.2 |
+| [CHANGELOG.md](CHANGELOG.md) | Histórico de mudanças |
+| [IMPLEMENTATION_SUMMARY.md](IMPLEMENTATION_SUMMARY.md) | Resumo técnico |
+| [TEMPLATES_REVIEW_SUMMARY.md](TEMPLATES_REVIEW_SUMMARY.md) | ⭐ Revisão de templates |
+| [TEMPLATES_STANDARDIZATION_PLAN.md](TEMPLATES_STANDARDIZATION_PLAN.md) | Plano de padronização |
+
+---
+
+## 🏗️ Tecnologias Atualizadas (v1.1.0)
+
+| Tecnologia | Versão | Status |
+|------------|--------|--------|
+| Django | 4.2.11 LTS | ✅ |
+| Python | 3.9+ | ✅ |
+| django-allauth | 0.61.1 | ✅ |
+| supabase | 2.3.4 | ✅ |
+| huggingface-hub | 0.20.3 | ✅ |
+| transformers | 4.37.2 | ✅ |
+| PostgreSQL | 12+ | ✅ |
+
+## User Stories
+
+### Utilizadores Regulares
+- **Como** utilizador público, **posso** visualizar estatísticas gerais sobre o mercado de telecomunicações, **para** entender as tendências do setor.
+- **Como** utilizador público, **posso** interagir com o chatbot, **para** obter respostas às minhas dúvidas sobre o setor.
+- **Como** utilizador público, **posso** ver gráficos comparativos entre operadoras, **para** escolher a melhor empresa para meus serviços.
+
+### Utilizadores Autenticados
+- **Como** utilizador autenticado, **posso** inserir novos dados de questionários, **para** contribuir com informações atualizadas.
+- **Como** utilizador autenticado, **posso** visualizar relatórios detalhados, **para** realizar análises aprofundadas do mercado.
+
+### Administradores
+- **Como** administrador, **posso** gerir tarifários de voz, **para** manter a base de dados sempre atualizada.
+- **Como** administrador, **posso** criar novos utilizadores e atribuir permissões, **para** controlar o acesso ao sistema.
+- **Como** administrador, **posso** monitorar a sincronização com o Supabase, **para** garantir a integridade dos dados.
+- **Como** administrador, **posso** ver logs de atividades, **para** auditar as ações realizadas no sistema.
+
+## Configuração de Ambiente
 
 ### Pré-requisitos
 
-- Git
-- Docker e Docker Compose
-- Node.js 20 ou superior, quando executado fora do Docker
-- Python 3.12, quando executado fora do Docker
+- Python 3.7+
+- Pip (gerenciador de pacotes Python)
+- Navegador moderno (Chrome, Firefox, Safari, Edge)
+- Conta no Supabase para sincronização de dados (opcional, mas recomendado)
 
-### Ambiente com Docker
+### Instalação
 
-```bash
-git clone https://github.com/atchutchi/Observatorio_ARN_2026.git
-cd Observatorio_ARN_2026
-cp .env.example .env
-docker-compose up --build
-```
+1. Clone o repositório:
+   ```
+   git clone https://github.com/seu-usuario/observatorio-telecom-gb.git
+   cd observatorio-telecom-gb
+   ```
 
-Serviços locais:
+2. Crie e ative um ambiente virtual:
+   ```
+   python -m venv venv
+   source venv/bin/activate  # Linux/Mac
+   venv\Scripts\activate     # Windows
+   ```
 
-| Serviço | URL |
-| --- | --- |
-| Frontend | [http://localhost:3000](http://localhost:3000) |
-| Backend API | [http://localhost:8000/api/v1/](http://localhost:8000/api/v1/) |
-| Health check | [http://localhost:8000/healthz/](http://localhost:8000/healthz/) |
-| Django Admin | [http://localhost:8000/admin/](http://localhost:8000/admin/) |
-| Nginx | [http://localhost](http://localhost) |
+3. Instale as dependências:
+   ```
+   pip install -r requirements.txt
+   ```
 
-### Script local
+4. Configure as variáveis de ambiente:
+   Crie um arquivo `.env` na raiz do projeto com o seguinte conteúdo:
+   ```
+   DEBUG=True
+   SECRET_KEY=sua-chave-secreta
+   ALLOWED_HOSTS=localhost,127.0.0.1
+   
+   # Database
+   DATABASE_URL=sqlite:///db.sqlite3
+   
+   # Supabase
+   SUPABASE_URL=sua-url-supabase
+   SUPABASE_KEY=sua-chave-supabase
+   
+   # Hugging Face
+   HUGGINGFACE_TOKEN=seu-token-huggingface
+   
+   # Google Auth
+   GOOGLE_CLIENT_ID=seu-client-id-google
+   GOOGLE_CLIENT_SECRET=seu-client-secret-google
+   ```
 
-O repositório inclui um script para acelerar o arranque em desenvolvimento.
+5. Aplique as migrações:
+   ```
+   python manage.py migrate
+   ```
 
-```bash
-./start.sh setup
-./start.sh
-```
+6. Crie um superusuário:
+   ```
+   python manage.py createsuperuser
+   ```
 
-Também é possível arrancar apenas uma parte:
+7. Execute o servidor de desenvolvimento:
+   ```
+   python manage.py runserver
+   ```
 
-```bash
-./start.sh backend
-./start.sh frontend
-./start.sh stop
-```
+8. Acesse o site em `http://localhost:8000`
 
-## Variáveis de Ambiente
+## Integração com Supabase
 
-Ver `.env.example` para a lista completa.
+Para configurar a integração com Supabase:
 
-### Backend
+1. Instale a biblioteca Supabase:
+   ```
+   pip install supabase
+   ```
 
-| Variável | Uso |
-| --- | --- |
-| `DJANGO_SECRET_KEY` | chave secreta do Django |
-| `DJANGO_SETTINGS_MODULE` | settings activos, por exemplo `config.settings.production` |
-| `DJANGO_ALLOWED_HOSTS` | domínios autorizados pelo Django |
-| `DATABASE_URL` | ligação PostgreSQL em produção |
-| `FRONTEND_URL` | URL público do frontend |
-| `CORS_ALLOWED_ORIGINS` | origens permitidas para chamadas API |
-| `CSRF_TRUSTED_ORIGINS` | origens confiáveis para CSRF |
-| `DJANGO_SUPERUSER_USERNAME` | username do admin criado no primeiro arranque |
-| `DJANGO_SUPERUSER_EMAIL` | email do admin criado no primeiro arranque |
-| `DJANGO_SUPERUSER_PASSWORD` | palavra-passe inicial do admin |
-| `GEMINI_API_KEY` | chave opcional para assistente IA |
-| `USE_S3_STORAGE` | activa storage S3 quando definido como `true` |
-| `DATA_UPLOAD_PROCESS_SYNC` | processa uploads Excel de forma síncrona quando definido como `true` |
-| `RUN_SEED_ON_STARTUP` | executa `seed_data` no arranque quando definido como `true` |
-| `RUN_KPI_IMPORT_ON_STARTUP` | importa os ficheiros KPI JSON no arranque quando definido como `true` |
-| `KPI_IMPORT_YEARS` | lista de anos a importar quando `RUN_KPI_IMPORT_ON_STARTUP=true` |
+2. Configure as tabelas no Supabase:
+   ```
+   python manage.py setup_supabase
+   ```
 
-### Frontend
+3. Este comando verificará se as tabelas necessárias existem no Supabase e fornecerá instruções para criar aquelas que não existem.
 
-| Variável | Uso |
-| --- | --- |
-| `NEXT_PUBLIC_API_URL` | URL público da API, por exemplo `https://backend.onrender.com/api/v1` |
-| `NEXT_PUBLIC_APP_NAME` | nome público da aplicação |
+## Troubleshooting
 
-Em produção, `NEXT_PUBLIC_API_URL` deve apontar para o backend no Render, não para o domínio da Vercel.
+| Problema | Solução |
+|----------|---------|
+| URLs não encontradas (NoReverseMatch) | Verifique se o namespace está correto nos URLs. Foi corrigido um problema onde o `app_name = 'questionarios'` estava faltando. |
+| Erro na migração com JSON_VALID | Este erro ocorre com SQLite em versões mais antigas. Atualize o SQLite ou use PostgreSQL para desenvolvimento. |
+| Modelos não aparecem no Admin | Verifique se os modelos estão registrados em `admin.py` com o decorator `@admin.register`. |
+| Erro ao conectar com o Supabase | Verifique as credenciais no arquivo `.env` e se a biblioteca Supabase foi instalada corretamente. |
+| Tarifário Voz não aparece no Admin | Foi adicionado o registro dos modelos `TarifarioVozOrangeIndicador` e `TarifarioVozMTNIndicador` ao arquivo `admin.py`. |
+| Dados não sincronizam com Supabase | Execute `python manage.py setup_supabase` para verificar a configuração das tabelas e siga as instruções para criar manualmente as tabelas necessárias. |
 
-## Deploy
+## Database Schema
 
-### Frontend na Vercel
+### Models Principais
 
-1. Ligar o repositório GitHub à Vercel.
-2. Configurar o projecto para usar a pasta `frontend`.
-3. Definir `NEXT_PUBLIC_API_URL` com o URL público do backend:
+#### Base
+- **IndicadorBase** (Modelo Abstrato)
+  - `ano`: IntegerField
+  - `mes`: IntegerField
+  - `operadora`: CharField (choices: orange, telecel, telecel)
 
-```txt
-https://URL-DO-BACKEND.onrender.com/api/v1
-```
+#### Tarifários
+- **TarifarioVozOrangeIndicador**
+  - Campos para tarifas de Internet USB Pré-pago
+  - Campos para tarifas de Internet USB/BOX Residencial
+  - Campos para tarifas de Subscrição mensal Residencial
+  - Campos para tarifas de comunicação On-net e Off-net
+  - Campos para tarifas internacionais (zonas 1-6)
+  - Campos de metadados (criado_por, data_criacao, etc.)
 
-4. Fazer redeploy depois de alterar variáveis `NEXT_PUBLIC_*`.
+- **TarifarioVozMTNIndicador**
+  - Campos para equipamentos Huawei
+  - Campos para pacotes diários, semanais e mensais
+  - Campos para pacotes Y'ello Night
+  - Campos para pacotes ilimitados
+  - Campos de metadados (criado_por, data_criacao, etc.)
 
-### Backend no Render
+#### Estações Móveis
+- **EstacoesMoveisIndicador**
+  - Informações sobre estações móveis das operadoras
+  - Distribuição regional e tecnológica
 
-O backend é provisionado por Blueprint através de `render.yaml`.
+#### Tráfego
+- **TrafegoOriginadoIndicador**
+  - Dados sobre tráfego originado por operadora
+  - Estatísticas por tipo de tráfego e destino
 
-O Blueprint cria:
+- **TrafegoTerminadoIndicador**
+  - Dados sobre tráfego terminado por operadora
+  - Estatísticas por tipo de tráfego e origem
 
-- web service `observatorio-arn-backend`
-- base PostgreSQL `observatorio-arn-db`
-- variável `DATABASE_URL` ligada automaticamente à base
-- `DJANGO_SECRET_KEY` gerada automaticamente
-- health check em `/healthz/`
+- **TrafegoRoamingInternacionalIndicador**
+  - Dados sobre roaming internacional
+  - Estatísticas por país e tipo de serviço
 
-Variáveis a preencher manualmente no Render:
+- **TrafegoInternetIndicador**
+  - Estatísticas de tráfego de internet
+  - Distribuição por tecnologia e velocidade
 
-```txt
-FRONTEND_URL=https://observatorio-arn-2026.vercel.app
-CORS_ALLOWED_ORIGINS=https://observatorio-arn-2026.vercel.app
-CSRF_TRUSTED_ORIGINS=https://observatorio-arn-2026.vercel.app
-DJANGO_SUPERUSER_USERNAME=<utilizador-admin>
-DJANGO_SUPERUSER_EMAIL=<email-admin>
-DJANGO_SUPERUSER_PASSWORD=<password-forte>
-GEMINI_API_KEY=<opcional>
-```
+#### Outros Indicadores
+- **LBIIndicador**
+  - Indicadores de LBI (Large Bandwidth Internet)
 
-Por defeito, o backend não reexecuta `seed_data` nem `import_kpi_json` em cada arranque. Isto evita cold starts longos no plano free do Render. Para reimportar dados históricos, activar temporariamente:
+- **InternetFixoIndicador**
+  - Estatísticas de internet fixa
+  - Distribuição por tecnologia e região
 
-```txt
-RUN_SEED_ON_STARTUP=true
-RUN_KPI_IMPORT_ON_STARTUP=true
-KPI_IMPORT_YEARS=2024 2021 2020 2019 2018
-```
+- **ReceitasIndicador**
+  - Dados financeiros sobre receitas das operadoras
+  - Categorização por tipo de serviço
 
-Depois do deploy/importação, voltar a definir `RUN_SEED_ON_STARTUP=false` e `RUN_KPI_IMPORT_ON_STARTUP=false`.
+- **EmpregoIndicador**
+  - Dados sobre emprego no setor de telecomunicações
+  - Estatísticas por gênero e tipo de emprego
 
-Depois do deploy, validar:
+- **InvestimentoIndicador**
+  - Dados sobre investimentos no setor
+  - Categorização por tipo de investimento e região
 
-```txt
-https://URL-DO-BACKEND.onrender.com/healthz/
-```
+### Integração com Supabase
 
-Resposta esperada:
+Todos os modelos possuem os métodos:
+- `save_to_supabase(table_name)`: Salva os dados do modelo no Supabase
+- `delete_from_supabase(table_name)`: Remove os dados do modelo no Supabase
 
-```json
-{"status":"ok"}
-```
+Os signals `post_save` e `post_delete` estão configurados para sincronizar automaticamente com o Supabase.
 
-## Comandos de Desenvolvimento
+## Estrutura do Projeto
 
-### Backend
+- **home**: Aplicação para a página inicial
+- **dashboard**: Aplicação para visualizações e análises de dados
+- **questionarios**: Aplicação para gerenciamento de questionários e indicadores
+- **templates**: Templates HTML base
+- **static**: Arquivos estáticos (CSS, JS, imagens)
+- **media**: Arquivos enviados pelos usuários
 
-```bash
-cd backend
-python manage.py makemigrations
-python manage.py migrate
-python manage.py seed_data
-python manage.py test
-```
+## Desenvolvimento Futuro
 
-### Frontend
+### Planejado para as próximas versões:
 
-```bash
-cd frontend
-npm install
-npm run dev
-npm run lint
-npm run build
-```
+1. **Melhorias no Chatbot**
+   - Treinamento com dados específicos do mercado de telecomunicações da Guiné-Bissau
+   - Integração com mais fontes de dados para respostas mais precisas
 
-### Validação usada no projecto
+2. **Expansão de Análises**
+   - Módulos adicionais para análise preditiva usando técnicas de IA
+   - Dashboards personalizáveis para utilizadores
 
-```bash
-cd frontend
-npm run lint
-npm run build
-```
+3. **Autenticação e Segurança**
+   - Implementação de autenticação de dois fatores
+   - Auditoria mais detalhada de ações dos utilizadores
 
-```bash
-cd backend
-USE_SQLITE=true ./venv/bin/python manage.py test apps.dashboards apps.reports apps.data_entry
-USE_SQLITE=true ./venv/bin/python manage.py makemigrations --check --dry-run
-```
+4. **Internacionalização**
+   - Suporte a múltiplos idiomas (incluindo crioulo guineense)
+   - Adaptação para diferentes fusos horários
 
-## API Principal
+5. **API RESTful**
+   - Desenvolvimento de API pública para acesso a dados não-sensíveis
+   - Documentação interativa com Swagger/OpenAPI
 
-Todos os endpoints principais estão sob `/api/v1/`.
+6. **Mobile App**
+   - Desenvolvimento de aplicativo móvel complementar
+   - Notificações push para atualizações importantes
 
-| Área | Endpoints |
-| --- | --- |
-| Auth | `POST auth/token/`, `POST auth/token/refresh/`, `GET auth/profile/` |
-| Utilizadores | `GET users/`, `PATCH auth/profile/` |
-| Operadores | `GET operators/`, `GET operator-types/` |
-| Indicadores | `GET indicator-categories/`, `GET indicators/`, `GET periods/` |
-| Dados | `GET/POST data/`, `GET/POST cumulative-data/`, `POST uploads/` |
-| Documentos | `GET/POST received-documents/`, `GET received-documents/summary/`, `POST received-documents/{id}/send_to_import/` |
-| Dashboard | `GET dashboard/summary/`, `GET dashboard/market-share/`, `GET dashboard/trends/`, `GET dashboard/hhi/` |
-| Relatórios | `GET reports/`, `POST reports/generate/`, downloads PDF, Excel e DOCX |
-| Assistente | `POST assistant/query/`, `GET assistant/sessions/` |
+7. **Integração com Sistemas Governamentais**
+   - Conexões com sistemas da ARN (Autoridade Reguladora Nacional)
+   - Intercâmbio de dados com outros órgãos relevantes
 
-## Modelo de Operação
+## Contribuição
 
-```mermaid
-flowchart LR
-    A["Operador"] --> B["Documentos recebidos"]
-    B --> C["Tratamento interno"]
-    C --> D["Entrada manual ou upload"]
-    D --> E["Validação"]
-    E --> J["Base de indicadores"]
-    J --> K["Dashboard"]
-    J --> L["Análise por operador"]
-    J --> M["Relatórios"]
-    J --> N["Assistente IA"]
-    I["ARN"] --> B
-    I --> K
-    I --> L
-    I --> M
-```
+Para contribuir com o projeto:
 
-## Segurança e Boas Práticas
+1. Faça um fork do repositório
+2. Crie uma branch para sua feature (`git checkout -b feature/nova-feature`)
+3. Faça commit das mudanças (`git commit -m 'Adiciona nova feature'`)
+4. Faça push para a branch (`git push origin feature/nova-feature`)
+5. Crie um Pull Request
 
-- credenciais fora do código fonte
-- variáveis sensíveis configuradas em Render e Vercel
-- JWT para autenticação API
-- CORS restrito ao frontend autorizado
-- `ALLOWED_HOSTS` controlado por ambiente
-- superuser criado por variáveis no primeiro arranque
-- passwords iniciais devem ser alteradas depois do primeiro login
-- ficheiros `.env*` não devem ser versionados
-- dados reais e relatórios sensíveis não devem ser colocados em screenshots públicos
+## Créditos
 
-## Estado Actual
+### Equipe de Desenvolvimento
+- **Coordenação**: ARN (Autoridade Reguladora Nacional) da Guiné-Bissau
+- **Desenvolvimento Backend**: Equipe de TI da ARN
+- **Design e Frontend**: Consultores contratados
+- **Análise de Dados**: Departamento de Estatística da ARN
 
-O produto já cobre o núcleo do observatório:
+### Tecnologias e Serviços
+- **Supabase**: Serviço de banco de dados e armazenamento
+- **Hugging Face**: Modelos de IA para o chatbot
+- **Bootstrap**: Framework CSS para o frontend
+- **Chart.js**: Biblioteca para visualização de dados
+- **Django**: Framework web para Python
 
-- autenticação
-- documentos recebidos e fila interna de tratamento
-- detalhe do documento com envio para importação e log do processamento
-- entrada manual e importação de dados
-- operadores e indicadores
-- dashboard executivo
-- análise por operador e por categoria
-- relatórios por operador e geral
-- exportações PDF, Excel e DOCX
-- assistente IA
-- deploy preparado para Vercel e Render
-
-## Roadmap Técnico
-
-- adicionar extracção assistida de tabelas dos questionários Excel
-- criar checklist de qualidade por tipo de documento e operador
-- reforçar testes E2E dos fluxos principais
-- configurar storage persistente para ficheiros gerados em produção
-- adicionar screenshots sanitizados ao README
-- melhorar observabilidade de jobs e geração de relatórios
-- ampliar histórico de indicadores plurianuais
-- automatizar relatórios trimestrais e anuais recorrentes
-
-## Repositórios de Referência
-
-Este README segue uma abordagem mais operacional e profissional, alinhada com a documentação de projectos recentes do mesmo autor:
-
-- [bidera_store](https://github.com/atchutchi/bidera_store)
-- [abiptom-admin](https://github.com/atchutchi/abiptom-admin)
+### Agradecimentos Especiais
+- Às operadoras de telecomunicações da Guiné-Bissau pela colaboração na coleta de dados
+- À comunidade open-source pelas ferramentas e bibliotecas utilizadas
 
 ## Licença
 
-Projecto institucional da Autoridade Reguladora Nacional (ARN) da Guiné-Bissau.
+Este projeto está licenciado sob a licença MIT - veja o arquivo [LICENSE](LICENSE) para mais detalhes.
 
-Desenvolvido por Atchutchi Ferreira para apoio à operação técnica e regulatória da ARN.
+## Contato
+
+Para dúvidas ou informações, entre em contato: contato@observatoriotelecom.gb 

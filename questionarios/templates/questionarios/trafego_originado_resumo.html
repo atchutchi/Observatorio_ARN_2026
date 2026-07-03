@@ -1,0 +1,508 @@
+{% extends "questionarios/base_questionarios.html" %}
+{% load static %}
+{% load humanize %}
+
+{% block questionario_title %}Resumo Anual Tráfego Originado - {{ ano }}{% endblock %}
+
+{% block questionario_content %}
+<!-- Header do Resumo -->
+<div class="questionario-header">
+    <div class="d-flex justify-content-between align-items-start">
+        <div>
+            <h1 class="questionario-title">Resumo Anual de Tráfego Originado - {{ ano }}</h1>
+            <p class="questionario-subtitle">Análise consolidada KPI ARN - Seção 5: Tráfego de dados, SMS, voz e chamadas</p>
+        </div>
+        <div class="questionario-actions">
+            <button onclick="window.print()" class="btn btn-outline me-2">
+                <i class="fas fa-print me-2"></i>Imprimir
+            </button>
+            <a href="{% url 'questionarios:trafego_originado_list' %}" class="btn btn-outline">
+                <i class="fas fa-arrow-left me-2"></i>Voltar à Lista
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Filtros -->
+<div class="questionario-filters">
+    <h5 class="questionario-filters-title">
+        <i class="fas fa-filter me-2"></i>
+        Filtros de Análise
+    </h5>
+    <form method="get" class="questionario-filter-group">
+        <div class="form-group-questionario">
+            <label class="form-label-questionario">Operadora</label>
+            <select name="operadora" class="form-select-questionario" onchange="this.form.submit()">
+                <option value="">Todas as operadoras</option>
+                {% for op in operadoras_disponiveis %}
+                <option value="{{ op }}" {% if operadora_selecionada == op %}selected{% endif %}>{{ op }}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </form>
+</div>
+
+<!-- Totais Anuais Consolidados -->
+<div class="platform-card mb-4">
+    <div class="card-header">
+        <h3 class="card-title">
+            <i class="fas fa-chart-bar me-2"></i>
+            Totais Anuais Consolidados - {{ ano }}
+            {% if operadora_selecionada %}
+                <span class="badge bg-warning ms-2">{{ operadora_selecionada }}</span>
+            {% else %}
+                <span class="badge bg-secondary ms-2">Todas Operadoras</span>
+            {% endif %}
+        </h3>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <!-- Tráfego de Dados -->
+            <div class="col-md-6 col-lg-3 mb-4">
+                <div class="detail-info-item">
+                    <div class="detail-info-icon">
+                        <i class="fas fa-database"></i>
+                    </div>
+                    <div class="detail-info-content">
+                        <strong>Tráfego de Dados</strong>
+                        <p class="detail-value">
+                            {% if total_dados_tb_anual > 1 %}
+                                {{ total_dados_tb_anual|floatformat:2 }} TB
+                            {% else %}
+                                {{ total_dados_gb_anual|floatformat:1 }} GB
+                            {% endif %}
+                        </p>
+                        <small class="text-muted">
+                            2G: {% widthratio total_dados_2g_anual 1024 1 %} GB | 
+                            3G: {% widthratio total_dados_3g_anual 1024 1 %} GB | 
+                            4G: {% widthratio total_dados_4g_anual 1024 1 %} GB<br>
+                            Sessões: {{ total_sessoes_anual|intcomma }}
+                        </small>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- SMS -->
+            <div class="col-md-6 col-lg-3 mb-4">
+                <div class="detail-info-item">
+                    <div class="detail-info-icon">
+                        <i class="fas fa-sms"></i>
+                    </div>
+                    <div class="detail-info-content">
+                        <strong>Mensagens SMS</strong>
+                        <p class="detail-value">{{ total_sms_anual|intcomma }}</p>
+                        <small class="text-muted">
+                            On-net: {{ total_sms_on_net_anual|intcomma }} | 
+                            Internacional: {{ total_sms_internacional_anual|intcomma }}<br>
+                            {% if total_sms_anual > 0 %}
+                                Int: {% widthratio total_sms_internacional_anual total_sms_anual 100 %}%
+                            {% endif %}
+                        </small>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Voz -->
+            <div class="col-md-6 col-lg-3 mb-4">
+                <div class="detail-info-item">
+                    <div class="detail-info-icon">
+                        <i class="fas fa-phone-alt"></i>
+                    </div>
+                    <div class="detail-info-content">
+                        <strong>Volume de Voz</strong>
+                        <p class="detail-value">{{ total_voz_minutos_anual|intcomma }}</p>
+                        <small class="text-muted">
+                            minutos | {% widthratio total_voz_minutos_anual 60 1 %} horas<br>
+                            On-net: {{ percentual_on_net_anual|floatformat:1 }}% | 
+                            Internacional: {{ percentual_internacional_anual|floatformat:1 }}%
+                        </small>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Chamadas -->
+            <div class="col-md-6 col-lg-3 mb-4">
+                <div class="detail-info-item">
+                    <div class="detail-info-icon">
+                        <i class="fas fa-phone-volume"></i>
+                    </div>
+                    <div class="detail-info-content">
+                        <strong>Chamadas</strong>
+                        <p class="detail-value">{{ total_chamadas_anual|intcomma }}</p>
+                        <small class="text-muted">
+                            On-net: {{ total_chamadas_on_net_anual|intcomma }} | 
+                            Internacional: {{ total_chamadas_internacional_anual|intcomma }}<br>
+                            {% if total_chamadas_anual > 0 %}
+                                Média: {% widthratio total_voz_minutos_anual total_chamadas_anual 1 %} min
+                            {% endif %}
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Análise Trimestral -->
+<div class="platform-card mb-4">
+    <div class="card-header">
+        <h3 class="card-title">
+            <i class="fas fa-chart-line me-2"></i>
+            Evolução Trimestral - {{ ano }}
+        </h3>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            {% for trimestre in totais_trimestrais %}
+            <div class="col-md-6 col-lg-3 mb-4">
+                <div class="platform-card {% if not trimestre.tem_dados %}opacity-50{% endif %}">
+                    <div class="card-header">
+                        <h5 class="card-title">{{ trimestre.trimestre }}º Trimestre</h5>
+                        {% if not trimestre.tem_dados %}
+                            <span class="badge bg-secondary">Sem dados</span>
+                        {% endif %}
+                    </div>
+                    {% if trimestre.tem_dados %}
+                    <div class="card-body">
+                        <div class="detail-info-item mb-3">
+                            <div class="detail-info-icon">
+                                <i class="fas fa-database"></i>
+                            </div>
+                            <div class="detail-info-content">
+                                <strong>Dados</strong>
+                                <p class="detail-value">{{ trimestre.total_dados_gb|floatformat:1 }} GB</p>
+                                <small class="text-muted">Sessões: {{ trimestre.total_sessoes|intcomma }}</small>
+                            </div>
+                        </div>
+                        
+                        <div class="detail-info-item mb-3">
+                            <div class="detail-info-icon">
+                                <i class="fas fa-sms"></i>
+                            </div>
+                            <div class="detail-info-content">
+                                <strong>SMS</strong>
+                                <p class="detail-value">{{ trimestre.total_sms|intcomma }}</p>
+                                <small class="text-muted">On-net: {{ trimestre.total_sms_on_net|intcomma }}</small>
+                            </div>
+                        </div>
+                        
+                        <div class="detail-info-item">
+                            <div class="detail-info-icon">
+                                <i class="fas fa-phone-alt"></i>
+                            </div>
+                            <div class="detail-info-content">
+                                <strong>Voz</strong>
+                                <p class="detail-value">{{ trimestre.total_voz_minutos|intcomma }} min</p>
+                                <small class="text-muted">
+                                    Chamadas: {{ trimestre.total_chamadas|intcomma }}
+                                    {% if trimestre.duracao_media %} | Média: {{ trimestre.duracao_media|floatformat:1 }} min{% endif %}
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="card-body">
+                        <p class="text-muted text-center mb-0">
+                            <i class="fas fa-inbox fa-2x mb-2"></i><br>
+                            Dados não disponíveis
+                        </p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <!-- Gráfico de Evolução -->
+        <div class="mt-4">
+            <canvas id="evolutionChart" height="100"></canvas>
+        </div>
+    </div>
+</div>
+
+<!-- Comparação entre Operadoras (se não houver filtro) -->
+{% if comparacao_operadoras %}
+<div class="platform-card mb-4">
+    <div class="card-header">
+        <h3 class="card-title">
+            <i class="fas fa-balance-scale me-2"></i>
+            Comparação entre Operadoras
+        </h3>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-6">
+                <h5 class="text-warning">ORANGE</h5>
+                <table class="table table-sm">
+                    <tr>
+                        <td>Total Voz:</td>
+                        <td class="text-end">{{ comparacao_operadoras.orange.total_voz|intcomma }} min</td>
+                    </tr>
+                    <tr>
+                        <td>Total SMS:</td>
+                        <td class="text-end">{{ comparacao_operadoras.orange.total_sms|intcomma }}</td>
+                    </tr>
+                </table>
+            </div>
+            <div class="col-md-6">
+                <h5 class="text-danger">TELECEL</h5>
+                <table class="table table-sm">
+                    <tr>
+                        <td>Total Voz:</td>
+                        <td class="text-end">{{ comparacao_operadoras.telecel.total_voz|intcomma }} min</td>
+                    </tr>
+                    <tr>
+                        <td>Total SMS:</td>
+                        <td class="text-end">{{ comparacao_operadoras.telecel.total_sms|intcomma }}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- Tabela Detalhada Mensal -->
+<div class="platform-card mb-4">
+    <div class="card-header">
+        <h3 class="card-title">
+            <i class="fas fa-table me-2"></i>
+            Detalhamento Mensal - {{ ano }}
+        </h3>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="questionario-table" id="monthlyTable">
+                <thead>
+                    <tr>
+                        <th rowspan="2">Mês</th>
+                        <th rowspan="2">Operadora</th>
+                        <th colspan="3" class="text-center">Dados (MB)</th>
+                        <th colspan="2" class="text-center">SMS</th>
+                        <th colspan="2" class="text-center">Voz</th>
+                        <th rowspan="2">Ações</th>
+                    </tr>
+                    <tr>
+                        <th>2G</th>
+                        <th>3G</th>
+                        <th>4G</th>
+                        <th>Total</th>
+                        <th>On-net</th>
+                        <th>Minutos</th>
+                        <th>Chamadas</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for indicador in indicadores %}
+                    <tr>
+                        <td>
+                            <span class="badge bg-secondary">{{ indicador.get_mes_display|default:indicador.mes }}</span>
+                        </td>
+                        <td>
+                            <div class="operadora-display">
+                                <div class="operadora-icon {{ indicador.operadora|lower }}">
+                                    {% if indicador.operadora == 'ORANGE' %}
+                                        <i class="fas fa-signal"></i>
+                                    {% elif indicador.operadora == 'TELECEL' %}
+                                        <i class="fas fa-broadcast-tower"></i>
+                                    {% endif %}
+                                </div>
+                                <div class="operadora-name">{{ indicador.operadora }}</div>
+                            </div>
+                        </td>
+                        <td class="text-end">{{ indicador.trafego_dados_2g_mbytes|intcomma }}</td>
+                        <td class="text-end">{{ indicador.calcular_total_dados_3g_mb|intcomma }}</td>
+                        <td class="text-end">{{ indicador.calcular_total_dados_4g_mb|intcomma }}</td>
+                        <td class="text-end"><strong>{{ indicador.calcular_total_sms|intcomma }}</strong></td>
+                        <td class="text-end">{{ indicador.sms_on_net|intcomma }}</td>
+                        <td class="text-end">{{ indicador.calcular_total_voz_minutos|intcomma }}</td>
+                        <td class="text-end">{{ indicador.calcular_total_chamadas|intcomma }}</td>
+                        <td>
+                            <div class="btn-group" role="group">
+                                <a href="{% url 'questionarios:trafego_originado_detail' indicador.pk %}" 
+                                   class="btn-questionario btn-questionario-info"
+                                   title="Ver detalhes">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                <a href="{% url 'questionarios:trafego_originado_update' indicador.pk %}" 
+                                   class="btn-questionario btn-questionario-warning"
+                                   title="Editar">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="10" class="text-center py-4">
+                            <div class="empty-state">
+                                <i class="fas fa-inbox fa-3x mb-3"></i>
+                                <h5>Nenhum dado encontrado</h5>
+                                <p>Não há indicadores para o ano {{ ano }}{% if operadora_selecionada %} da operadora {{ operadora_selecionada }}{% endif %}.</p>
+                                <a href="{% url 'questionarios:trafego_originado_create' %}" class="btn-binance mt-3">
+                                    <i class="fas fa-plus me-2"></i>Adicionar Indicador
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+                <tfoot>
+                    <tr class="table-summary">
+                        <th colspan="2">TOTAIS</th>
+                        <th class="text-end">{{ total_dados_2g_anual|intcomma }}</th>
+                        <th class="text-end">{{ total_dados_3g_anual|intcomma }}</th>
+                        <th class="text-end">{{ total_dados_4g_anual|intcomma }}</th>
+                        <th class="text-end">{{ total_sms_anual|intcomma }}</th>
+                        <th class="text-end">{{ total_sms_on_net_anual|intcomma }}</th>
+                        <th class="text-end">{{ total_voz_minutos_anual|intcomma }}</th>
+                        <th class="text-end">{{ total_chamadas_anual|intcomma }}</th>
+                        <th></th>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Ações Finais -->
+<div class="platform-card">
+    <div class="card-body">
+        <div class="d-flex gap-3 justify-content-center">
+            <a href="{% url 'questionarios:trafego_originado_list' %}" class="btn btn-outline">
+                <i class="fas fa-list me-2"></i>Voltar para Lista
+            </a>
+            <button class="btn btn-outline" onclick="window.print()">
+                <i class="fas fa-print me-2"></i>Imprimir Relatório
+            </button>
+            <a href="{% url 'questionarios:trafego_originado_create' %}" class="btn-binance">
+                <i class="fas fa-plus me-2"></i>Novo Indicador
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block questionario_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+// Dados para o gráfico
+const trimestralData = {
+    labels: ['1º Trim', '2º Trim', '3º Trim', '4º Trim'],
+    datasets: [
+        {
+            label: 'Dados (GB)',
+            data: [
+                {% for t in totais_trimestrais %}{{ t.total_dados_gb|default:0 }}{% if not forloop.last %},{% endif %}{% endfor %}
+            ],
+            borderColor: 'rgb(54, 162, 235)',
+            backgroundColor: 'rgba(54, 162, 235, 0.1)',
+            yAxisID: 'y',
+            tension: 0.4
+        },
+        {
+            label: 'SMS (mil)',
+            data: [
+                {% for t in totais_trimestrais %}{% widthratio t.total_sms 1000 1 %}{% if not forloop.last %},{% endif %}{% endfor %}
+            ],
+            borderColor: 'rgb(75, 192, 192)',
+            backgroundColor: 'rgba(75, 192, 192, 0.1)',
+            yAxisID: 'y1',
+            tension: 0.4
+        },
+        {
+            label: 'Voz (mil min)',
+            data: [
+                {% for t in totais_trimestrais %}{% widthratio t.total_voz_minutos 1000 1 %}{% if not forloop.last %},{% endif %}{% endfor %}
+            ],
+            borderColor: 'rgb(240, 185, 11)',
+            backgroundColor: 'rgba(240, 185, 11, 0.1)',
+            yAxisID: 'y1',
+            tension: 0.4
+        }
+    ]
+};
+
+// Configuração do gráfico
+const config = {
+    type: 'line',
+    data: trimestralData,
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: {
+            mode: 'index',
+            intersect: false,
+        },
+        plugins: {
+            legend: {
+                display: true,
+                position: 'top',
+                labels: {
+                    color: '#B7BDC6'
+                }
+            },
+            title: {
+                display: true,
+                text: 'Evolução Trimestral dos Principais Indicadores',
+                color: '#B7BDC6',
+                font: {
+                    size: 16
+                }
+            }
+        },
+        scales: {
+            y: {
+                type: 'linear',
+                display: true,
+                position: 'left',
+                title: {
+                    display: true,
+                    text: 'Dados (GB)',
+                    color: '#B7BDC6'
+                },
+                grid: {
+                    color: 'rgba(183, 189, 198, 0.1)'
+                },
+                ticks: {
+                    color: '#B7BDC6'
+                }
+            },
+            y1: {
+                type: 'linear',
+                display: true,
+                position: 'right',
+                title: {
+                    display: true,
+                    text: 'SMS e Voz (milhares)',
+                    color: '#B7BDC6'
+                },
+                grid: {
+                    drawOnChartArea: false,
+                    color: 'rgba(183, 189, 198, 0.1)'
+                },
+                ticks: {
+                    color: '#B7BDC6'
+                }
+            },
+            x: {
+                grid: {
+                    color: 'rgba(183, 189, 198, 0.1)'
+                },
+                ticks: {
+                    color: '#B7BDC6'
+                }
+            }
+        }
+    }
+};
+
+// Renderizar gráfico
+const ctx = document.getElementById('evolutionChart');
+if (ctx) {
+    new Chart(ctx, config);
+}
+
+
+</script>
+{% endblock %}

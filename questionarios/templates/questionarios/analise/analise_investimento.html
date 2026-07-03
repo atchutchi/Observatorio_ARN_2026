@@ -1,0 +1,128 @@
+{% extends 'questionarios/analise/base_analise.html' %}
+{% load static %}
+
+{% block specific_charts %}
+<div class="row mt-4">
+    <div class="col-lg-6 mb-3">
+        <h5>Investimento Corpóreo x Incorpóreo (Anual - Mercado)</h5>
+        <div style="position: relative; height:300px; width:100%">
+            <canvas id="investimentoTipoChart"></canvas>
+        </div>
+    </div>
+    <div class="col-lg-6 mb-3">
+        <h5>Investimento por Operadora (Anual)</h5>
+        <canvas id="investimentoOperadoraChart"></canvas>
+    </div>
+</div>
+{% endblock %}
+
+{% block data_table %}
+<div class="card mt-4">
+    <div class="card-header">
+        Dados Detalhados de Investimento - {{ ano_selecionado }}
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover">
+                <thead class="table-light">
+                    <tr>
+                        <th>Operadora</th>
+                        <th>Período</th>
+                        <th>Serv. Telecom (Corpóreo)</th>
+                        <th>Serv. Internet (Corpóreo)</th>
+                        <th>Serv. Telecom (Incorpóreo)</th>
+                        <th>Serv. Internet (Incorpóreo)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for op, op_data in analysis_data.items %}
+                        {% if op != 'TOTAL' %}
+                            <!-- Annual Data -->
+                            <tr class="table-primary">
+                                <td rowspan="5">{{ op }}</td>
+                                <td><b>Anual</b></td>
+                                <td>{{ op_data.annual.total_servicos_telecomunicacoes|floatformat:2 }}</td>
+                                <td>{{ op_data.annual.total_servicos_internet|floatformat:2 }}</td>
+                                <td>{{ op_data.annual.total_servicos_telecomunicacoes_incorporeo|floatformat:2 }}</td>
+                                <td>{{ op_data.annual.total_servicos_internet_incorporeo|floatformat:2 }}</td>
+                            </tr>
+                            <!-- Quarterly Data -->
+                            {% for q, q_data in op_data.quarterly.items %}
+                            <tr>
+                                <td><b>{{ q }}</b></td>
+                                <td>{{ q_data.total_servicos_telecomunicacoes|floatformat:2 }}</td>
+                                <td>{{ q_data.total_servicos_internet|floatformat:2 }}</td>
+                                <td>{{ q_data.total_servicos_telecomunicacoes_incorporeo|floatformat:2 }}</td>
+                                <td>{{ q_data.total_servicos_internet_incorporeo|floatformat:2 }}</td>
+                            </tr>
+                            {% endfor %}
+                        {% endif %}
+                    {% endfor %}
+                    <!-- Total Market -->
+                    <tr class="table-dark">
+                        <td rowspan="5"><b>TOTAL Mercado</b></td>
+                        <td><b>Anual</b></td>
+                         <td>{{ analysis_data.TOTAL.annual.total_servicos_telecomunicacoes|floatformat:2 }}</td>
+                         <td>{{ analysis_data.TOTAL.annual.total_servicos_internet|floatformat:2 }}</td>
+                         <td>{{ analysis_data.TOTAL.annual.total_servicos_telecomunicacoes_incorporeo|floatformat:2 }}</td>
+                         <td>{{ analysis_data.TOTAL.annual.total_servicos_internet_incorporeo|floatformat:2 }}</td>
+                    </tr>
+                     {% for q, q_data in analysis_data.TOTAL.quarterly.items %}
+                    <tr class="table-secondary">
+                         <td><b>{{ q }}</b></td>
+                         <td>{{ q_data.total_servicos_telecomunicacoes|floatformat:2 }}</td>
+                         <td>{{ q_data.total_servicos_internet|floatformat:2 }}</td>
+                         <td>{{ q_data.total_servicos_telecomunicacoes_incorporeo|floatformat:2 }}</td>
+                         <td>{{ q_data.total_servicos_internet_incorporeo|floatformat:2 }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <small class="text-muted">* Valores em moeda local (presumido).</small>
+    </div>
+</div>
+{% endblock %}
+
+{% block specific_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const analysisData = window.getAnalysisData();
+    if (!analysisData) return;
+
+    const operators = Object.keys(analysisData).filter(op => op !== 'TOTAL');
+    const colors = window.getOperatorColors();
+    const marketAnnual = analysisData['TOTAL']?.annual || {};
+
+    // Chart: Corporeal vs Incorporeal Investment (Annual - Market)
+    const totalCorporeo = (marketAnnual.total_servicos_telecomunicacoes || 0) + (marketAnnual.total_servicos_internet || 0);
+    const totalIncorporeo = (marketAnnual.total_servicos_telecomunicacoes_incorporeo || 0) + (marketAnnual.total_servicos_internet_incorporeo || 0);
+    const investimentoTipoData = {
+        labels: ['Corpóreo', 'Incorpóreo'],
+        datasets: [{
+            label: 'Investimento Anual Total por Tipo',
+            data: [totalCorporeo, totalIncorporeo],
+            backgroundColor: ['rgba(255, 159, 64, 0.6)', 'rgba(75, 192, 192, 0.6)'],
+        }]
+    };
+    window.createAnalysisChart('investimentoTipoChart', 'pie', investimentoTipoData.labels, investimentoTipoData.datasets);
+
+    // Chart: Investment per Operator (Annual)
+    const investimentoOpData = {
+        labels: operators,
+        datasets: [{
+            label: 'Investimento Anual Total (Corpóreo + Incorpóreo)',
+            data: operators.map(op => {
+                 const opAnnual = analysisData[op]?.annual || {};
+                 return (opAnnual.total_servicos_telecomunicacoes || 0) + 
+                        (opAnnual.total_servicos_internet || 0) + 
+                        (opAnnual.total_servicos_telecomunicacoes_incorporeo || 0) + 
+                        (opAnnual.total_servicos_internet_incorporeo || 0);
+            }),
+             backgroundColor: operators.map(op => colors[op] || '#cccccc'),
+        }]
+    };
+    window.createAnalysisChart('investimentoOperadoraChart', 'bar', investimentoOpData.labels, investimentoOpData.datasets);
+});
+</script>
+{% endblock %} 

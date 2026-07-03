@@ -1,0 +1,157 @@
+{% extends 'questionarios/analise/base_analise.html' %}
+{% load static %}
+
+{% block specific_charts %}
+<div class="row mt-4">
+    <div class="col-lg-6 mb-3">
+        <h5>Assinantes Internet Fixo por Região (Anual - Mercado)</h5>
+        <canvas id="internetFixoRegiaoChart"></canvas>
+    </div>
+     <div class="col-lg-6 mb-3">
+        <h5>Assinantes Internet Fixo por Tecnologia (Anual - Mercado)</h5>
+         <div style="position: relative; height:300px; width:100%">
+            <canvas id="internetFixoTecnologiaChart"></canvas>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block data_table %}
+<div class="card mt-4">
+    <div class="card-header">
+        Dados Detalhados de Internet Fixo - {{ ano_selecionado }}
+    </div>
+    <div class="card-body">
+         <div class="table-responsive">
+            <table class="table table-bordered table-hover table-sm">
+                <thead class="table-light">
+                    <tr>
+                        <th>Operadora</th>
+                        <th>Período</th>
+                        <th>Bissau</th>
+                        <th>Bafatá</th>
+                        <th>Biombo</th>
+                        <th>Airbox</th>
+                        <th>Hertziano</th>
+                        <th>Fibra Ótica</th>
+                        <th>Residencial</th>
+                        {# Add more relevant headers as needed #}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for op, op_data in analysis_data.items %}
+                        {% if op != 'TOTAL' %}
+                            <!-- Annual Data -->
+                            <tr class="table-primary">
+                                <td rowspan="5">{{ op }}</td>
+                                <td><b>Anual</b></td>
+                                <td>{{ op_data.annual.total_cidade_bissau|floatformat:0 }}</td>
+                                <td>{{ op_data.annual.total_bafata|floatformat:0 }}</td>
+                                <td>{{ op_data.annual.total_biombo|floatformat:0 }}</td>
+                                <td>{{ op_data.annual.total_airbox|floatformat:0 }}</td>
+                                <td>{{ op_data.annual.total_sistema_hertziano_fixo_terra|floatformat:0 }}</td>
+                                <td>{{ op_data.annual.total_fibra_otica|floatformat:0 }}</td>
+                                <td>{{ op_data.annual.total_residencial|floatformat:0 }}</td>
+                            </tr>
+                            <!-- Quarterly Data -->
+                            {% for q, q_data in op_data.quarterly.items %}
+                            <tr>
+                                <td><b>{{ q }}</b></td>
+                                <td>{{ q_data.total_cidade_bissau|floatformat:0 }}</td>
+                                <td>{{ q_data.total_bafata|floatformat:0 }}</td>
+                                <td>{{ q_data.total_biombo|floatformat:0 }}</td>
+                                <td>{{ q_data.total_airbox|floatformat:0 }}</td>
+                                <td>{{ q_data.total_sistema_hertziano_fixo_terra|floatformat:0 }}</td>
+                                <td>{{ q_data.total_fibra_otica|floatformat:0 }}</td>
+                                <td>{{ q_data.total_residencial|floatformat:0 }}</td>
+                            </tr>
+                            {% endfor %}
+                        {% endif %}
+                    {% endfor %}
+                    <!-- Total Market -->
+                     <tr class="table-dark">
+                        <td rowspan="5"><b>TOTAL Mercado</b></td>
+                        <td><b>Anual</b></td>
+                         <td>{{ analysis_data.TOTAL.annual.total_cidade_bissau|floatformat:0 }}</td>
+                         <td>{{ analysis_data.TOTAL.annual.total_bafata|floatformat:0 }}</td>
+                         <td>{{ analysis_data.TOTAL.annual.total_biombo|floatformat:0 }}</td>
+                         <td>{{ analysis_data.TOTAL.annual.total_airbox|floatformat:0 }}</td>
+                         <td>{{ analysis_data.TOTAL.annual.total_sistema_hertziano_fixo_terra|floatformat:0 }}</td>
+                         <td>{{ analysis_data.TOTAL.annual.total_fibra_otica|floatformat:0 }}</td>
+                         <td>{{ analysis_data.TOTAL.annual.total_residencial|floatformat:0 }}</td>
+                    </tr>
+                    {% for q, q_data in analysis_data.TOTAL.quarterly.items %}
+                    <tr class="table-secondary">
+                         <td><b>{{ q }}</b></td>
+                         <td>{{ q_data.total_cidade_bissau|floatformat:0 }}</td>
+                         <td>{{ q_data.total_bafata|floatformat:0 }}</td>
+                         <td>{{ q_data.total_biombo|floatformat:0 }}</td>
+                         <td>{{ q_data.total_airbox|floatformat:0 }}</td>
+                         <td>{{ q_data.total_sistema_hertziano_fixo_terra|floatformat:0 }}</td>
+                         <td>{{ q_data.total_fibra_otica|floatformat:0 }}</td>
+                         <td>{{ q_data.total_residencial|floatformat:0 }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block specific_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const analysisData = window.getAnalysisData();
+    if (!analysisData) return;
+    console.log("Internet Fixo Data:", analysisData);
+
+    const operators = Object.keys(analysisData).filter(op => op !== 'TOTAL');
+    const colors = window.getOperatorColors();
+    const marketAnnual = analysisData['TOTAL']?.annual || {};
+
+    // Chart: Assinantes Internet Fixo por Região (Anual - Mercado)
+    const regiaoLabels = ['Bissau', 'Bafatá', 'Biombo', 'Bolama', 'Cacheu', 'Gabú', 'Oio', 'Quinara', 'Tombali'];
+    const regiaoData = {
+        labels: regiaoLabels,
+        datasets: [{
+            label: 'Assinantes por Região (Anual)',
+            data: [
+                marketAnnual.total_cidade_bissau || 0,
+                marketAnnual.total_bafata || 0,
+                marketAnnual.total_biombo || 0,
+                marketAnnual.total_bolama_bijagos || 0,
+                marketAnnual.total_cacheu || 0,
+                marketAnnual.total_gabu || 0,
+                marketAnnual.total_oio || 0,
+                marketAnnual.total_quinara || 0,
+                marketAnnual.total_tombali || 0,
+            ],
+            backgroundColor: 'rgba(54, 162, 235, 0.6)',
+        }]
+    };
+    window.createAnalysisChart('internetFixoRegiaoChart', 'bar', regiaoData.labels, regiaoData.datasets);
+
+    // Chart: Assinantes Internet Fixo por Tecnologia (Anual - Mercado)
+    const tecnologiaData = {
+        labels: ['Airbox', 'Hertziano', 'Outros/Proxim', 'Fibra Ótica'],
+        datasets: [{
+            label: 'Assinantes por Tecnologia (Anual)',
+            data: [
+                marketAnnual.total_airbox || 0,
+                marketAnnual.total_sistema_hertziano_fixo_terra || 0,
+                marketAnnual.total_outros_proxim || 0,
+                marketAnnual.total_fibra_otica || 0,
+            ],
+            backgroundColor: [
+                'rgba(255, 99, 132, 0.6)',
+                'rgba(75, 192, 192, 0.6)',
+                'rgba(255, 206, 86, 0.6)',
+                'rgba(153, 102, 255, 0.6)',
+            ],
+        }]
+    };
+    window.createAnalysisChart('internetFixoTecnologiaChart', 'pie', tecnologiaData.labels, tecnologiaData.datasets);
+});
+</script>
+{% endblock %} 

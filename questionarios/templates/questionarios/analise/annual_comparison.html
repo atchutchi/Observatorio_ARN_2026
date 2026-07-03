@@ -1,0 +1,232 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Comparação Anual dos Dados{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4">
+    <h1 class="mt-4">Comparação Anual dos Dados</h1>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item"><a href="{% url 'questionarios:index' %}">Home</a></li>
+        <li class="breadcrumb-item active">Comparação Anual</li>
+    </ol>
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <i class="fas fa-chart-area me-1"></i>
+            Evolução Anual dos Indicadores
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-xl-6">
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <i class="fas fa-chart-bar me-1"></i>
+                            Assinantes Rede Móvel
+                        </div>
+                        <div class="card-body">
+                            <canvas id="chartAssinantes" width="100%" height="40"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-6">
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <i class="fas fa-chart-bar me-1"></i>
+                            Assinantes Banda Larga Móvel
+                        </div>
+                        <div class="card-body">
+                            <canvas id="chartBandaLarga" width="100%" height="40"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xl-6">
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <i class="fas fa-chart-bar me-1"></i>
+                            Receita Total (XOF)
+                        </div>
+                        <div class="card-body">
+                            <canvas id="chartReceita" width="100%" height="40"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-6">
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <i class="fas fa-chart-bar me-1"></i>
+                            Investimentos (XOF)
+                        </div>
+                        <div class="card-body">
+                            <canvas id="chartInvestimentos" width="100%" height="40"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="card mb-4">
+        <div class="card-header">
+            <i class="fas fa-table me-1"></i>
+            Dados Comparativos por Ano e Operadora
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table id="dataTable" class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Ano</th>
+                            <th>Operadora</th>
+                            <th>Assinantes Rede Móvel</th>
+                            <th>Banda Larga Móvel</th>
+                            <th>Assinantes 4G</th>
+                            <th>Receita Total</th>
+                            <th>Tráfego de Dados</th>
+                            <th>Investimentos</th>
+                        </tr>
+                    </thead>
+                    <tbody id="comparisonTableBody">
+                        <!-- Dados serão inseridos via JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Dados recebidos do contexto Django
+    const comparisonData = {{ comparison_data|safe }};
+    const anos = {{ anos|safe }};
+    const operadoras = {{ operadoras|safe }};
+    
+    // Função para formatar números grandes
+    function formatNumber(num) {
+        return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
+    }
+    
+    // Cores por operadora
+    const operadoraColors = {
+        'orange': 'rgba(255, 165, 0, 0.7)',
+        'telecel': 'rgba(255, 255, 0, 0.7)',
+        'telecel': 'rgba(0, 128, 0, 0.7)',
+        'TOTAL': 'rgba(54, 162, 235, 0.7)'
+    };
+    
+    // Preencher a tabela com os dados
+    const tableBody = document.getElementById('comparisonTableBody');
+    anos.forEach(ano => {
+        operadoras.forEach(operadora => {
+            if (comparisonData[ano] && comparisonData[ano][operadora]) {
+                const dados = comparisonData[ano][operadora];
+                const row = document.createElement('tr');
+                
+                row.innerHTML = `
+                    <td>${ano}</td>
+                    <td>${operadora}</td>
+                    <td>${formatNumber(dados.assinantes_rede_movel || 0)}</td>
+                    <td>${formatNumber(dados.assinantes_banda_larga_movel || 0)}</td>
+                    <td>${formatNumber(dados.assinantes_4g || 0)}</td>
+                    <td>${formatNumber(Math.round(dados.receita_total || 0))} XOF</td>
+                    <td>${formatNumber(dados.trafego_dados || 0)} GB</td>
+                    <td>${formatNumber(Math.round(dados.investimentos || 0))} XOF</td>
+                `;
+                
+                tableBody.appendChild(row);
+            }
+        });
+    });
+    
+    // Preparar dados para gráficos
+    function prepareChartData(indicator) {
+        const datasets = [];
+        
+        operadoras.forEach(operadora => {
+            const data = [];
+            anos.forEach(ano => {
+                if (comparisonData[ano] && comparisonData[ano][operadora]) {
+                    data.push(comparisonData[ano][operadora][indicator] || 0);
+                } else {
+                    data.push(0);
+                }
+            });
+            
+            datasets.push({
+                label: operadora,
+                data: data,
+                backgroundColor: operadoraColors[operadora] || 'rgba(100, 100, 100, 0.7)',
+                borderColor: operadoraColors[operadora] ? operadoraColors[operadora].replace('0.7', '1') : 'rgba(100, 100, 100, 1)',
+                borderWidth: 1
+            });
+        });
+        
+        return {
+            labels: anos,
+            datasets: datasets
+        };
+    }
+    
+    // Criar gráficos
+    const ctxAssinantes = document.getElementById('chartAssinantes').getContext('2d');
+    new Chart(ctxAssinantes, {
+        type: 'bar',
+        data: prepareChartData('assinantes_rede_movel'),
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+    
+    const ctxBandaLarga = document.getElementById('chartBandaLarga').getContext('2d');
+    new Chart(ctxBandaLarga, {
+        type: 'bar',
+        data: prepareChartData('assinantes_banda_larga_movel'),
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+    
+    const ctxReceita = document.getElementById('chartReceita').getContext('2d');
+    new Chart(ctxReceita, {
+        type: 'bar',
+        data: prepareChartData('receita_total'),
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+    
+    const ctxInvestimentos = document.getElementById('chartInvestimentos').getContext('2d');
+    new Chart(ctxInvestimentos, {
+        type: 'bar',
+        data: prepareChartData('investimentos'),
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+</script>
+{% endblock %} 

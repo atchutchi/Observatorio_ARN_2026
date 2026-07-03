@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+
+{% block title %}Upload Excel Questionários{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Upload de Arquivo Excel com Dados dos Questionários</h2>
+    <p class="text-muted">Faça o upload do arquivo .xlsx contendo os dados consolidados dos indicadores.</p>
+    
+    {# Display Messages #}
+    {% if messages %}
+        {% for message in messages %}
+        <div class="alert alert-{% if message.tags %}{{ message.tags }}{% else %}info{% endif %}{% if 'small' in message.tags %} alert-sm{% endif %} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endfor %}
+    {% endif %}
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="mb-3">
+                    {{ form.excel_file.label_tag }}
+                    {{ form.excel_file }}
+                    {% if form.excel_file.help_text %}
+                        <div class="form-text">{{ form.excel_file.help_text }}</div>
+                    {% endif %}
+                    {% if form.excel_file.errors %}
+                        <div class="invalid-feedback d-block">
+                            {% for error in form.excel_file.errors %}{{ error }}{% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+                
+                {# Add other form fields here if needed (e.g., year, operadora) #}
+                
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-upload me-2"></i> Processar Arquivo
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <div class="alert alert-warning mt-4" role="alert">
+      <h4 class="alert-heading">Importante!</h4>
+      <p>No momento, este upload processa apenas a aba <strong>'Internet_Trafic'</strong> (nome exato) para o modelo <strong>Tráfego de Internet</strong>.</p>
+      <p>A determinação do Ano e Operadora ainda precisa ser implementada dinamicamente no código (atualmente usa valores placeholder).</p>
+      <hr>
+      <p class="mb-0">Certifique-se que a estrutura da aba (linhas de cabeçalho, nomes de colunas/indicadores) corresponde exatamente ao esperado pelo parser.</p>
+    </div>
+
+</div>
+{% endblock %} 

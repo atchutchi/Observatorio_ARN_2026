@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4">Resumo de Receitas - {{ ano }}</h2>
+
+    <!-- Filtro de Operadora -->
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+            Filtrar por Operadora
+        </div>
+        <div class="card-body">
+            <form method="get" class="form-inline">
+                <div class="row align-items-center">
+                    <div class="col-auto">
+                        <select name="operadora" class="form-control">
+                            <option value="">Todas</option>
+                            <option value="orange" {% if operadora_selecionada == 'orange' %}selected{% endif %}>Orange</option>
+                            <option value="telecel" {% if operadora_selecionada == 'telecel' %}selected{% endif %}>TELECEL</option>
+                        </select>
+                    </div>
+                    <div class="col-auto">
+                        <button type="submit" class="btn btn-primary">Filtrar</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    {% if operadora_selecionada %}
+    <div class="alert alert-info">
+        Mostrando dados da operadora: {{ operadora_selecionada|upper }}
+    </div>
+    {% endif %}
+
+    <h3>Totais Trimestrais</h3>
+    {% for trimestre in totais_trimestrais %}
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+            {{ trimestre.trimestre }}º Trimestre
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5>Receitas Retalhistas</h5>
+                    <p><strong>Total Voz:</strong> {{ trimestre.total_receitas_voz|floatformat:2 }} FCFA</p>
+                    <p><strong>Total Dados:</strong> {{ trimestre.total_receitas_dados|floatformat:2 }} FCFA</p>
+                    <p><strong>Internacional:</strong> {{ trimestre.total_receitas_internacional|floatformat:2 }} FCFA</p>
+                    <p><strong>Total Retalhistas:</strong> {{ trimestre.total_receitas_retalhistas|floatformat:2 }} FCFA</p>
+                </div>
+                <div class="col-md-6">
+                    <h5>Receitas Grossistas</h5>
+                    <p><strong>Total Grossistas:</strong> {{ trimestre.total_receitas_grossistas|floatformat:2 }} FCFA</p>
+                    <p class="mt-4"><strong>Total Geral:</strong> {{ trimestre.total_receitas|floatformat:2 }} FCFA</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+
+    <h3>Totais Anuais</h3>
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+            Ano {{ ano }}{% if operadora_selecionada %} - {{ operadora_selecionada|upper }}{% endif %}
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5>Receitas Retalhistas</h5>
+                    <p><strong>Total Voz:</strong> {{ total_receitas_voz_anual|floatformat:2 }} FCFA</p>
+                    <p><strong>Total Dados:</strong> {{ total_receitas_dados_anual|floatformat:2 }} FCFA</p>
+                    <p><strong>Internacional:</strong> {{ total_receitas_internacional_anual|floatformat:2 }} FCFA</p>
+                    <p><strong>Total Retalhistas:</strong> {{ total_receitas_retalhistas_anual|floatformat:2 }} FCFA</p>
+                </div>
+                <div class="col-md-6">
+                    <h5>Receitas Grossistas</h5>
+                    <p><strong>Total Grossistas:</strong> {{ total_receitas_grossistas_anual|floatformat:2 }} FCFA</p>
+                    <p class="mt-4"><strong>Total Geral:</strong> {{ total_receitas_anual|floatformat:2 }} FCFA</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <h3>Detalhes Mensais</h3>
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Mês</th>
+                    <th>Operadora</th>
+                    <th>Retalhistas</th>
+                    <th>Grossistas</th>
+                    <th>Total</th>
+                    <th>% Retalhista</th>
+                    <th>% Grossista</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for indicador in indicadores %}
+                <tr>
+                    <td>{{ indicador.get_mes_display }}</td>
+                    <td>{{ indicador.get_operadora_display }}</td>
+                    <td>{{ indicador.calcular_total_receitas_retalhistas|floatformat:2 }} FCFA</td>
+                    <td>{{ indicador.calcular_total_receitas_grossistas|floatformat:2 }} FCFA</td>
+                    <td>{{ indicador.calcular_total_receitas|floatformat:2 }} FCFA</td>
+                    <td>{{ indicador.calcular_total_receitas_retalhistas|div:indicador.calcular_total_receitas|multiply:100|floatformat:1 }}%</td>
+                    <td>{{ indicador.calcular_total_receitas_grossistas|div:indicador.calcular_total_receitas|multiply:100|floatformat:1 }}%</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="mt-4 mb-4">
+        <a href="{% url 'questionarios:receitas_list' %}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Voltar para a Lista
+        </a>
+        <button class="btn btn-primary" onclick="window.print()">
+            <i class="fas fa-print"></i> Imprimir Relatório
+        </button>
+    </div>
+</div>
+{% endblock %}

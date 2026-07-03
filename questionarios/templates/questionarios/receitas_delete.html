@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-header bg-danger text-white">
+            <h2 class="mb-0">Confirmar Exclusão</h2>
+        </div>
+        <div class="card-body">
+            <p class="lead">Tem certeza que deseja excluir o indicador de Receitas para {{ object.get_operadora_display }} - {{ object.ano }}/{{ object.get_mes_display }}?</p>
+            
+            <div class="alert alert-warning">
+                <h5>Resumo do Indicador:</h5>
+                <p><strong>Total Receitas Retalhistas:</strong> {{ object.calcular_total_receitas_retalhistas|floatformat:2 }} FCFA</p>
+                <p><strong>Total Receitas Grossistas:</strong> {{ object.calcular_total_receitas_grossistas|floatformat:2 }} FCFA</p>
+                <p><strong>Total Geral:</strong> {{ object.calcular_total_receitas|floatformat:2 }} FCFA</p>
+            </div>
+
+            <form method="post">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger">
+                    <i class="fas fa-trash"></i> Confirmar Exclusão
+                </button>
+                <a href="{% url 'questionarios:receitas_list' %}" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left"></i> Cancelar
+                </a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

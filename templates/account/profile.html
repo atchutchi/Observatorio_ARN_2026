@@ -1,0 +1,340 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block head_title %}Perfil - {{ user.get_full_name|default:user.username }}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/binance-style.css' %}">
+<link rel="stylesheet" href="{% static 'home/css/home-binance.css' %}">
+{% endblock %}
+
+{# Esconder navbar e footer padrão #}
+{% block navbar %}{% endblock %}
+{% block footer %}{% endblock %}
+{% block main_container %}
+
+<div class="platform-container">
+    <!-- SIDEBAR PERFIL -->
+    <nav class="platform-sidebar" id="sidebar">
+        <!-- Header da Sidebar -->
+        <div class="sidebar-header">
+            <a href="/" class="sidebar-logo">
+                <i class="fas fa-chart-network"></i>
+                ARN Platform
+            </a>
+        </div>
+        
+        <!-- Navegação da Sidebar -->
+        <div class="sidebar-nav">
+            <div class="sidebar-nav-item">
+                <a href="/" class="sidebar-nav-link">
+                    <i class="fas fa-home"></i>
+                    Início
+                </a>
+            </div>
+            
+            <div class="sidebar-nav-item">
+                <a href="{% url 'dashboard:home' %}" class="sidebar-nav-link">
+                    <i class="fas fa-tachometer-alt"></i>
+                    Dashboard
+                </a>
+            </div>
+            
+            <div class="sidebar-nav-item">
+                <a href="{% url 'questionarios:data_management' %}" class="sidebar-nav-link">
+                    <i class="fas fa-database"></i>
+                    Gestão de Dados
+                </a>
+            </div>
+            
+            <div class="sidebar-nav-item">
+                <a href="/accounts/profile/" class="sidebar-nav-link active">
+                    <i class="fas fa-user"></i>
+                    Meu Perfil
+                </a>
+            </div>
+            
+            <div class="sidebar-nav-item">
+                <a href="/accounts/password/change/" class="sidebar-nav-link">
+                    <i class="fas fa-key"></i>
+                    Alterar Senha
+                </a>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- CONTEÚDO PRINCIPAL -->
+    <div class="platform-content">
+        <!-- NAVBAR SUPERIOR -->
+        <header class="platform-navbar">
+            <div class="d-flex align-items-center">
+                <button class="navbar-btn d-md-none" id="sidebarToggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <h1 class="h4 mb-0 ms-2">Perfil do Usuário</h1>
+            </div>
+            
+            <!-- Ações da Navbar -->
+            <div class="navbar-actions">
+                <!-- Menu do Usuário -->
+                <div class="user-menu dropdown">
+                    <div class="user-avatar" data-bs-toggle="dropdown" aria-expanded="false">
+                        {{ user.first_name.0|default:user.email.0|upper }}
+                    </div>
+                    <ul class="dropdown-menu dropdown-menu-end" style="background-color: var(--binance-dark-light); border-color: var(--binance-border);">
+                        <li><a class="dropdown-item" href="/accounts/profile/" style="color: var(--binance-text);">
+                            <i class="fas fa-user me-2"></i>Perfil
+                        </a></li>
+                        <li><a class="dropdown-item" href="/accounts/password/change/" style="color: var(--binance-text);">
+                            <i class="fas fa-key me-2"></i>Alterar Senha
+                        </a></li>
+                        <li><hr class="dropdown-divider" style="border-color: var(--binance-border);"></li>
+                        <li><a class="dropdown-item" href="/accounts/logout/" style="color: var(--binance-danger);">
+                            <i class="fas fa-sign-out-alt me-2"></i>Sair
+                        </a></li>
+                    </ul>
+                </div>
+            </div>
+        </header>
+        
+        <!-- ÁREA DE CONTEÚDO -->
+        <main class="platform-main">
+            <!-- Header do Perfil -->
+            <div class="platform-card mb-4">
+                <div class="card-header text-center">
+                    <div class="profile-avatar-large">
+                        {{ user.first_name.0|default:user.email.0|upper }}
+                    </div>
+                    <h2 class="card-title mb-0">{{ user.get_full_name|default:user.username }}</h2>
+                    <p class="card-subtitle">{{ user.email }}</p>
+                </div>
+            </div>
+
+            <!-- Informações do Perfil -->
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="platform-card">
+                        <div class="card-header">
+                            <h3 class="card-title">
+                                <i class="fas fa-user me-2"></i>
+                                Informações Pessoais
+                            </h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="profile-info-item">
+                                <div class="profile-info-icon">
+                                    <i class="fas fa-signature"></i>
+                                </div>
+                                <div class="profile-info-content">
+                                    <strong>Nome de usuário</strong>
+                                    <p>{{ user.username }}</p>
+                                </div>
+                            </div>
+                            
+                            <div class="profile-info-item">
+                                <div class="profile-info-icon">
+                                    <i class="fas fa-envelope"></i>
+                                </div>
+                                <div class="profile-info-content">
+                                    <strong>Email</strong>
+                                    <p>{{ user.email }}</p>
+                                </div>
+                            </div>
+                            
+                            <div class="profile-info-item">
+                                <div class="profile-info-icon">
+                                    <i class="fas fa-user-tag"></i>
+                                </div>
+                                <div class="profile-info-content">
+                                    <strong>Nome completo</strong>
+                                    <p>{{ user.get_full_name|default:"Não informado" }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="platform-card">
+                        <div class="card-header">
+                            <h3 class="card-title">
+                                <i class="fas fa-shield-alt me-2"></i>
+                                Informações da Conta
+                            </h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="profile-info-item">
+                                <div class="profile-info-icon">
+                                    <i class="fas fa-calendar-alt"></i>
+                                </div>
+                                <div class="profile-info-content">
+                                    <strong>Membro desde</strong>
+                                    <p>{{ user.date_joined|date:"d/m/Y" }}</p>
+                                </div>
+                            </div>
+                            
+                            <div class="profile-info-item">
+                                <div class="profile-info-icon">
+                                    <i class="fas fa-clock"></i>
+                                </div>
+                                <div class="profile-info-content">
+                                    <strong>Último login</strong>
+                                    <p>{{ user.last_login|date:"d/m/Y H:i"|default:"Nunca" }}</p>
+                                </div>
+                            </div>
+                            
+                            <div class="profile-info-item">
+                                <div class="profile-info-icon">
+                                    <i class="fas fa-crown"></i>
+                                </div>
+                                <div class="profile-info-content">
+                                    <strong>Tipo de conta</strong>
+                                    <p>
+                                        {% if user.is_superuser %}
+                                            <span class="badge-questionario badge-questionario-danger">Administrador</span>
+                                        {% elif user.is_staff %}
+                                            <span class="badge-questionario badge-questionario-warning">Staff</span>
+                                        {% else %}
+                                            <span class="badge-questionario badge-questionario-info">Usuário</span>
+                                        {% endif %}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Ações do Perfil -->
+            <div class="platform-card">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-cogs me-2"></i>
+                        Ações da Conta
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex gap-3 flex-wrap justify-content-center">
+                        <a href="/accounts/password/change/" class="btn-binance">
+                            <i class="fas fa-key me-2"></i>Alterar Senha
+                        </a>
+                        <a href="{% url 'dashboard:home' %}" class="btn btn-outline">
+                            <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+                        </a>
+                        <a href="{% url 'questionarios:estacoes_moveis_list' %}" class="btn btn-outline">
+                            <i class="fas fa-database me-2"></i>Gestão de Dados
+                        </a>
+                        <a href="/accounts/logout/" class="btn btn-danger">
+                            <i class="fas fa-sign-out-alt me-2"></i>Sair
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Estatísticas de Uso (se for staff) -->
+            {% if user.is_staff %}
+            <div class="platform-card">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-chart-line me-2"></i>
+                        Estatísticas de Uso
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-eye"></i>
+                            </div>
+                            <div class="stat-value">156</div>
+                            <div class="stat-label">Páginas Visitadas</div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-chart-bar"></i>
+                            </div>
+                            <div class="stat-value">23</div>
+                            <div class="stat-label">Análises Acessadas</div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-file-alt"></i>
+                            </div>
+                            <div class="stat-value">8</div>
+                            <div class="stat-label">Relatórios Gerados</div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <div class="stat-value">42h</div>
+                            <div class="stat-label">Tempo na Plataforma</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </main>
+    </div>
+</div>
+
+<style>
+.profile-avatar-large {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--binance-yellow) 0%, #D4A00A 100%);
+    color: var(--binance-dark);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin: 0 auto 1rem;
+}
+
+.profile-info-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--binance-border);
+}
+
+.profile-info-item:last-child {
+    border-bottom: none;
+}
+
+.profile-info-icon {
+    width: 40px;
+    height: 40px;
+    background-color: var(--binance-yellow);
+    color: var(--binance-dark);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.profile-info-content strong {
+    color: var(--binance-text);
+    font-weight: 600;
+}
+
+.profile-info-content p {
+    color: var(--binance-text-muted);
+    margin-bottom: 0;
+    margin-top: 0.25rem;
+}
+</style>
+
+{% endblock %} {# Fechar main_container #}
+
+{% block extra_js %}
+<script src="{% static 'js/platform.js' %}"></script>
+<script src="{% static 'home/js/home-binance.js' %}"></script>
+{% endblock %}

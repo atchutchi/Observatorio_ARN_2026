@@ -1,0 +1,125 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Visão Geral do Mercado{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <h1 class="mb-4">Visão Geral do Mercado de Telecomunicações</h1>
+    
+    {% if error_message %}
+    <div class="alert alert-warning">
+        <strong>Atenção:</strong> {{ error_message }}
+        <p>Para resolver este problema, siga os passos abaixo:</p>
+        <ol>
+            <li>Execute as migrações pendentes: <code>python manage.py migrate</code></li>
+            <li>Verifique se as migrações foram aplicadas corretamente</li>
+            <li>Adicione alguns dados através do painel administrativo</li>
+        </ol>
+        <p>Enquanto isso, você verá gráficos com dados vazios para visualizar o layout.</p>
+    </div>
+    {% endif %}
+    
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Total de Assinantes</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="assinantesChart"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">Receita Total (milhões)</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="receitaChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">Tráfego de Dados (TB)</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="trafegoChart"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-warning text-dark">
+                    <h5 class="mb-0">Investimentos (milhões)</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="investimentosChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-dark text-white">
+                    <h5 class="mb-0">Dados Resumidos</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Ano</th>
+                                    <th>Assinantes</th>
+                                    <th>Receita Total</th>
+                                    <th>Tráfego de Dados (TB)</th>
+                                    <th>Investimentos</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in overview_data %}
+                                <tr>
+                                    <td>{{ item.ano }}</td>
+                                    <td>{{ item.assinantes_total|floatformat:0 }}</td>
+                                    <td>{{ item.receita_total|floatformat:2 }}</td>
+                                    <td>{{ item.trafego_dados_total|floatformat:2 }}</td>
+                                    <td>{{ item.investimentos_total|floatformat:2 }}</td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="5" class="text-center">Não há dados disponíveis</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'questionarios/js/market_overview.js' %}"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const anos = {{ anos|safe }};
+        const assinantesData = {{ assinantes_total|safe }};
+        const receitaData = {{ receita_total|safe }};
+        const trafegoData = {{ trafego_dados_total|safe }};
+        const investimentosData = {{ investimentos_total|safe }};
+        
+        // Inicializar gráficos com os dados do Django
+        initMarketOverviewCharts(anos, assinantesData, receitaData, trafegoData, investimentosData);
+    });
+</script>
+{% endblock %} 

@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Observatório de Telecomunicações - ARN{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="jumbotron text-center bg-primary text-white rounded-lg shadow mb-4">
+        <h1 class="display-4">Observatório de Telecomunicações</h1>
+        <p class="lead">Autoridade Reguladora Nacional (ARN)</p>
+        <p>Dados estatísticos do setor de telecomunicações na Guiné-Bissau</p>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card text-center h-100 shadow">
+                <div class="card-body">
+                    <i class="fa fa-mobile fa-3x text-primary mb-3"></i>
+                    <h5 class="card-title">Estações Móveis</h5>
+                    <h2 class="card-text">{{ estacoes_moveis_count|intcomma }}</h2>
+                    <p class="card-text text-muted">utilizadores</p>
+                    <a href="{% url 'public:estacoes_moveis' %}" class="btn btn-outline-primary">Ver detalhes</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-center h-100 shadow">
+                <div class="card-body">
+                    <i class="fa fa-wifi fa-3x text-primary mb-3"></i>
+                    <h5 class="card-title">Internet Fixo</h5>
+                    <h2 class="card-text">{{ internet_fixo_count|intcomma }}</h2>
+                    <p class="card-text text-muted">assinantes</p>
+                    <a href="{% url 'public:internet_fixo' %}" class="btn btn-outline-primary">Ver detalhes</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-center h-100 shadow">
+                <div class="card-body">
+                    <i class="fa fa-users fa-3x text-primary mb-3"></i>
+                    <h5 class="card-title">Emprego</h5>
+                    <h2 class="card-text">{{ emprego_count|intcomma }}</h2>
+                    <p class="card-text text-muted">empregos diretos</p>
+                    <a href="{% url 'public:emprego' %}" class="btn btn-outline-primary">Ver detalhes</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <hr class="my-4">
+
+    <div class="row mt-4">
+        <div class="col-12">
+            <h2 class="mb-4">Sobre o Observatório</h2>
+            <p>O Observatório de Telecomunicações é uma iniciativa da Autoridade Reguladora Nacional (ARN) que tem como objetivo coletar, analisar e disponibilizar dados estatísticos sobre o setor de telecomunicações na Guiné-Bissau.</p>
+            <p>Os dados apresentados neste portal são fornecidos pelas operadoras de telecomunicações e validados pela ARN.</p>
+            
+            <div class="alert alert-info mt-3">
+                <h5>Para Operadoras</h5>
+                <p>Se você representa uma operadora de telecomunicações e precisa enviar dados para o Observatório, acesse sua área restrita:</p>
+                <a href="{% url 'questionarios:login' %}" class="btn btn-primary">Área Restrita</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    $(document).ready(function() {
+        // Adicionar animação aos números
+        $('.card-text').each(function () {
+            $(this).prop('Counter', 0).animate({
+                Counter: $(this).text()
+            }, {
+                duration: 2000,
+                easing: 'swing',
+                step: function (now) {
+                    $(this).text(Math.ceil(now).toLocaleString('pt-BR'));
+                }
+            });
+        });
+    });
+</script>
+{% endblock %} 

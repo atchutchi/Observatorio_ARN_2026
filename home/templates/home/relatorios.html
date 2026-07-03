@@ -1,0 +1,182 @@
+{% extends 'base.html' %}
+
+{% block title %}Relatórios - Observatório Telecom GB{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <h1 class="mb-4">Relatórios</h1>
+    
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <h5 class="card-title">Filtros</h5>
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <label for="tipo" class="form-label">Tipo</label>
+                    <select class="form-select" id="tipo">
+                        <option value="todos">Todos</option>
+                        <option value="anual">Anual</option>
+                        <option value="trimestral">Trimestral</option>
+                        <option value="analise">Análise de Mercado</option>
+                    </select>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label for="ano" class="form-label">Ano</label>
+                    <select class="form-select" id="ano">
+                        <option value="todos">Todos</option>
+                        <option value="2024">2024</option>
+                        <option value="2023">2023</option>
+                        <option value="2022">2022</option>
+                        <option value="2021">2021</option>
+                    </select>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label for="formato" class="form-label">Formato</label>
+                    <select class="form-select" id="formato">
+                        <option value="todos">Todos</option>
+                        <option value="pdf">PDF</option>
+                        <option value="xlsx">Excel (XLSX)</option>
+                        <option value="docx">Word (DOCX)</option>
+                    </select>
+                </div>
+            </div>
+            <div class="d-flex justify-content-end">
+                <button type="button" class="btn btn-primary">Filtrar</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0">Relatórios Disponíveis</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Título</th>
+                                    <th>Data</th>
+                                    <th>Tipo</th>
+                                    <th>Formato</th>
+                                    <th>Tamanho</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for relatorio in relatorios %}
+                                <tr>
+                                    <td>{{ relatorio.titulo }}</td>
+                                    <td>{{ relatorio.data }}</td>
+                                    <td>
+                                        {% if 'Anual' in relatorio.titulo %}
+                                            <span class="badge bg-primary">Anual</span>
+                                        {% elif 'Trimestral' in relatorio.titulo %}
+                                            <span class="badge bg-info">Trimestral</span>
+                                        {% else %}
+                                            <span class="badge bg-success">Análise</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-secondary">{{ relatorio.tipo }}</span>
+                                    </td>
+                                    <td>3.2 MB</td>
+                                    <td>
+                                        <div class="btn-group" role="group">
+                                            <button type="button" class="btn btn-sm btn-outline-primary">
+                                                <i class="fas fa-eye"></i> Ver
+                                            </button>
+                                            <button type="button" class="btn btn-sm btn-outline-success">
+                                                <i class="fas fa-download"></i> Baixar
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="card-footer bg-white">
+                    <nav aria-label="Navegação de relatórios">
+                        <ul class="pagination justify-content-center mb-0">
+                            <li class="page-item disabled">
+                                <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Anterior</a>
+                            </li>
+                            <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                            <li class="page-item"><a class="page-link" href="#">2</a></li>
+                            <li class="page-item"><a class="page-link" href="#">3</a></li>
+                            <li class="page-item">
+                                <a class="page-link" href="#">Próximo</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-white">
+            <h5 class="mb-0">Solicitar Relatório Personalizado</h5>
+        </div>
+        <div class="card-body">
+            <form>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="relatorio-titulo" class="form-label">Título</label>
+                        <input type="text" class="form-control" id="relatorio-titulo" placeholder="Título do relatório">
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="relatorio-tipo" class="form-label">Tipo</label>
+                        <select class="form-select" id="relatorio-tipo">
+                            <option selected>Selecione o tipo</option>
+                            <option value="desempenho">Desempenho de Operadoras</option>
+                            <option value="cobertura">Cobertura de Rede</option>
+                            <option value="assinantes">Evolução de Assinantes</option>
+                            <option value="receita">Análise de Receita</option>
+                            <option value="personalizado">Personalizado</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="relatorio-periodo" class="form-label">Período</label>
+                        <div class="input-group">
+                            <input type="text" class="form-control" placeholder="De">
+                            <span class="input-group-text">até</span>
+                            <input type="text" class="form-control" placeholder="Até">
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="relatorio-formato" class="form-label">Formato</label>
+                        <div class="d-flex">
+                            <div class="form-check me-3">
+                                <input class="form-check-input" type="checkbox" id="formato-pdf" checked>
+                                <label class="form-check-label" for="formato-pdf">PDF</label>
+                            </div>
+                            <div class="form-check me-3">
+                                <input class="form-check-input" type="checkbox" id="formato-excel">
+                                <label class="form-check-label" for="formato-excel">Excel</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="formato-word">
+                                <label class="form-check-label" for="formato-word">Word</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label for="relatorio-observacoes" class="form-label">Observações</label>
+                    <textarea class="form-control" id="relatorio-observacoes" rows="3" placeholder="Descreva detalhes adicionais sobre o relatório solicitado"></textarea>
+                </div>
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                    <button type="reset" class="btn btn-outline-secondary me-md-2">Limpar</button>
+                    <button type="submit" class="btn btn-primary">Solicitar Relatório</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %} 

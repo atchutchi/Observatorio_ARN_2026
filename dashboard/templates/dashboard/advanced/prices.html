@@ -1,0 +1,413 @@
+{% extends "dashboard/base_dashboard.html" %}
+{% load static %}
+
+{% block dashboard_title %}Comparador de Preços - {{ year }}{% endblock %}
+
+{% block dashboard_content %}
+<!-- Header do Dashboard -->
+<div class="platform-card mb-4">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <div>
+            <h2 class="card-title mb-0">
+                <i class="fas fa-tags me-2"></i>
+                Comparador de Preços
+            </h2>
+            <p class="card-subtitle">Análise de competitividade de tarifários entre operadoras</p>
+        </div>
+        <div class="export-buttons">
+            <a href="{% url 'dashboard:advanced-dashboard' %}" class="btn-binance-outline">
+                <i class="fas fa-arrow-left"></i> Voltar
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Filtros -->
+<div class="dashboard-filters">
+    <h5 class="dashboard-filters-title">Filtros de Análise</h5>
+    <form method="get" class="dashboard-filter-group">
+        <div class="form-group">
+            <label class="form-label">Ano</label>
+            <select name="year" class="form-select-questionario dashboard-filter">
+                {% for y in "2021 2022 2023 2024 2025"|make_list %}
+                    <option value="{{ y }}" {% if y|add:0 == year %}selected{% endif %}>{{ y }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group">
+            <button type="submit" class="btn-binance">
+                <i class="fas fa-sync me-2"></i>Atualizar
+            </button>
+        </div>
+    </form>
+</div>
+
+<!-- Índice de Preços -->
+{% if price_index %}
+<div class="platform-card mb-4">
+    <div class="card-header">
+        <h4 class="card-title mb-0">
+            <i class="fas fa-chart-pie me-2"></i>
+            Índice de Preços do Mercado
+        </h4>
+        <p class="card-subtitle">Cesta básica de telecomunicações - Base {{ price_index.base_year }}</p>
+    </div>
+    <div class="card-body">
+        <div class="row align-items-center">
+            <div class="col-md-4">
+                <div class="text-center">
+                    <div class="kpi-value" style="font-size: 3rem; color: var(--binance-yellow);">
+                        {{ price_index.index_value }}
+                    </div>
+                    <p class="text-muted">Índice Base</p>
+                </div>
+            </div>
+            <div class="col-md-8">
+                <h6 class="mb-3">Componentes do Índice:</h6>
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between mb-1">
+                        <span>Chamadas On-Net ({{ price_index.basket_weights.chamadas_on_net|floatformat:0|mul:100 }}%)</span>
+                        <strong>{{ price_index.components.on_net_avg }} FCFA/min</strong>
+                    </div>
+                    <div class="progress" style="height: 8px;">
+                        <div class="progress-bar bg-success" style="width: {{ price_index.basket_weights.chamadas_on_net|mul:100 }}%"></div>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between mb-1">
+                        <span>Chamadas Off-Net ({{ price_index.basket_weights.chamadas_off_net|floatformat:0|mul:100 }}%)</span>
+                        <strong>{{ price_index.components.off_net_avg }} FCFA/min</strong>
+                    </div>
+                    <div class="progress" style="height: 8px;">
+                        <div class="progress-bar bg-warning" style="width: {{ price_index.basket_weights.chamadas_off_net|mul:100 }}%"></div>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between mb-1">
+                        <span>Internet 1GB ({{ price_index.basket_weights.internet_1gb|floatformat:0|mul:100 }}%)</span>
+                        <strong>{{ price_index.components.internet_1gb_avg }} FCFA</strong>
+                    </div>
+                    <div class="progress" style="height: 8px;">
+                        <div class="progress-bar bg-info" style="width: {{ price_index.basket_weights.internet_1gb|mul:100 }}%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- Melhores Ofertas -->
+{% if best_deals %}
+<div class="platform-card mb-4">
+    <div class="card-header">
+        <h4 class="card-title mb-0">
+            <i class="fas fa-star me-2"></i>
+            Melhores Ofertas do Mercado
+        </h4>
+        <p class="card-subtitle">Tarifários mais competitivos identificados automaticamente</p>
+    </div>
+    <div class="card-body">
+        <div class="dashboard-kpis">
+            {% if best_deals.internet %}
+            <div class="kpi-card kpi-success" style="position: relative;">
+                <div class="best-deal-badge">
+                    <i class="fas fa-trophy"></i> MELHOR
+                </div>
+                <div class="kpi-icon">
+                    <i class="fas fa-wifi"></i>
+                </div>
+                <div class="kpi-value">{{ best_deals.internet.price|floatformat:0 }} FCFA</div>
+                <div class="kpi-label">Melhor Internet - {{ best_deals.internet.package }}</div>
+                <div class="kpi-change positive">
+                    <span class="operator-badge operator-{{ best_deals.internet.operator }}">
+                        {{ best_deals.internet.operator }}
+                    </span>
+                </div>
+            </div>
+            {% endif %}
+            
+            {% if best_deals.on_net %}
+            <div class="kpi-card kpi-info">
+                <div class="kpi-icon">
+                    <i class="fas fa-phone"></i>
+                </div>
+                <div class="kpi-value">{{ best_deals.on_net.price_per_minute|floatformat:2 }} FCFA/min</div>
+                <div class="kpi-label">Chamadas On-Net</div>
+                <div class="kpi-change positive">
+                    <span class="operator-badge operator-{{ best_deals.on_net.operator }}">
+                        {{ best_deals.on_net.operator }}
+                    </span>
+                </div>
+            </div>
+            {% endif %}
+            
+            {% if best_deals.off_net %}
+            <div class="kpi-card kpi-warning">
+                <div class="kpi-icon">
+                    <i class="fas fa-phone-alt"></i>
+                </div>
+                <div class="kpi-value">{{ best_deals.off_net.price_per_minute|floatformat:2 }} FCFA/min</div>
+                <div class="kpi-label">Chamadas Off-Net</div>
+                <div class="kpi-change positive">
+                    <span class="operator-badge operator-{{ best_deals.off_net.operator }}">
+                        {{ best_deals.off_net.operator }}
+                    </span>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- Comparação de Chamadas -->
+<div class="row mb-4">
+    <div class="col-md-6">
+        <div class="platform-card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-phone me-2"></i>
+                    Chamadas On-Net
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table-binance">
+                        <thead>
+                            <tr>
+                                <th>Operadora</th>
+                                <th>Pré-Pago</th>
+                                <th>Pós-Pago</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for operator, prices in price_comparison.chamadas_on_net.items %}
+                            <tr>
+                                <td><span class="operator-badge operator-{{ operator }}">{{ operator }}</span></td>
+                                <td>{{ prices.on_net_prepago|default:prices.on_net|floatformat:2 }} FCFA</td>
+                                <td>{{ prices.on_net_pospago|default:"-" }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <div class="platform-card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-phone-alt me-2"></i>
+                    Chamadas Off-Net
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table-binance">
+                        <thead>
+                            <tr>
+                                <th>Operadora</th>
+                                <th>Pré-Pago</th>
+                                <th>Pós-Pago</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for operator, prices in price_comparison.chamadas_off_net.items %}
+                            <tr>
+                                <td><span class="operator-badge operator-{{ operator }}">{{ operator }}</span></td>
+                                <td>{{ prices.off_net_prepago|default:prices.off_net|floatformat:2 }} FCFA</td>
+                                <td>{{ prices.off_net_pospago|default:"-" }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Pacotes de Internet -->
+<div class="platform-card mb-4">
+    <div class="card-header">
+        <h5 class="card-title mb-0">
+            <i class="fas fa-wifi me-2"></i>
+            Pacotes de Internet
+        </h5>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            {% for operator, packages in price_comparison.pacotes_dados.items %}
+            <div class="col-md-4 mb-3">
+                <div class="widget-card">
+                    <div class="widget-header">
+                        <span class="operator-badge operator-{{ operator }}">{{ operator }}</span>
+                    </div>
+                    <div class="widget-body">
+                        <ul class="list-unstyled mb-0">
+                            {% for package in packages %}
+                            <li class="mb-2">
+                                <i class="fas fa-check-circle text-success me-1"></i>
+                                {% if package.size %}
+                                    {{ package.size }}: <strong>{{ package.price|floatformat:0 }} FCFA</strong>
+                                {% elif package.period %}
+                                    {{ package.period }}: <strong>{{ package.price|floatformat:0 }} FCFA</strong>
+                                {% endif %}
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<!-- Evolução de Preços -->
+{% if price_evolution %}
+<div class="platform-card mb-4">
+    <div class="card-header">
+        <h5 class="card-title mb-0">
+            <i class="fas fa-chart-line me-2"></i>
+            Evolução Histórica de Preços
+        </h5>
+    </div>
+    <div class="card-body">
+        <div class="dashboard-kpis mb-4">
+            <div class="kpi-card kpi-{% if price_evolution.trend == 'increasing' %}warning{% elif price_evolution.trend == 'decreasing' %}success{% else %}info{% endif %}">
+                <div class="kpi-icon">
+                    <i class="fas fa-arrow-{% if price_evolution.trend == 'increasing' %}up{% elif price_evolution.trend == 'decreasing' %}down{% else %}right{% endif %}"></i>
+                </div>
+                <div class="kpi-value text-capitalize">{{ price_evolution.trend }}</div>
+                <div class="kpi-label">Tendência</div>
+            </div>
+            
+            <div class="kpi-card kpi-{% if price_evolution.overall_change_percentage > 0 %}warning{% else %}success{% endif %}">
+                <div class="kpi-icon">
+                    <i class="fas fa-percentage"></i>
+                </div>
+                <div class="kpi-value">
+                    {% if price_evolution.overall_change_percentage > 0 %}+{% endif %}{{ price_evolution.overall_change_percentage }}%
+                </div>
+                <div class="kpi-label">Variação Total</div>
+                <div class="kpi-change {% if price_evolution.overall_change_percentage > 0 %}negative{% else %}positive{% endif %}">
+                    <i class="fas fa-arrow-{% if price_evolution.overall_change_percentage > 0 %}up{% else %}down{% endif %}"></i>
+                    Últimos {{ price_evolution.years_analyzed }} anos
+                </div>
+            </div>
+        </div>
+        
+        <div class="dashboard-chart-container">
+            <canvas id="evolutionChart"></canvas>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- Disclaimer -->
+<div class="platform-alert platform-alert-info">
+    <div class="alert-icon">
+        <i class="fas fa-info-circle"></i>
+    </div>
+    <div class="alert-content">
+        <h6 class="alert-title">Aviso Importante</h6>
+        <p class="alert-message mb-0">
+            {{ public_comparison.disclaimer }}
+            Os preços apresentados são baseados nos dados fornecidos pelas operadoras e podem sofrer alterações.
+            Esta ferramenta é fornecida pela ARN para orientação do consumidor.
+        </p>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .operator-badge {
+        display: inline-block;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 600;
+    }
+    
+    .operator-ORANGE {
+        background-color: #FF6600;
+        color: white;
+    }
+    
+    .operator-MTN {
+        background-color: #FFCC00;
+        color: #181A20;
+    }
+    
+    .operator-TELECEL {
+        background-color: #0066CC;
+        color: white;
+    }
+    
+    .best-deal-badge {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: linear-gradient(135deg, var(--binance-success), #019A63);
+        color: white;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: bold;
+        box-shadow: 0 3px 10px rgba(14, 203, 129, 0.5);
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    {% if price_evolution %}
+    // Gráfico de Evolução de Preços
+    const ctx = document.getElementById('evolutionChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: [{% for item in price_evolution.evolution %}'{{ item.year }}'{% if not forloop.last %},{% endif %}{% endfor %}],
+            datasets: [{
+                label: 'Índice de Preços',
+                data: [{% for item in price_evolution.evolution %}{{ item.index }}{% if not forloop.last %},{% endif %}{% endfor %}],
+                borderColor: 'rgba(240, 185, 11, 1)',
+                backgroundColor: 'rgba(240, 185, 11, 0.1)',
+                tension: 0.4,
+                fill: true,
+                pointRadius: 6,
+                pointHoverRadius: 8,
+                pointBackgroundColor: 'rgba(240, 185, 11, 1)'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    labels: { color: '#EAECEF' }
+                }
+            },
+            scales: {
+                y: {
+                    ticks: { color: '#EAECEF' },
+                    grid: { color: 'rgba(71, 77, 87, 0.3)' }
+                },
+                x: {
+                    ticks: { color: '#EAECEF' },
+                    grid: { color: 'rgba(71, 77, 87, 0.3)' }
+                }
+            }
+        }
+    });
+    {% endif %}
+});
+</script>
+{% endblock %}

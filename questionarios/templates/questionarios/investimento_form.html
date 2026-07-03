@@ -1,0 +1,32 @@
+{% extends "questionarios/partials/base_form.html" %}
+{% load static %}
+
+{% block form_title %}{% if form.instance.pk %}Editar{% else %}Criar{% endif %} Indicador de Investimento{% endblock %}
+{% block form_subtitle %}Gestão de dados de investimento por operadora{% endblock %}
+
+{% block list_url %}{% url 'questionarios:investimento_list' %}{% endblock %}
+
+{% block form_fields %}
+<!-- Campos específicos do formulário -->
+<div class="platform-card mb-4">
+    <div class="card-header">
+        <h4 class="card-title">
+            <i class="fas fa-edit me-2"></i>
+            Dados do Indicador
+        </h4>
+    </div>
+    <div class="card-body">
+        <div class="alert-questionario alert-questionario-info">
+            <i class="fas fa-info-circle"></i>
+            <span>Template gerado automaticamente. Personalize os campos conforme necessário.</span>
+        </div>
+        
+        <!-- Campos do formulário aqui -->
+        <div class="row">
+            {{ form.as_p }}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block submit_text %}{% if form.instance.pk %}Atualizar{% else %}Criar{% endif %} Investimento{% endblock %}

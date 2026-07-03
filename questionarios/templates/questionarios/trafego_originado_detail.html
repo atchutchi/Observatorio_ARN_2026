@@ -1,0 +1,545 @@
+{% extends "questionarios/partials/base_detail.html" %}
+{% load static %}
+{% load humanize %}
+
+{% block detail_title %}Detalhes de Tráfego Originado - KPI ARN{% endblock %}
+{% block detail_subtitle %}{{ object.operadora }} - {{ object.ano }}/{{ object.mes|stringformat:"02d" }}{% endblock %}
+
+{% block list_url %}{% url 'questionarios:trafego_originado_list' %}{% endblock %}
+{% block edit_url %}{% url 'questionarios:trafego_originado_update' object.pk %}{% endblock %}
+{% block delete_url %}{% url 'questionarios:trafego_originado_delete' object.pk %}{% endblock %}
+
+{% block detail_content %}
+<!-- Resumo de Totais Principais -->
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="detail-info-item">
+            <div class="detail-info-icon">
+                <i class="fas fa-database"></i>
+            </div>
+            <div class="detail-info-content">
+                <strong>Total Dados</strong>
+                <p class="detail-value text-warning">{{ totals.dados.total_gb|floatformat:2 }} GB</p>
+                <small class="text-muted">{{ totals.dados.total_mb|intcomma }} MB</small>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3">
+        <div class="detail-info-item">
+            <div class="detail-info-icon">
+                <i class="fas fa-sms"></i>
+            </div>
+            <div class="detail-info-content">
+                <strong>Total SMS</strong>
+                <p class="detail-value text-success">{{ totals.sms.total|intcomma }}</p>
+                <small class="text-muted">Nac: {{ totals.sms.nacional|intcomma }} | Int: {{ totals.sms.internacional|intcomma }}</small>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3">
+        <div class="detail-info-item">
+            <div class="detail-info-icon">
+                <i class="fas fa-phone-alt"></i>
+            </div>
+            <div class="detail-info-content">
+                <strong>Total Voz</strong>
+                <p class="detail-value text-info">{{ totals.voz.total_minutos|intcomma }}</p>
+                <small class="text-muted">minutos</small>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3">
+        <div class="detail-info-item">
+            <div class="detail-info-icon">
+                <i class="fas fa-phone-volume"></i>
+            </div>
+            <div class="detail-info-content">
+                <strong>Total Chamadas</strong>
+                <p class="detail-value">{{ totals.chamadas.total|intcomma }}</p>
+                <small class="text-muted">Média: {{ duracao_media_chamada|floatformat:1 }} min</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SEÇÃO 5.1: TRÁFEGO DE DADOS -->
+<div class="platform-card mb-4">
+    <div class="card-header">
+        <h4 class="card-title">
+            <i class="fas fa-database me-2"></i>
+            5.1 Tráfego de Dados - Análise Detalhada
+        </h4>
+    </div>
+    <div class="card-body">
+        <!-- Comparativo por Tecnologia -->
+        <div class="row mb-4">
+            <div class="col-md-4">
+                <div class="detail-info-item">
+                    <div class="detail-info-icon">
+                        <i class="fas fa-mobile"></i>
+                    </div>
+                    <div class="detail-info-content">
+                        <strong>2G</strong>
+                        <table class="table table-sm">
+                        <tr>
+                            <td>Volume:</td>
+                            <td class="text-end"><strong>{{ object.trafego_dados_2g_mbytes|intcomma }} MB</strong></td>
+                        </tr>
+                        <tr>
+                            <td>Sessões:</td>
+                            <td class="text-end">{{ object.trafego_dados_2g_sessoes|intcomma }}</td>
+                        </tr>
+                        <tr>
+                            <td>MB/Sessão:</td>
+                            <td class="text-end">
+                                {% if object.trafego_dados_2g_sessoes > 0 %}
+                                    {{ object.calcular_mb_por_sessao_2g|floatformat:2 }}
+                                {% else %}
+                                    N/A
+                                {% endif %}
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="detail-info-item">
+                    <div class="detail-info-icon">
+                        <i class="fas fa-signal"></i>
+                    </div>
+                    <div class="detail-info-content">
+                        <strong>3G</strong>
+                        <table class="table table-sm">
+                        <tr>
+                            <td>Volume Total:</td>
+                            <td class="text-end"><strong>{{ totals.dados.3g_mb|intcomma }} MB</strong></td>
+                        </tr>
+                        <tr>
+                            <td>Internet:</td>
+                            <td class="text-end">{{ object.internet_3g_mbytes|intcomma }} MB</td>
+                        </tr>
+                        <tr>
+                            <td>Placas/Box:</td>
+                            <td class="text-end">{{ object.internet_3g_placas_modem_mbytes|intcomma }} MB</td>
+                        </tr>
+                        <tr>
+                            <td>USB:</td>
+                            <td class="text-end">{{ object.internet_3g_modem_usb_mbytes|intcomma }} MB</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="detail-info-item">
+                    <div class="detail-info-icon">
+                        <i class="fas fa-broadcast-tower"></i>
+                    </div>
+                    <div class="detail-info-content">
+                        <strong>4G/LTE</strong>
+                        <table class="table table-sm">
+                        <tr>
+                            <td>Volume Total:</td>
+                            <td class="text-end"><strong>{{ totals.dados.4g_mb|intcomma }} MB</strong></td>
+                        </tr>
+                        <tr>
+                            <td>Internet:</td>
+                            <td class="text-end">{{ object.internet_4g_mbytes|intcomma }} MB</td>
+                        </tr>
+                        <tr>
+                            <td>Placas/Box:</td>
+                            <td class="text-end">{{ object.internet_4g_placas_modem_mbytes|intcomma }} MB</td>
+                        </tr>
+                        <tr>
+                            <td>USB:</td>
+                            <td class="text-end">{{ object.internet_4g_modem_usb_mbytes|intcomma }} MB</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Totais de Sessões -->
+        <div class="alert alert-info">
+            <i class="fas fa-info-circle me-2"></i>
+            <strong>Total de Sessões:</strong> {{ totals.dados.total_sessoes|intcomma }}
+            <span class="ms-3">|</span>
+            <span class="ms-3">2G: {{ object.trafego_dados_2g_sessoes|intcomma }}</span>
+            <span class="ms-3">|</span>
+            <span class="ms-3">3G: {{ object.trafego_dados_3g_upgrade_sessoes|intcomma }}</span>
+            <span class="ms-3">|</span>
+            <span class="ms-3">4G: {{ object.trafego_dados_4g_sessoes|intcomma }}</span>
+        </div>
+    </div>
+</div>
+
+<!-- SEÇÃO 5.2: TRÁFEGO DE MENSAGENS (SMS) -->
+<div class="platform-card mb-4">
+    <div class="card-header">
+        <h4 class="card-title">
+            <i class="fas fa-sms me-2"></i>
+            5.2 Tráfego de Mensagens (SMS)
+        </h4>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <!-- Nacional -->
+            <div class="col-md-6">
+                <h6 style="color: var(--binance-yellow);">SMS Nacional</h6>
+                <table class="table table-sm">
+                    <tbody>
+                        <tr>
+                            <td>5.2.1 On-net:</td>
+                            <td class="text-end"><strong>{{ object.sms_on_net|intcomma }}</strong></td>
+                            <td class="text-muted">
+                                {% if totals.sms.total > 0 %}
+                                    ({% widthratio object.sms_on_net totals.sms.total 100 %}%)
+                                {% endif %}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>5.2.2 Off-net Nacional:</td>
+                            <td class="text-end"><strong>{{ object.sms_off_net_nacional|intcomma }}</strong></td>
+                            <td class="text-muted">
+                                {% if totals.sms.total > 0 %}
+                                    ({% widthratio object.sms_off_net_nacional totals.sms.total 100 %}%)
+                                {% endif %}
+                            </td>
+                        </tr>
+                        <tr class="table-primary">
+                            <td><strong>Total Nacional:</strong></td>
+                            <td class="text-end"><strong>{{ totals.sms.nacional|intcomma }}</strong></td>
+                            <td></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Internacional -->
+            <div class="col-md-6">
+                <h6 style="color: var(--binance-warning);">SMS Internacional</h6>
+                <table class="table table-sm">
+                    <tbody>
+                        <tr>
+                            <td>5.2.3.1 CEDEAO:</td>
+                            <td class="text-end">{{ object.sms_cedeao|intcomma }}</td>
+                        </tr>
+                        <tr>
+                            <td>5.2.3.2 PALOP:</td>
+                            <td class="text-end">{{ object.sms_palop|intcomma }}</td>
+                        </tr>
+                        <tr>
+                            <td>5.2.3.3 CPLP:</td>
+                            <td class="text-end">{{ object.sms_cplp|intcomma }}</td>
+                        </tr>
+                        <tr>
+                            <td>5.2.3.4 Resto África:</td>
+                            <td class="text-end">{{ object.sms_resto_africa|intcomma }}</td>
+                        </tr>
+                        <tr>
+                            <td>5.2.3.5 Resto Mundo:</td>
+                            <td class="text-end">{{ object.sms_resto_mundo|intcomma }}</td>
+                        </tr>
+                        <tr class="table-warning">
+                            <td><strong>Total Internacional:</strong></td>
+                            <td class="text-end"><strong>{{ totals.sms.internacional|intcomma }}</strong></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <!-- Total Geral SMS -->
+        <div class="mt-3 text-center">
+            <h5>Total Geral SMS: <strong class="text-success">{{ totals.sms.total|intcomma }}</strong></h5>
+        </div>
+    </div>
+</div>
+
+<!-- SEÇÃO 5.3: VOLUME DE TRÁFEGO DE VOZ -->
+<div class="platform-card mb-4">
+    <div class="card-header">
+        <h4 class="card-title">
+            <i class="fas fa-phone-alt me-2"></i>
+            5.3 Volume de Tráfego de Voz (Minutos)
+        </h4>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <!-- Nacional -->
+            <div class="col-md-6">
+                <h6 style="color: var(--binance-yellow);">Voz Nacional</h6>
+                <table class="table table-sm">
+                    <tbody>
+                        <tr>
+                            <td>5.3.1 On-net:</td>
+                            <td class="text-end"><strong>{{ object.voz_on_net_minutos|intcomma }}</strong></td>
+                            <td class="text-muted">
+                                {% if totals.voz.total_minutos > 0 %}
+                                    ({{ totals.voz.on_net_percent|floatformat:1 }}%)
+                                {% endif %}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>5.3.2 Off-net Nacional:</td>
+                            <td class="text-end">{{ object.voz_off_net_nacional_minutos|intcomma }}</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>5.3.2.1 Rede Fixa:</td>
+                            <td class="text-end">{{ object.voz_rede_fixa_minutos|intcomma }}</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>5.3.2.2 Outras Móveis:</td>
+                            <td class="text-end">{{ object.voz_outras_redes_moveis_minutos|intcomma }}</td>
+                            <td></td>
+                        </tr>
+                        <tr class="table-primary">
+                            <td><strong>Total Nacional:</strong></td>
+                            <td class="text-end"><strong>{{ totals.voz.nacional_minutos|intcomma }}</strong></td>
+                            <td></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Internacional -->
+            <div class="col-md-6">
+                <h6 style="color: var(--binance-warning);">Voz Internacional</h6>
+                <table class="table table-sm">
+                    <tbody>
+                        <tr>
+                            <td>5.3.3.1 CEDEAO:</td>
+                            <td class="text-end">{{ object.voz_cedeao_minutos|intcomma }}</td>
+                        </tr>
+                        <tr>
+                            <td>5.3.3.2 PALOP:</td>
+                            <td class="text-end">{{ object.voz_palop_minutos|intcomma }}</td>
+                        </tr>
+                        <tr>
+                            <td>5.3.3.3 CPLP:</td>
+                            <td class="text-end">{{ object.voz_cplp_minutos|intcomma }}</td>
+                        </tr>
+                        <tr>
+                            <td>5.3.3.4 Resto África:</td>
+                            <td class="text-end">{{ object.voz_resto_africa_minutos|intcomma }}</td>
+                        </tr>
+                        <tr>
+                            <td>5.3.3.5 Resto Mundo:</td>
+                            <td class="text-end">{{ object.voz_resto_mundo_minutos|intcomma }}</td>
+                        </tr>
+                        <tr class="table-warning">
+                            <td><strong>Total Internacional:</strong></td>
+                            <td class="text-end"><strong>{{ totals.voz.internacional_minutos|intcomma }}</strong></td>
+                            <td class="text-muted">
+                                ({{ totals.voz.internacional_percent|floatformat:1 }}%)
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <!-- Total e Estatísticas -->
+        <div class="row mt-3">
+            <div class="col-md-12 text-center">
+                <h5>Total Geral Voz: <strong class="text-info">{{ totals.voz.total_minutos|intcomma }}</strong> minutos</h5>
+                <p class="text-muted">
+                    Equivalente a {{ object.calcular_total_voz_horas|floatformat:0|intcomma }} horas ou 
+                    {{ object.calcular_total_voz_dias|floatformat:1 }} dias
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SEÇÃO 5.4: NÚMERO DE COMUNICAÇÕES DE VOZ -->
+<div class="platform-card mb-4">
+    <div class="card-header">
+        <h4 class="card-title">
+            <i class="fas fa-phone-volume me-2"></i>
+            5.4 Número de Comunicações de Voz (Chamadas)
+        </h4>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <!-- Nacional -->
+            <div class="col-md-6">
+                <h6 style="color: var(--binance-yellow);">Chamadas Nacionais</h6>
+                <table class="table table-sm">
+                    <tbody>
+                        <tr>
+                            <td>5.4.1 On-net:</td>
+                            <td class="text-end"><strong>{{ object.chamadas_on_net|intcomma }}</strong></td>
+                        </tr>
+                        <tr>
+                            <td>5.4.2 Off-net Nacional:</td>
+                            <td class="text-end">{{ object.chamadas_off_net_nacional|intcomma }}</td>
+                        </tr>
+                        <tr>
+                            <td>5.4.2.1 Rede Fixa:</td>
+                            <td class="text-end">{{ object.chamadas_rede_fixa|intcomma }}</td>
+                        </tr>
+                        <tr>
+                            <td>5.4.2.2 Outras Móveis:</td>
+                            <td class="text-end">{{ object.chamadas_outras_redes_moveis|intcomma }}</td>
+                        </tr>
+                        <tr class="table-primary">
+                            <td><strong>Total Nacional:</strong></td>
+                            <td class="text-end"><strong>{{ totals.chamadas.nacional|intcomma }}</strong></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Internacional -->
+            <div class="col-md-6">
+                <h6 style="color: var(--binance-warning);">Chamadas Internacionais</h6>
+                <table class="table table-sm">
+                    <tbody>
+                        <tr>
+                            <td>5.4.3.1 CEDEAO:</td>
+                            <td class="text-end">{{ object.chamadas_cedeao|intcomma }}</td>
+                        </tr>
+                        <tr>
+                            <td>5.4.3.2 PALOP:</td>
+                            <td class="text-end">{{ object.chamadas_palop|intcomma }}</td>
+                        </tr>
+                        <tr>
+                            <td>5.4.3.3 CPLP:</td>
+                            <td class="text-end">{{ object.chamadas_cplp|intcomma }}</td>
+                        </tr>
+                        <tr>
+                            <td>5.4.3.4 Resto África:</td>
+                            <td class="text-end">{{ object.chamadas_resto_africa|intcomma }}</td>
+                        </tr>
+                        <tr>
+                            <td>5.4.3.5 Resto Mundo:</td>
+                            <td class="text-end">{{ object.chamadas_resto_mundo|intcomma }}</td>
+                        </tr>
+                        <tr class="table-warning">
+                            <td><strong>Total Internacional:</strong></td>
+                            <td class="text-end"><strong>{{ totals.chamadas.internacional|intcomma }}</strong></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <!-- Estatísticas de Chamadas -->
+        <div class="alert alert-info mt-3">
+            <div class="row text-center">
+                <div class="col-md-4">
+                    <strong>Total de Chamadas:</strong><br>
+                    <span class="h5">{{ totals.chamadas.total|intcomma }}</span>
+                </div>
+                <div class="col-md-4">
+                    <strong>Duração Média:</strong><br>
+                    <span class="h5">{{ duracao_media_chamada|floatformat:1 }} min</span>
+                </div>
+                <div class="col-md-4">
+                    <strong>Taxa On-net:</strong><br>
+                    <span class="h5">
+                        {% if totals.chamadas.total > 0 %}
+                            {% widthratio object.chamadas_on_net totals.chamadas.total 100 %}%
+                        {% else %}
+                            N/A
+                        {% endif %}
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SEÇÃO 5.5: OUTROS SERVIÇOS -->
+{% if object.numeros_curtos or object.mms_total %}
+<div class="platform-card mb-4">
+    <div class="card-header">
+        <h4 class="card-title">
+            <i class="fas fa-ellipsis-h me-2"></i>
+            5.5 Outros Serviços
+        </h4>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            {% if object.numeros_curtos %}
+            <div class="col-md-6">
+                <div class="detail-info-item">
+                    <div class="detail-info-icon">
+                        <i class="fas fa-hashtag"></i>
+                    </div>
+                    <div class="detail-info-content">
+                        <strong>5.5.1 Números Curtos</strong>
+                        <p>{{ object.numeros_curtos|intcomma }}</p>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+            
+            {% if object.mms_total %}
+            <div class="col-md-6">
+                <div class="detail-info-item">
+                    <div class="detail-info-icon">
+                        <i class="fas fa-image"></i>
+                    </div>
+                    <div class="detail-info-content">
+                        <strong>5.5.2 MMS Total</strong>
+                        <p>{{ object.mms_total|intcomma }}</p>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- Validações e Avisos -->
+{% if validation_errors %}
+<div class="platform-card mb-4">
+    <div class="card-header bg-warning">
+        <h4 class="card-title text-dark">
+            <i class="fas fa-exclamation-triangle me-2"></i>
+            Avisos de Validação
+        </h4>
+    </div>
+    <div class="card-body">
+        <ul class="mb-0">
+            {% for error in validation_errors %}
+            <li>{{ error }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+{% endif %}
+
+<!-- Metadados -->
+<div class="platform-card">
+    <div class="card-header">
+        <h4 class="card-title">
+            <i class="fas fa-info-circle me-2"></i>
+            Informações de Auditoria
+        </h4>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-6">
+                <p><strong>Criado por:</strong> {{ object.criado_por|default:"Sistema" }}</p>
+                <p><strong>Data de criação:</strong> {{ object.data_criacao|date:"d/m/Y H:i" }}</p>
+            </div>
+            <div class="col-md-6">
+                <p><strong>Última atualização por:</strong> {{ object.atualizado_por|default:"N/A" }}</p>
+                <p><strong>Data de atualização:</strong> {{ object.data_atualizacao|date:"d/m/Y H:i" }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% endblock %}

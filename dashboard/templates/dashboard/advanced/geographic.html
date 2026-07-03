@@ -1,0 +1,331 @@
+{% extends "dashboard/base_dashboard.html" %}
+{% load static %}
+
+{% block dashboard_title %}Análise Geográfica - {{ year }}{% endblock %}
+
+{% block dashboard_content %}
+<!-- Header do Dashboard -->
+<div class="platform-card mb-4">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <div>
+            <h2 class="card-title mb-0">
+                <i class="fas fa-map-marked-alt me-2"></i>
+                Análise Geográfica
+            </h2>
+            <p class="card-subtitle">Cobertura e penetração regional</p>
+        </div>
+        <div class="export-buttons">
+            <a href="{% url 'dashboard:advanced-dashboard' %}" class="btn-binance-outline">
+                <i class="fas fa-arrow-left"></i> Voltar
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Filtros -->
+<div class="dashboard-filters">
+    <h5 class="dashboard-filters-title">Filtros de Análise</h5>
+    <form method="get" class="dashboard-filter-group">
+        <div class="form-group">
+            <label class="form-label">Ano</label>
+            <select name="year" class="form-select-questionario dashboard-filter">
+                {% for y in "2021 2022 2023 2024 2025"|make_list %}
+                    <option value="{{ y }}" {% if y|add:0 == year %}selected{% endif %}>{{ y }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group">
+            <button type="submit" class="btn-binance">
+                <i class="fas fa-sync me-2"></i>Atualizar
+            </button>
+        </div>
+    </form>
+</div>
+
+<!-- Comparação Urbano-Rural -->
+{% if urban_rural_comparison %}
+<div class="dashboard-kpis mb-4">
+    <div class="kpi-card kpi-primary">
+        <div class="kpi-icon">
+            <i class="fas fa-city"></i>
+        </div>
+        <div class="kpi-value">{{ urban_rural_comparison.urban.avg_penetration }}%</div>
+        <div class="kpi-label">Penetração Urbana</div>
+        <div class="kpi-change neutral">
+            <i class="fas fa-users"></i>
+            {{ urban_rural_comparison.urban.total_population|floatformat:0 }} hab.
+        </div>
+    </div>
+    
+    <div class="kpi-card kpi-success">
+        <div class="kpi-icon">
+            <i class="fas fa-tree"></i>
+        </div>
+        <div class="kpi-value">{{ urban_rural_comparison.rural.avg_penetration }}%</div>
+        <div class="kpi-label">Penetração Rural</div>
+        <div class="kpi-change neutral">
+            <i class="fas fa-users"></i>
+            {{ urban_rural_comparison.rural.total_population|floatformat:0 }} hab.
+        </div>
+    </div>
+    
+    <div class="kpi-card kpi-{% if urban_rural_comparison.digital_divide.severity == 'high' %}warning{% elif urban_rural_comparison.digital_divide.severity == 'medium' %}info{% else %}success{% endif %}">
+        <div class="kpi-icon">
+            <i class="fas fa-exchange-alt"></i>
+        </div>
+        <div class="kpi-value">{{ urban_rural_comparison.digital_divide.penetration_gap }}%</div>
+        <div class="kpi-label">Divisão Digital (Gap)</div>
+        <div class="kpi-change {% if urban_rural_comparison.digital_divide.severity == 'high' %}negative{% else %}neutral{% endif %}">
+            <span class="badge badge-{{ urban_rural_comparison.digital_divide.severity }}">
+                {{ urban_rural_comparison.digital_divide.severity|upper }}
+            </span>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- Mapa de Cobertura -->
+<div class="platform-card mb-4">
+    <div class="card-header">
+        <h4 class="card-title mb-0">
+            <i class="fas fa-globe-africa me-2"></i>
+            Mapa de Cobertura por Região
+        </h4>
+        <p class="card-subtitle">Distribuição de cobertura nas 9 regiões da Guiné-Bissau</p>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            {% for region_code, region_data in coverage_map.items %}
+            <div class="col-md-4 mb-3">
+                <div class="widget-card coverage-{{ region_data.coverage_level }}">
+                    <div class="widget-header">
+                        <h5 class="widget-title mb-0">{{ region_data.name }}</h5>
+                        <div class="d-flex gap-2 mt-2">
+                            <span class="badge badge-secondary">{{ region_data.type|upper }}</span>
+                            <span class="badge badge-{% if region_data.coverage_level == 'excellent' %}success{% elif region_data.coverage_level == 'good' %}info{% elif region_data.coverage_level == 'fair' %}warning{% else %}danger{% endif %}">
+                                {{ region_data.coverage_level|upper }}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="widget-body">
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between mb-1">
+                                <small>Cobertura:</small>
+                                <strong>{{ region_data.coverage_percentage }}%</strong>
+                            </div>
+                            <div class="progress" style="height: 10px;">
+                                <div class="progress-bar bg-{% if region_data.coverage_percentage > 70 %}success{% elif region_data.coverage_percentage > 40 %}warning{% else %}danger{% endif %}" 
+                                     style="width: {{ region_data.coverage_percentage }}%"></div>
+                            </div>
+                        </div>
+                        <div class="stats-list">
+                            <div class="stats-item-small">
+                                <i class="fas fa-users text-muted"></i>
+                                <span>{{ region_data.population|floatformat:0 }} habitantes</span>
+                            </div>
+                            <div class="stats-item-small">
+                                <i class="fas fa-signal text-muted"></i>
+                                <span>Score: {{ region_data.quality_score }}/100</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<!-- Áreas Carentes -->
+{% if underserved_areas %}
+<div class="platform-card mb-4">
+    <div class="card-header">
+        <h4 class="card-title mb-0">
+            <i class="fas fa-exclamation-triangle me-2"></i>
+            Áreas que Requerem Atenção
+        </h4>
+        <p class="card-subtitle">Regiões com baixa cobertura priorizadas por necessidade</p>
+    </div>
+    <div class="card-body">
+        {% for area in underserved_areas %}
+        <div class="platform-alert platform-alert-{% if area.priority == 'critical' %}danger{% elif area.priority == 'high' %}warning{% else %}info{% endif %} mb-3">
+            <div class="alert-content">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <h5 class="mb-0">{{ area.name }}</h5>
+                    <span class="badge badge-{% if area.priority == 'critical' %}danger{% elif area.priority == 'high' %}warning{% else %}info{% endif %}">
+                        {{ area.priority|upper }}
+                    </span>
+                </div>
+                <div class="row mb-2">
+                    <div class="col-md-3">
+                        <small class="text-muted">População</small>
+                        <div><strong>{{ area.population|floatformat:0 }}</strong></div>
+                    </div>
+                    <div class="col-md-3">
+                        <small class="text-muted">Penetração</small>
+                        <div><strong>{{ area.penetration }}%</strong></div>
+                    </div>
+                    <div class="col-md-3">
+                        <small class="text-muted">Cobertura</small>
+                        <div><strong>{{ area.coverage|upper }}</strong></div>
+                    </div>
+                    <div class="col-md-3">
+                        <small class="text-muted">Score de Carência</small>
+                        <div><strong>{{ area.underserved_score }}/100</strong></div>
+                    </div>
+                </div>
+                {% if area.recommendations %}
+                <div class="mt-3">
+                    <strong><i class="fas fa-lightbulb me-1"></i> Recomendações:</strong>
+                    <ul class="mb-0 mt-2">
+                        {% for rec in area.recommendations %}
+                        <li>{{ rec }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% else %}
+<div class="platform-alert platform-alert-success">
+    <div class="alert-icon">
+        <i class="fas fa-check-circle"></i>
+    </div>
+    <div class="alert-content">
+        <h6 class="alert-title">Cobertura Satisfatória</h6>
+        <p class="alert-message">Nenhuma área crítica identificada. Todas as regiões têm cobertura adequada!</p>
+    </div>
+</div>
+{% endif %}
+
+<!-- Tabela Detalhada de Penetração -->
+<div class="platform-card">
+    <div class="card-header">
+        <h4 class="card-title mb-0">
+            <i class="fas fa-chart-bar me-2"></i>
+            Detalhamento de Penetração por Região
+        </h4>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table-binance">
+                <thead>
+                    <tr>
+                        <th>Região</th>
+                        <th>Tipo</th>
+                        <th>População</th>
+                        <th>Penetração Estimada</th>
+                        <th>Classificação</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for region_code, pen_data in penetration_data.items %}
+                    <tr>
+                        <td><strong>{{ pen_data.name }}</strong></td>
+                        <td>
+                            <span class="badge badge-{% if pen_data.urban_rural == 'urban' %}primary{% elif pen_data.urban_rural == 'rural' %}success{% else %}info{% endif %}">
+                                {{ pen_data.urban_rural|upper }}
+                            </span>
+                        </td>
+                        <td>{{ pen_data.population|floatformat:0 }}</td>
+                        <td>
+                            <div class="d-flex align-items-center gap-2">
+                                <div class="progress flex-grow-1" style="height: 20px; min-width: 100px;">
+                                    <div class="progress-bar bg-{% if pen_data.estimated_penetration > 70 %}success{% elif pen_data.estimated_penetration > 40 %}warning{% else %}danger{% endif %}" 
+                                         style="width: {{ pen_data.estimated_penetration }}%">
+                                        {{ pen_data.estimated_penetration }}%
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <span class="badge badge-{% if pen_data.classification == 'high' %}success{% elif pen_data.classification == 'medium' %}warning{% elif pen_data.classification == 'low' %}danger{% else %}secondary{% endif %}">
+                                {{ pen_data.classification|upper }}
+                            </span>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Insights Geográficos -->
+{% if insights %}
+<div class="platform-card mt-4">
+    <div class="card-header">
+        <h4 class="card-title mb-0">
+            <i class="fas fa-lightbulb me-2"></i>
+            Insights Geográficos
+        </h4>
+        <p class="card-subtitle">Análises automáticas sobre distribuição regional</p>
+    </div>
+    <div class="card-body">
+        {% for insight in insights %}
+        <div class="platform-alert platform-alert-{% if insight.type == 'warning' %}warning{% else %}info{% endif %} mb-3">
+            <div class="alert-icon">
+                <i class="fas fa-{% if insight.type == 'warning' %}exclamation-triangle{% else %}info-circle{% endif %}"></i>
+            </div>
+            <div class="alert-content">
+                <h6 class="alert-title">{{ insight.title }}</h6>
+                <p class="alert-message mb-0">{{ insight.message }}</p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .coverage-excellent { border-left: 5px solid var(--binance-success); }
+    .coverage-good { border-left: 5px solid rgba(14, 203, 129, 0.7); }
+    .coverage-fair { border-left: 5px solid var(--binance-warning); }
+    .coverage-poor { border-left: 5px solid var(--binance-danger); }
+    .coverage-no_coverage { border-left: 5px solid var(--binance-text-muted); }
+    
+    .stats-list {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .stats-item-small {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.875rem;
+    }
+    
+    .badge-high { background-color: var(--binance-danger) !important; }
+    .badge-medium { background-color: var(--binance-warning) !important; }
+    .badge-low { background-color: var(--binance-success) !important; }
+    .badge-secondary { background-color: var(--binance-text-muted) !important; }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Animações de entrada
+    const cards = document.querySelectorAll('.widget-card, .platform-alert');
+    cards.forEach((card, index) => {
+        setTimeout(() => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+            card.style.transition = 'all 0.5s ease';
+            
+            setTimeout(() => {
+                card.style.opacity = '1';
+                card.style.transform = 'translateY(0)';
+            }, 50);
+        }, index * 50);
+    });
+});
+</script>
+{% endblock %}

@@ -1,0 +1,197 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4">Resumo de Tráfego de Internet - {{ ano }}</h2>
+
+    <!-- Filtro de Operadora -->
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+            Filtrar por Operadora
+        </div>
+        <div class="card-body">
+            <form method="get" class="form-inline">
+                <div class="row align-items-center">
+                    <div class="col-auto">
+                        <select name="operadora" class="form-control">
+                            <option value="">Todas</option>
+                            <option value="orange" {% if operadora_selecionada == 'orange' %}selected{% endif %}>Orange</option>
+                            <option value="telecel" {% if operadora_selecionada == 'telecel' %}selected{% endif %}>TELECEL</option>
+                        </select>
+                    </div>
+                    <div class="col-auto">
+                        <button type="submit" class="btn btn-primary">Filtrar</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    {% if operadora_selecionada %}
+    <div class="alert alert-info">
+        Mostrando dados da operadora: {{ operadora_selecionada|upper }}
+    </div>
+    {% endif %}
+
+    <h3>Totais Trimestrais</h3>
+    {% for trimestre in totais_trimestrais %}
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+            {{ trimestre.trimestre }}º Trimestre
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <!-- Tráfego por Tecnologia -->
+                <div class="col-md-6">
+                    <h5>Tráfego por Tecnologia</h5>
+                    <p><strong>Tráfego Total:</strong> {{ trimestre.total_trafego|floatformat:2 }} Mbit/s</p>
+                    <p><strong>Via Satélite:</strong> {{ trimestre.total_satelite|floatformat:2 }} Mbit/s</p>
+                    <p><strong>Sistema Hertziano:</strong> {{ trimestre.total_hertziano|floatformat:2 }} Mbit/s</p>
+                    <p><strong>Fibra Ótica:</strong> {{ trimestre.total_fibra|floatformat:2 }} Mbit/s</p>
+                </div>
+
+                <!-- Tráfego por Banda -->
+                <div class="col-md-6">
+                    <h5>Tráfego por Banda</h5>
+                    <p><strong>Banda Larga Total:</strong> {{ trimestre.total_banda_larga|floatformat:2 }} Mbit/s</p>
+                    <p><strong>256 Kbps - 2 Mbits:</strong> {{ trimestre.total_256k_2m|floatformat:2 }} Mbit/s</p>
+                    <p><strong>2 - 4 Mbits:</strong> {{ trimestre.total_2m_4m|floatformat:2 }} Mbit/s</p>
+                    <p><strong>10 Mbits:</strong> {{ trimestre.total_10m|floatformat:2 }} Mbit/s</p>
+                </div>
+            </div>
+
+            <div class="row mt-4">
+                <!-- Tráfego por Categoria -->
+                <div class="col-md-6">
+                    <h5>Tráfego por Categoria</h5>
+                    <p><strong>Residencial:</strong> {{ trimestre.total_residencial|floatformat:2 }} Mbit/s</p>
+                    <p><strong>Corporativo:</strong> {{ trimestre.total_corporativo|floatformat:2 }} Mbit/s</p>
+                    <p><strong>Instituições Públicas:</strong> {{ trimestre.total_publico|floatformat:2 }} Mbit/s</p>
+                    <p><strong>Instituições de Ensino:</strong> {{ trimestre.total_ensino|floatformat:2 }} Mbit/s</p>
+                    <p><strong>Instituições de Saúde:</strong> {{ trimestre.total_saude|floatformat:2 }} Mbit/s</p>
+                </div>
+
+                <!-- Tráfego por Região -->
+                <div class="col-md-6">
+                    <h5>Tráfego por Região</h5>
+                    <p><strong>Cidade Bissau:</strong> {{ trimestre.total_bissau|floatformat:2 }} Mbit/s</p>
+                    <p><strong>Bafatá:</strong> {{ trimestre.total_bafata|floatformat:2 }} Mbit/s</p>
+                    <p><strong>Biombo:</strong> {{ trimestre.total_biombo|floatformat:2 }} Mbit/s</p>
+                    <p><strong>Bolama/Bijagós:</strong> {{ trimestre.total_bolama|floatformat:2 }} Mbit/s</p>
+                    <p><strong>Outras Regiões:</strong> {{ trimestre.total_outras_regioes|floatformat:2 }} Mbit/s</p>
+                </div>
+            </div>
+
+            <!-- Acesso Público -->
+            <div class="row mt-4">
+                <div class="col-12">
+                    <h5>Acesso Público (PWLAN)</h5>
+                    <p><strong>Acesso Livre:</strong> {{ trimestre.total_acesso_livre|floatformat:2 }} Mbit/s</p>
+                    <p><strong>Acesso Condicionado:</strong> {{ trimestre.total_acesso_condicionado|floatformat:2 }} Mbit/s</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+
+    <h3>Totais Anuais</h3>
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+            Ano {{ ano }}{% if operadora_selecionada %} - {{ operadora_selecionada|upper }}{% endif %}
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <!-- Tráfego por Tecnologia -->
+                <div class="col-md-6">
+                    <h5>Tráfego por Tecnologia</h5>
+                    <p><strong>Tráfego Total:</strong> {{ total_trafego_anual|floatformat:2 }} Mbit/s</p>
+                    <p><strong>Via Satélite:</strong> {{ total_satelite_anual|floatformat:2 }} Mbit/s</p>
+                    <p><strong>Sistema Hertziano:</strong> {{ total_hertziano_anual|floatformat:2 }} Mbit/s</p>
+                    <p><strong>Fibra Ótica:</strong> {{ total_fibra_anual|floatformat:2 }} Mbit/s</p>
+                </div>
+
+                <!-- Tráfego por Banda -->
+                <div class="col-md-6">
+                    <h5>Tráfego por Banda</h5>
+                    <p><strong>Banda Larga Total:</strong> {{ total_banda_larga_anual|floatformat:2 }} Mbit/s</p>
+                    <p><strong>256 Kbps - 2 Mbits:</strong> {{ total_256k_2m_anual|floatformat:2 }} Mbit/s</p>
+                    <p><strong>2 - 4 Mbits:</strong> {{ total_2m_4m_anual|floatformat:2 }} Mbit/s</p>
+                    <p><strong>10 Mbits:</strong> {{ total_10m_anual|floatformat:2 }} Mbit/s</p>
+                </div>
+            </div>
+
+            <div class="row mt-4">
+                <!-- Tráfego por Categoria -->
+                <div class="col-md-6">
+                    <h5>Tráfego por Categoria</h5>
+                    <p><strong>Residencial:</strong> {{ total_residencial_anual|floatformat:2 }} Mbit/s</p>
+                    <p><strong>Corporativo:</strong> {{ total_corporativo_anual|floatformat:2 }} Mbit/s</p>
+                    <p><strong>Instituições Públicas:</strong> {{ total_publico_anual|floatformat:2 }} Mbit/s</p>
+                    <p><strong>Instituições de Ensino:</strong> {{ total_ensino_anual|floatformat:2 }} Mbit/s</p>
+                    <p><strong>Instituições de Saúde:</strong> {{ total_saude_anual|floatformat:2 }} Mbit/s</p>
+                </div>
+
+                <!-- Tráfego por Região -->
+                <div class="col-md-6">
+                    <h5>Tráfego por Região</h5>
+                    <p><strong>Cidade Bissau:</strong> {{ total_bissau_anual|floatformat:2 }} Mbit/s</p>
+                    <p><strong>Bafatá:</strong> {{ total_bafata_anual|floatformat:2 }} Mbit/s</p>
+                    <p><strong>Biombo:</strong> {{ total_biombo_anual|floatformat:2 }} Mbit/s</p>
+                    <p><strong>Bolama/Bijagós:</strong> {{ total_bolama_anual|floatformat:2 }} Mbit/s</p>
+                    <p><strong>Outras Regiões:</strong> {{ total_outras_regioes_anual|floatformat:2 }} Mbit/s</p>
+                </div>
+            </div>
+
+            <!-- Acesso Público -->
+            <div class="row mt-4">
+                <div class="col-12">
+                    <h5>Acesso Público (PWLAN)</h5>
+                    <p><strong>Acesso Livre:</strong> {{ total_acesso_livre_anual|floatformat:2 }} Mbit/s</p>
+                    <p><strong>Acesso Condicionado:</strong> {{ total_acesso_condicionado_anual|floatformat:2 }} Mbit/s</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <h3>Detalhes Mensais</h3>
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Mês</th>
+                    <th>Operadora</th>
+                    <th>Tráfego Total</th>
+                    <th>Banda Larga</th>
+                    <th>Residencial</th>
+                    <th>Corporativo</th>
+                    <th>Cidade Bissau</th>
+                    <th>Interior</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for indicador in indicadores %}
+                <tr>
+                    <td>{{ indicador.get_mes_display }}</td>
+                    <td>{{ indicador.get_operadora_display }}</td>
+                    <td>{{ indicador.trafego_total|floatformat:2 }} Mbit/s</td>
+                    <td>{{ indicador.banda_larga_total|floatformat:2 }} Mbit/s</td>
+                    <td>{{ indicador.residencial|floatformat:2 }} Mbit/s</td>
+                    <td>{{ indicador.corporativo_empresarial|floatformat:2 }} Mbit/s</td>
+                    <td>{{ indicador.cidade_bissau|floatformat:2 }} Mbit/s</td>
+                    <td>{{ indicador.calcular_total_interior|floatformat:2 }} Mbit/s</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="mt-4 mb-4">
+        <a href="{% url 'questionarios:trafego_internet_list' %}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Voltar para a Lista
+        </a>
+        <button class="btn btn-primary" onclick="window.print()">
+            <i class="fas fa-print"></i> Imprimir Relatório
+        </button>
+    </div>
+</div>
+{% endblock %}

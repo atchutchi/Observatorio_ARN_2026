@@ -1,0 +1,164 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Estações Móveis - Observatório de Telecomunicações{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'public:index' %}">Início</a></li>
+            <li class="breadcrumb-item active">Estações Móveis</li>
+        </ol>
+    </nav>
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="mb-0">Estações Móveis</h1>
+        <a href="{% url 'questionarios:login' %}" class="btn btn-outline-primary">Área Restrita</a>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header bg-light">
+            <h5 class="mb-0">Filtros</h5>
+        </div>
+        <div class="card-body">
+            <form method="get" class="row g-3">
+                <div class="col-md-6">
+                    <label for="ano" class="form-label">Ano</label>
+                    <select name="ano" id="ano" class="form-select">
+                        {% for ano in anos_disponiveis %}
+                            <option value="{{ ano }}" {% if ano == ano_selecionado|add:"0" %}selected{% endif %}>{{ ano }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label for="operadora" class="form-label">Operadora</label>
+                    <select name="operadora" id="operadora" class="form-select">
+                        <option value="">Todas</option>
+                        {% for op in operadoras %}
+                            <option value="{{ op }}" {% if op == operadora_selecionada %}selected{% endif %}>{{ op|title }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-12">
+                    <button type="submit" class="btn btn-primary">Filtrar</button>
+                    <a href="{% url 'public:estacoes_moveis' %}" class="btn btn-secondary">Limpar Filtros</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="card shadow">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">Dados de Estações Móveis - {{ ano_selecionado }}</h5>
+        </div>
+        <div class="card-body">
+            {% if estacoes_moveis_list %}
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Operadora</th>
+                                <th>Mês</th>
+                                <th>Utilizadores</th>
+                                <th>Carregamentos</th>
+                                <th>Levantamentos</th>
+                                <th>Transferências</th>
+                                <th>Total Estações Móveis</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in estacoes_moveis_list %}
+                            <tr>
+                                <td>{{ item.get_operadora_display }}</td>
+                                <td>{{ item.get_mes_display }}</td>
+                                <td>{{ item.calcular_total_utilizadores|intcomma }}</td>
+                                <td>{{ item.calcular_total_carregamentos|intcomma }}</td>
+                                <td>{{ item.calcular_total_levantamentos|intcomma }}</td>
+                                <td>{{ item.calcular_total_transferencias|intcomma }}</td>
+                                <td>{{ item.calcular_total_estacoes_moveis|intcomma }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="alert alert-info">
+                    Não há dados disponíveis para os filtros selecionados.
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    {% if estacoes_moveis_list %}
+    <div class="card mt-4 shadow">
+        <div class="card-header bg-success text-white">
+            <h5 class="mb-0">Gráfico de Utilizadores por Mês</h5>
+        </div>
+        <div class="card-body">
+            <canvas id="utilizadoresChart" height="300"></canvas>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+{% if estacoes_moveis_list %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    $(document).ready(function() {
+        // Preparar dados para o gráfico
+        var meses = [];
+        var utilizadores = [];
+        var bgColors = [];
+        
+        {% for item in estacoes_moveis_list %}
+            meses.push('{{ item.get_mes_display }} - {{ item.get_operadora_display }}');
+            utilizadores.push({{ item.calcular_total_utilizadores }});
+            
+            {% if item.operadora == 'orange' %}
+                bgColors.push('rgba(255, 140, 0, 0.7)');
+            {% elif item.operadora == 'telecel' %}
+                bgColors.push('rgba(255, 215, 0, 0.7)');
+            {% else %}
+                bgColors.push('rgba(30, 144, 255, 0.7)');
+            {% endif %}
+        {% endfor %}
+        
+        // Criar gráfico
+        var ctx = document.getElementById('utilizadoresChart').getContext('2d');
+        var chart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: meses,
+                datasets: [{
+                    label: 'Utilizadores',
+                    data: utilizadores,
+                    backgroundColor: bgColors,
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    title: {
+                        display: true,
+                        text: 'Número de Utilizadores por Mês e Operadora'
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    });
+</script>
+{% endif %}
+{% endblock %} 

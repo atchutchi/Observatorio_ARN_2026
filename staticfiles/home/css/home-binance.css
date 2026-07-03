@@ -1,0 +1,342 @@
+/* ===============================
+   HOME BINANCE STYLE
+   =============================== */
+
+/* HOME ESPECÍFICOS */
+.home-container {
+    max-width: 100%;
+}
+
+/* HERO SECTION */
+.home-hero {
+    background: linear-gradient(135deg, var(--binance-dark) 0%, var(--binance-dark-light) 100%);
+    color: var(--binance-text);
+    padding: 4rem 2rem;
+    text-align: center;
+    border-radius: 12px;
+    margin-bottom: 3rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.home-hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" patternUnits="userSpaceOnUse" width="100" height="100"><circle cx="50" cy="50" r="1" fill="%23F0B90B" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+    opacity: 0.5;
+}
+
+.home-hero-content {
+    position: relative;
+    z-index: 2;
+}
+
+.home-hero-title {
+    font-size: 3rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: var(--binance-text) !important;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.home-hero-subtitle {
+    font-size: 1.25rem;
+    opacity: 0.9;
+    margin-bottom: 2rem;
+    color: var(--binance-text-muted);
+}
+
+.home-hero-cta {
+    background: linear-gradient(135deg, var(--binance-yellow) 0%, #D4A00A 100%);
+    color: var(--binance-dark);
+    border: none;
+    padding: 1rem 2rem;
+    border-radius: 8px;
+    font-size: 1.125rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.home-hero-cta:hover {
+    background: linear-gradient(135deg, #D4A00A 0%, #B8900A 100%);
+    color: var(--binance-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(240, 185, 11, 0.3);
+    text-decoration: none;
+}
+
+/* FEATURES SECTION */
+.home-features {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    margin-bottom: 3rem;
+}
+
+.home-feature-card {
+    background-color: var(--binance-dark-light);
+    border: 1px solid var(--binance-border);
+    border-radius: 12px;
+    padding: 2rem;
+    text-align: center;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.home-feature-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--binance-yellow), var(--binance-info));
+}
+
+.home-feature-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-dark);
+}
+
+.home-feature-icon {
+    font-size: 3rem;
+    margin-bottom: 1.5rem;
+    color: var(--binance-yellow);
+}
+
+.home-feature-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: var(--binance-text) !important;
+}
+
+.home-feature-description {
+    color: var(--binance-text-muted);
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+}
+
+.home-feature-link {
+    color: var(--binance-yellow);
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+.home-feature-link:hover {
+    color: #D4A00A;
+    text-decoration: none;
+}
+
+/* STATS OVERVIEW */
+.home-stats {
+    background-color: var(--binance-dark-light);
+    border: 1px solid var(--binance-border);
+    border-radius: 12px;
+    padding: 3rem 2rem;
+    margin-bottom: 3rem;
+}
+
+.home-stats-title {
+    text-align: center;
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 3rem;
+    color: var(--binance-text) !important;
+}
+
+.home-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 2rem;
+}
+
+.home-stat-item {
+    text-align: center;
+}
+
+.home-stat-value {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--binance-yellow);
+    margin-bottom: 0.5rem;
+    line-height: 1;
+}
+
+.home-stat-label {
+    color: var(--binance-text-muted);
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 500;
+}
+
+/* LATEST NEWS */
+.home-news {
+    background-color: var(--binance-dark-light);
+    border: 1px solid var(--binance-border);
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 3rem;
+}
+
+.home-news-header {
+    background-color: var(--binance-hover);
+    padding: 1.5rem 2rem;
+    border-bottom: 1px solid var(--binance-border);
+}
+
+.home-news-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 0;
+    color: var(--binance-text) !important;
+}
+
+.home-news-body {
+    padding: 2rem;
+}
+
+.home-news-item {
+    display: flex;
+    gap: 1rem;
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--binance-border);
+}
+
+.home-news-item:last-child {
+    border-bottom: none;
+}
+
+.home-news-date {
+    min-width: 80px;
+    text-align: center;
+    color: var(--binance-text-muted);
+    font-size: 0.875rem;
+}
+
+.home-news-content h6 {
+    color: var(--binance-text) !important;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.home-news-content p {
+    color: var(--binance-text-muted);
+    margin-bottom: 0;
+    font-size: 0.875rem;
+}
+
+/* CALL TO ACTION */
+.home-cta {
+    background: linear-gradient(135deg, var(--binance-yellow) 0%, #D4A00A 100%);
+    color: var(--binance-dark);
+    border-radius: 12px;
+    padding: 3rem 2rem;
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.home-cta-title {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: var(--binance-dark) !important;
+}
+
+.home-cta-description {
+    font-size: 1.125rem;
+    margin-bottom: 2rem;
+    opacity: 0.9;
+}
+
+.home-cta-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.home-cta-btn {
+    background-color: var(--binance-dark);
+    color: var(--binance-text);
+    border: 2px solid var(--binance-dark);
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.home-cta-btn:hover {
+    background-color: transparent;
+    color: var(--binance-dark);
+    border-color: var(--binance-dark);
+    text-decoration: none;
+}
+
+.home-cta-btn.secondary {
+    background-color: transparent;
+    color: var(--binance-dark);
+    border-color: var(--binance-dark);
+}
+
+.home-cta-btn.secondary:hover {
+    background-color: var(--binance-dark);
+    color: var(--binance-text);
+}
+
+/* RESPONSIVO HOME */
+@media (max-width: 768px) {
+    .home-hero {
+        padding: 3rem 1rem;
+    }
+    
+    .home-hero-title {
+        font-size: 2rem;
+    }
+    
+    .home-features {
+        grid-template-columns: 1fr;
+    }
+    
+    .home-feature-card {
+        padding: 1.5rem;
+    }
+    
+    .home-stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .home-cta {
+        padding: 2rem 1rem;
+    }
+    
+    .home-cta-title {
+        font-size: 1.5rem;
+    }
+    
+    .home-cta-buttons {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .home-cta-btn {
+        width: 100%;
+        max-width: 300px;
+        justify-content: center;
+    }
+}

@@ -1,0 +1,28 @@
+{% extends "questionarios/partials/base_list.html" %}
+
+{% block indicator_title %}Indicadores de Receitas{% endblock %}
+{% block indicator_subtitle %}Gestão e controle de dados de receitas por operadora{% endblock %}
+
+{% block create_url %}{% url 'questionarios:receitas_create' %}{% endblock %}
+
+{% block table_headers %}
+<th>Receita Total</th>
+<th>Serviços Móveis</th>
+<th>Internet</th>
+<th>Outros Serviços</th>
+{% endblock %}
+
+{% block table_row_data %}
+<td><strong>{{ indicador.receita_total|default:"-" }}</strong></td>
+<td>{{ indicador.receita_servicos_moveis|default:"-" }}</td>
+<td>{{ indicador.receita_internet|default:"-" }}</td>
+<td>{{ indicador.receita_outros_servicos|default:"-" }}</td>
+{% endblock %}
+
+{% block detail_url %}{% url 'questionarios:receitas_detail' indicador.pk %}{% endblock %}
+{% block update_url %}{% url 'questionarios:receitas_update' indicador.pk %}{% endblock %}
+{% block delete_url %}{% url 'questionarios:receitas_delete' indicador.pk %}{% endblock %}
+
+{% block table_colspan %}8{% endblock %}
+
+{% block resumo_url %}{% url 'questionarios:receitas_resumo' 2024 %}{% endblock %}

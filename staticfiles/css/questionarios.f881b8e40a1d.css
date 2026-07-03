@@ -1,0 +1,390 @@
+/* ===============================
+   QUESTIONÁRIOS CSS
+   =============================== */
+
+/* CONTAINER PRINCIPAL */
+.questionarios-container {
+    max-width: 100%;
+    margin: 0;
+}
+
+/* HEADER DOS QUESTIONÁRIOS */
+.questionario-header {
+    background: linear-gradient(135deg, var(--binance-yellow) 0%, #D4A00A 100%);
+    color: var(--binance-dark);
+    border-radius: 12px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: var(--shadow-dark);
+}
+
+.questionario-title {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    color: var(--binance-dark) !important;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.questionario-subtitle {
+    opacity: 0.9;
+    font-size: 1rem;
+    margin-bottom: 0;
+    color: var(--binance-dark);
+}
+
+.questionario-actions {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+/* CONTEÚDO PRINCIPAL */
+.questionario-content {
+    background-color: var(--binance-dark-light);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: var(--shadow-light);
+}
+
+/* CARTÕES DE RESULTADO */
+.results-card {
+    background-color: var(--binance-dark-light);
+    border: 1px solid var(--binance-border);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: var(--shadow-light);
+}
+
+.results-card .card-header {
+    background-color: var(--binance-hover);
+    border-bottom: 1px solid var(--binance-border);
+    padding: 1.5rem 2rem;
+    color: var(--binance-text);
+}
+
+/* TABELAS DOS QUESTIONÁRIOS */
+.questionario-table {
+    width: 100%;
+    background-color: transparent;
+    margin-bottom: 0;
+}
+
+.questionario-table th {
+    background: linear-gradient(135deg, var(--binance-yellow) 0%, #D4A00A 100%);
+    color: var(--binance-dark);
+    font-weight: 600;
+    border: none;
+    padding: 1rem;
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.questionario-table td {
+    padding: 1rem;
+    vertical-align: middle;
+    border-color: var(--binance-border);
+    color: var(--binance-text);
+    background-color: transparent;
+}
+
+.questionario-table tbody tr {
+    transition: all 0.3s ease;
+    border-bottom: 1px solid var(--binance-border);
+}
+
+.questionario-table tbody tr:hover {
+    background-color: var(--binance-hover);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+/* BOTÕES DOS QUESTIONÁRIOS */
+.btn-questionario {
+    padding: 0.5rem 1rem;
+    margin: 0 0.25rem;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    transition: all 0.3s ease;
+    border: none;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.btn-questionario-info {
+    background-color: var(--binance-info);
+    color: white;
+}
+
+.btn-questionario-info:hover {
+    background-color: #3E9CDB;
+    color: white;
+    transform: translateY(-1px);
+}
+
+.btn-questionario-warning {
+    background-color: var(--binance-warning);
+    color: var(--binance-dark);
+}
+
+.btn-questionario-warning:hover {
+    background-color: #D4A00A;
+    color: var(--binance-dark);
+    transform: translateY(-1px);
+}
+
+.btn-questionario-danger {
+    background-color: var(--binance-danger);
+    color: white;
+}
+
+.btn-questionario-danger:hover {
+    background-color: #E8374F;
+    color: white;
+    transform: translateY(-1px);
+}
+
+.btn-questionario-success {
+    background-color: var(--binance-success);
+    color: white;
+}
+
+.btn-questionario-success:hover {
+    background-color: #019A63;
+    color: white;
+    transform: translateY(-1px);
+}
+
+/* FORMULÁRIOS DOS QUESTIONÁRIOS */
+.questionario-form {
+    padding: 2rem;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-label {
+    color: var(--binance-text);
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    display: block;
+}
+
+.form-control-questionario {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    background-color: var(--binance-dark);
+    border: 1px solid var(--binance-border);
+    border-radius: 8px;
+    color: var(--binance-text);
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.form-control-questionario:focus {
+    outline: none;
+    border-color: var(--binance-yellow);
+    box-shadow: 0 0 0 2px rgba(240, 185, 11, 0.2);
+    background-color: var(--binance-dark);
+    color: var(--binance-text);
+}
+
+.form-control-questionario::placeholder {
+    color: var(--binance-text-muted);
+}
+
+/* SELECT DROPDOWNS */
+.form-select-questionario {
+    background-color: var(--binance-dark);
+    border: 1px solid var(--binance-border);
+    color: var(--binance-text);
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23F0B90B' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m1 6 7 7 7-7'/%3e%3c/svg%3e");
+}
+
+.form-select-questionario:focus {
+    border-color: var(--binance-yellow);
+    box-shadow: 0 0 0 2px rgba(240, 185, 11, 0.2);
+}
+
+.form-select-questionario option {
+    background-color: var(--binance-dark);
+    color: var(--binance-text);
+}
+
+/* ALERTAS DOS QUESTIONÁRIOS */
+.alert-questionario {
+    padding: 1rem 1.5rem;
+    border-radius: 8px;
+    border: none;
+    margin-bottom: 1.5rem;
+}
+
+.alert-questionario-success {
+    background-color: #1D2B21;
+    color: var(--binance-success);
+    border: 1px solid var(--binance-success);
+}
+
+.alert-questionario-danger {
+    background-color: #2B1D1D;
+    color: var(--binance-danger);
+    border: 1px solid var(--binance-danger);
+}
+
+.alert-questionario-warning {
+    background-color: #2B2B1D;
+    color: var(--binance-warning);
+    border: 1px solid var(--binance-warning);
+}
+
+.alert-questionario-info {
+    background-color: #1D242B;
+    color: var(--binance-info);
+    border: 1px solid var(--binance-info);
+}
+
+/* PAGINAÇÃO */
+.pagination-questionario {
+    display: flex;
+    justify-content: center;
+    margin-top: 2rem;
+    padding: 2rem;
+}
+
+.pagination-questionario .page-link {
+    background-color: var(--binance-dark);
+    border: 1px solid var(--binance-border);
+    color: var(--binance-text);
+    padding: 0.5rem 1rem;
+    margin: 0 0.25rem;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+}
+
+.pagination-questionario .page-link:hover {
+    background-color: var(--binance-hover);
+    border-color: var(--binance-yellow);
+    color: var(--binance-yellow);
+}
+
+.pagination-questionario .page-item.active .page-link {
+    background-color: var(--binance-yellow);
+    border-color: var(--binance-yellow);
+    color: var(--binance-dark);
+}
+
+/* FILTROS */
+.questionario-filters {
+    background-color: var(--binance-hover);
+    padding: 1.5rem 2rem;
+    border-bottom: 1px solid var(--binance-border);
+}
+
+.filter-group {
+    display: flex;
+    gap: 1rem;
+    align-items: end;
+}
+
+/* ESTATÍSTICAS RESUMO */
+.questionario-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.questionario-stat-card {
+    background-color: var(--binance-dark-light);
+    border: 1px solid var(--binance-border);
+    border-radius: 8px;
+    padding: 1.5rem;
+    text-align: center;
+    transition: transform 0.3s ease;
+}
+
+.questionario-stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-dark);
+}
+
+.questionario-stat-value {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--binance-yellow);
+    margin-bottom: 0.5rem;
+}
+
+.questionario-stat-label {
+    color: var(--binance-text-muted);
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* BADGES */
+.badge-questionario {
+    padding: 0.5rem 1rem;
+    border-radius: 50px;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.badge-questionario-success {
+    background-color: var(--binance-success);
+    color: white;
+}
+
+.badge-questionario-warning {
+    background-color: var(--binance-warning);
+    color: var(--binance-dark);
+}
+
+.badge-questionario-danger {
+    background-color: var(--binance-danger);
+    color: white;
+}
+
+.badge-questionario-info {
+    background-color: var(--binance-info);
+    color: white;
+}
+
+/* RESPONSIVO */
+@media (max-width: 768px) {
+    .questionario-header {
+        padding: 1.5rem;
+    }
+    
+    .questionario-title {
+        font-size: 1.5rem;
+    }
+    
+    .questionario-actions {
+        flex-direction: column;
+        gap: 0.5rem;
+        margin-top: 1rem;
+    }
+    
+    .questionario-table {
+        font-size: 0.875rem;
+    }
+    
+    .questionario-table th,
+    .questionario-table td {
+        padding: 0.75rem 0.5rem;
+    }
+    
+    .filter-group {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .questionario-stats {
+        grid-template-columns: 1fr;
+    }
+}

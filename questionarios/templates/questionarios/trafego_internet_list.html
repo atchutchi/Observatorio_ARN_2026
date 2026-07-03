@@ -1,0 +1,28 @@
+{% extends "questionarios/partials/base_list.html" %}
+
+{% block indicator_title %}Indicadores de Tráfego Internet{% endblock %}
+{% block indicator_subtitle %}Gestão e controle de dados de tráfego internet por operadora{% endblock %}
+
+{% block create_url %}{% url 'questionarios:trafego_internet_create' %}{% endblock %}
+
+{% block table_headers %}
+<th>Upload Nacional</th>
+<th>Download Nacional</th>
+<th>Upload Internacional</th>
+<th>Download Internacional</th>
+{% endblock %}
+
+{% block table_row_data %}
+<td>{{ indicador.upload_nacional|default:"-" }}</td>
+<td>{{ indicador.download_nacional|default:"-" }}</td>
+<td>{{ indicador.upload_internacional|default:"-" }}</td>
+<td>{{ indicador.download_internacional|default:"-" }}</td>
+{% endblock %}
+
+{% block detail_url %}{% url 'questionarios:trafego_internet_detail' indicador.pk %}{% endblock %}
+{% block update_url %}{% url 'questionarios:trafego_internet_update' indicador.pk %}{% endblock %}
+{% block delete_url %}{% url 'questionarios:trafego_internet_delete' indicador.pk %}{% endblock %}
+
+{% block table_colspan %}8{% endblock %}
+
+{% block resumo_url %}{% url 'questionarios:trafego_internet_resumo' 2024 %}{% endblock %}

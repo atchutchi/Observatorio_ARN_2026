@@ -1,0 +1,152 @@
+{% extends 'questionarios/analise/base_analise.html' %}
+{% load static %}
+
+{% block specific_charts %}
+<div class="row mt-4">
+    <div class="col-lg-6 mb-3">
+        <h5>Origem Chamadas Terminadas (Minutos Anual - Mercado)</h5>
+        <div style="position: relative; height:300px; width:100%">
+            <canvas id="chamadasTerminadasOrigemChart"></canvas>
+        </div>
+    </div>
+     <div class="col-lg-6 mb-3">
+        <h5>SMS Terminado por Operadora (Anual)</h5>
+        <canvas id="smsTerminadoOperadoraChart"></canvas>
+    </div>
+</div>
+{% endblock %}
+
+{% block data_table %}
+<div class="card mt-4">
+    <div class="card-header">
+        Dados Detalhados de Tráfego Terminado - {{ ano_selecionado }}
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover">
+                <thead class="table-light">
+                    <tr>
+                        <th>Operadora</th>
+                        <th>Período</th>
+                        <th>Total Chamadas</th>
+                        <th>Total Minutos</th>
+                        <th>Origem Mesma Op.</th>
+                        <th>Origem Outra Op.</th>
+                        <th>Origem Fixa Nac.</th>
+                        <th>Origem Internacional</th>
+                        <th>Roaming In</th>
+                        <th>SMS Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for op, op_data in analysis_data.items %}
+                        {% if op != 'TOTAL' %}
+                            <!-- Annual Data -->
+                            <tr class="table-primary">
+                                <td rowspan="5">{{ op }}</td>
+                                <td><b>Anual</b></td>
+                                <td>{{ op_data.annual.total_total_chamadas|floatformat:0 }}</td>
+                                <td>{{ op_data.annual.total_total_minutos|floatformat:0 }}</td>
+                                <td>{{ op_data.annual.total_movel_origem_mesma_operadora|floatformat:0 }}</td>
+                                <td>{{ op_data.annual.total_movel_origem_outra_operadora|floatformat:0 }}</td>
+                                <td>{{ op_data.annual.total_fixa_nacional|floatformat:0 }}</td>
+                                <td>{{ op_data.annual.total_internacional_entrada|floatformat:0 }}</td>
+                                <td>{{ op_data.annual.total_roaming_in|floatformat:0 }}</td>
+                                <td>{{ op_data.annual.total_sms_total|floatformat:0 }}</td>
+                            </tr>
+                            <!-- Quarterly Data -->
+                            {% for q, q_data in op_data.quarterly.items %}
+                            <tr>
+                                <td><b>{{ q }}</b></td>
+                                <td>{{ q_data.total_total_chamadas|floatformat:0 }}</td>
+                                <td>{{ q_data.total_total_minutos|floatformat:0 }}</td>
+                                <td>{{ q_data.total_movel_origem_mesma_operadora|floatformat:0 }}</td>
+                                <td>{{ q_data.total_movel_origem_outra_operadora|floatformat:0 }}</td>
+                                <td>{{ q_data.total_fixa_nacional|floatformat:0 }}</td>
+                                <td>{{ q_data.total_internacional_entrada|floatformat:0 }}</td>
+                                <td>{{ q_data.total_roaming_in|floatformat:0 }}</td>
+                                <td>{{ q_data.total_sms_total|floatformat:0 }}</td>
+                            </tr>
+                            {% endfor %}
+                        {% endif %}
+                    {% endfor %}
+                    <!-- Total Market -->
+                     <tr class="table-dark">
+                        <td rowspan="5"><b>TOTAL Mercado</b></td>
+                        <td><b>Anual</b></td>
+                        <td>{{ analysis_data.TOTAL.annual.total_total_chamadas|floatformat:0 }}</td>
+                        <td>{{ analysis_data.TOTAL.annual.total_total_minutos|floatformat:0 }}</td>
+                        <td>{{ analysis_data.TOTAL.annual.total_movel_origem_mesma_operadora|floatformat:0 }}</td>
+                        <td>{{ analysis_data.TOTAL.annual.total_movel_origem_outra_operadora|floatformat:0 }}</td>
+                        <td>{{ analysis_data.TOTAL.annual.total_fixa_nacional|floatformat:0 }}</td>
+                        <td>{{ analysis_data.TOTAL.annual.total_internacional_entrada|floatformat:0 }}</td>
+                        <td>{{ analysis_data.TOTAL.annual.total_roaming_in|floatformat:0 }}</td>
+                        <td>{{ analysis_data.TOTAL.annual.total_sms_total|floatformat:0 }}</td>
+                    </tr>
+                    {% for q, q_data in analysis_data.TOTAL.quarterly.items %}
+                    <tr class="table-secondary">
+                         <td><b>{{ q }}</b></td>
+                          <td>{{ q_data.total_total_chamadas|floatformat:0 }}</td>
+                         <td>{{ q_data.total_total_minutos|floatformat:0 }}</td>
+                         <td>{{ q_data.total_movel_origem_mesma_operadora|floatformat:0 }}</td>
+                         <td>{{ q_data.total_movel_origem_outra_operadora|floatformat:0 }}</td>
+                         <td>{{ q_data.total_fixa_nacional|floatformat:0 }}</td>
+                         <td>{{ q_data.total_internacional_entrada|floatformat:0 }}</td>
+                         <td>{{ q_data.total_roaming_in|floatformat:0 }}</td>
+                         <td>{{ q_data.total_sms_total|floatformat:0 }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block specific_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const analysisData = window.getAnalysisData();
+    if (!analysisData) return;
+    console.log("Trafego Terminado Data:", analysisData);
+
+    const operators = Object.keys(analysisData).filter(op => op !== 'TOTAL');
+    const colors = window.getOperatorColors();
+    const marketAnnual = analysisData['TOTAL']?.annual || {};
+
+    // Chart: Origem Chamadas Terminadas (Minutos Anual - Mercado)
+    const origemData = {
+        labels: ['Mesma Op.', 'Outra Op. Móvel', 'Fixa Nacional', 'Internacional', 'Roaming In'],
+        datasets: [{
+            label: 'Origem Chamadas Terminadas (Minutos Anual)',
+            data: [
+                marketAnnual.total_movel_origem_mesma_operadora || 0,
+                marketAnnual.total_movel_origem_outra_operadora || 0,
+                marketAnnual.total_fixa_nacional || 0,
+                marketAnnual.total_internacional_entrada || 0,
+                marketAnnual.total_roaming_in || 0
+            ],
+            backgroundColor: [
+                'rgba(54, 162, 235, 0.6)',
+                'rgba(255, 99, 132, 0.6)', 
+                'rgba(75, 192, 192, 0.6)',
+                'rgba(153, 102, 255, 0.6)',
+                'rgba(255, 159, 64, 0.6)'
+            ],
+        }]
+    };
+    window.createAnalysisChart('chamadasTerminadasOrigemChart', 'doughnut', origemData.labels, origemData.datasets);
+
+    // Chart: SMS Terminado por Operadora (Anual)
+    const smsOpData = {
+        labels: operators,
+        datasets: [{
+            label: 'Total SMS Terminado (Anual)',
+            data: operators.map(op => analysisData[op]?.annual?.total_sms_total || 0),
+            backgroundColor: operators.map(op => colors[op] || '#cccccc'),
+        }]
+    };
+    window.createAnalysisChart('smsTerminadoOperadoraChart', 'bar', smsOpData.labels, smsOpData.datasets);
+});
+</script>
+{% endblock %}

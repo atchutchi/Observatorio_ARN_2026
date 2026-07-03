@@ -1,0 +1,38 @@
+<svg width="800" height="800" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <pattern id="circuitPattern" width="100" height="100" patternUnits="userSpaceOnUse">
+      <!-- Horizontal Lines -->
+      <line x1="0" y1="10" x2="100" y2="10" stroke="white" stroke-width="1" />
+      <line x1="0" y1="30" x2="40" y2="30" stroke="white" stroke-width="1" />
+      <line x1="60" y1="30" x2="100" y2="30" stroke="white" stroke-width="1" />
+      <line x1="0" y1="70" x2="30" y2="70" stroke="white" stroke-width="1" />
+      <line x1="50" y1="70" x2="100" y2="70" stroke="white" stroke-width="1" />
+      <line x1="0" y1="90" x2="100" y2="90" stroke="white" stroke-width="1" />
+      
+      <!-- Vertical Lines -->
+      <line x1="10" y1="0" x2="10" y2="100" stroke="white" stroke-width="1" />
+      <line x1="30" y1="0" x2="30" y2="30" stroke="white" stroke-width="1" />
+      <line x1="30" y1="50" x2="30" y2="100" stroke="white" stroke-width="1" />
+      <line x1="70" y1="0" x2="70" y2="40" stroke="white" stroke-width="1" />
+      <line x1="70" y1="60" x2="70" y2="100" stroke="white" stroke-width="1" />
+      <line x1="90" y1="0" x2="90" y2="100" stroke="white" stroke-width="1" />
+      
+      <!-- Circles (connection points) -->
+      <circle cx="10" cy="10" r="3" fill="white" />
+      <circle cx="30" cy="30" r="3" fill="white" />
+      <circle cx="10" cy="70" r="3" fill="white" />
+      <circle cx="30" cy="50" r="3" fill="white" />
+      <circle cx="70" cy="10" r="3" fill="white" />
+      <circle cx="90" cy="30" r="3" fill="white" />
+      <circle cx="70" cy="60" r="3" fill="white" />
+      <circle cx="90" cy="90" r="3" fill="white" />
+      
+      <!-- Diagonal Lines -->
+      <line x1="30" y1="30" x2="50" y2="50" stroke="white" stroke-width="1" />
+      <line x1="50" y1="50" x2="70" y2="60" stroke="white" stroke-width="1" />
+      <line x1="10" y1="70" x2="30" y2="50" stroke="white" stroke-width="1" />
+      <line x1="70" y1="10" x2="90" y2="30" stroke="white" stroke-width="1" />
+    </pattern>
+  </defs>
+  <rect width="800" height="800" fill="url(#circuitPattern)" />
+</svg> 

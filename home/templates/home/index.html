@@ -1,0 +1,217 @@
+{% extends 'base.html' %}
+
+{% block title %}Observatório do Mercado das Telecomunicações - GB{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="/static/home/css/hero.css">
+<link rel="stylesheet" href="/static/home/css/cards.css">
+<link rel="stylesheet" href="/static/home/css/chatbot.css">
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6 hero-content">
+                <h1 class="hero-title">Observatório do Mercado das Telecomunicações</h1>
+                <p class="hero-subtitle">
+                    Monitoramento e análise de dados estatísticos do mercado de telecomunicações 
+                    da Guiné-Bissau para apoiar decisões estratégicas do setor.
+                </p>
+                <div class="hero-buttons">
+                    <a href="/dashboard/" class="btn hero-btn hero-btn-primary">
+                        <i class="fas fa-chart-bar me-2"></i> Ver Dashboard
+                    </a>
+                    <a href="/questionarios/" class="btn hero-btn hero-btn-secondary">
+                        <i class="fas fa-clipboard-list me-2"></i> Questionários
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-6 d-none d-lg-block hero-image-container">
+                <img src="/static/home/img/telecom-illustration.svg" alt="Telecomunicações" class="img-fluid hero-image">
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="container">
+    <!-- Resumo dos Dados -->
+    <section class="stats-section">
+        <div class="row">
+            <div class="col-md-3">
+                <div class="stats-card">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-muted">Operadoras Ativas</h6>
+                            <h3>{{ total_operadoras }}</h3>
+                        </div>
+                        <div class="stats-icon">
+                            <i class="fas fa-building"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stats-card orange">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-muted">Serviços Monitorados</h6>
+                            <h3>{{ servicos|length }}</h3>
+                        </div>
+                        <div class="stats-icon">
+                            <i class="fas fa-mobile-alt"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stats-card yellow">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-muted">Questionários</h6>
+                            <h3>11</h3>
+                        </div>
+                        <div class="stats-icon">
+                            <i class="fas fa-clipboard-list"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stats-card green">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-muted">Relatórios</h6>
+                            <h3>4</h3>
+                        </div>
+                        <div class="stats-icon">
+                            <i class="fas fa-file-alt"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Indicadores Principais -->
+    <section class="section indicators-section">
+        <h2 class="section-title" data-text="Indicadores">Indicadores Principais</h2>
+        <div class="row">
+            <div class="col-md-4 mb-4">
+                <div class="custom-card card h-100">
+                    <div class="card-img-container">
+                        <img src="/static/home/img/estacoes-moveis.svg" alt="Estações Móveis" class="card-img-top">
+                        <div class="card-badge">
+                            <i class="fas fa-mobile-alt me-1"></i> Mobile
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title">Estações Móveis</h5>
+                        <p class="card-text">Evolução do número de assinantes de telefonia móvel por operadora na Guiné-Bissau.</p>
+                        <a href="/questionarios/estacoes-moveis/" class="btn btn-outline-custom">Ver detalhes</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="custom-card card h-100">
+                    <div class="card-img-container">
+                        <img src="/static/home/img/trafego-internet.svg" alt="Tráfego Internet" class="card-img-top">
+                        <div class="card-badge">
+                            <i class="fas fa-wifi me-1"></i> Internet
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title">Tráfego Internet</h5>
+                        <p class="card-text">Dados sobre o consumo de internet móvel e fixa, incluindo volumes de tráfego por operadora.</p>
+                        <a href="/questionarios/trafego-internet/" class="btn btn-outline-custom">Ver detalhes</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="custom-card card h-100">
+                    <div class="card-img-container">
+                        <img src="/static/home/img/receitas.svg" alt="Receitas" class="card-img-top">
+                        <div class="card-badge">
+                            <i class="fas fa-chart-line me-1"></i> Receitas
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title">Receitas</h5>
+                        <p class="card-text">Receitas das operadoras por serviço e evolução histórica do mercado de telecomunicações.</p>
+                        <a href="/questionarios/receitas/" class="btn btn-outline-custom">Ver detalhes</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="text-center mt-5">
+            <a href="/questionarios/" class="cta-button">
+                <i class="fas fa-th-list me-2"></i> Ver todos os indicadores
+            </a>
+        </div>
+    </section>
+
+    <!-- Sobre o Observatório -->
+    <section class="section section-light py-5 rounded mb-5">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <h2 class="section-title" data-text="Sobre">Sobre o Observatório</h2>
+                <p class="lead">
+                    O Observatório do Mercado das Telecomunicações da Guiné-Bissau é uma plataforma que coleta, analisa 
+                    e disponibiliza dados estatísticos sobre o mercado de telecomunicações no país.
+                </p>
+                <p>
+                    Nosso objetivo é fornecer informações atualizadas e confiáveis para auxiliar na tomada de decisões, 
+                    pesquisas acadêmicas e formulação de políticas públicas para o setor.
+                </p>
+                <a href="/sobre/" class="btn btn-custom mt-3">
+                    <i class="fas fa-info-circle me-2"></i> Saiba mais
+                </a>
+            </div>
+            <div class="col-lg-6 mt-4 mt-lg-0">
+                <img src="/static/home/img/telecom-illustration.svg" alt="Ilustração" class="img-fluid rounded shadow">
+            </div>
+        </div>
+    </section>
+</div>
+
+<!-- Chat Bot Modal -->
+<div class="modal fade" id="chatbotModal" tabindex="-1" aria-labelledby="chatbotModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header" style="background: linear-gradient(135deg, var(--blue-primary), var(--orange-primary)); color: white;">
+                <h5 class="modal-title" id="chatbotModalLabel">
+                    <i class="fas fa-robot me-2"></i> Assistente Virtual
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="chat-container" id="chat-messages">
+                    <div class="chat-message bot">
+                        <div class="chat-avatar">
+                            <i class="fas fa-robot"></i>
+                        </div>
+                        <div class="chat-text">
+                            Olá! Sou o assistente virtual do Observatório de Telecomunicações da Guiné-Bissau. 
+                            Como posso ajudar você hoje?
+                        </div>
+                    </div>
+                </div>
+                <div class="chat-input mt-3">
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="chat-input" placeholder="Digite sua mensagem...">
+                        <button class="btn btn-primary" type="button" id="send-message">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="/static/home/js/chatbot.js"></script>
+<script src="/static/home/js/hero-particles.js"></script>
+{% endblock %} 

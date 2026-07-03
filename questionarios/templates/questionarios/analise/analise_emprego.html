@@ -1,0 +1,132 @@
+{% extends 'questionarios/analise/base_analise.html' %}
+{% load static %}
+
+{% block specific_charts %}
+<div class="row mt-4">
+    <div class="col-lg-6 mb-3">
+        <h5>Emprego Direto x Indireto (Anual - Mercado)</h5>
+        <div style="position: relative; height:300px; width:100%">
+            <canvas id="empregoDiretoIndiretoChart"></canvas>
+        </div>
+    </div>
+    <div class="col-lg-6 mb-3">
+        <h5>Distribuição Gênero (Emprego Direto Nacional - Anual Mercado)</h5>
+        <canvas id="empregoGeneroChart"></canvas>
+    </div>
+</div>
+{% endblock %}
+
+{% block data_table %}
+<div class="card mt-4">
+    <div class="card-header">
+        Dados Detalhados de Emprego - {{ ano_selecionado }}
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover">
+                <thead class="table-light">
+                    <tr>
+                        <th>Operadora</th>
+                        <th>Período</th>
+                        <th>Emprego Direto</th>
+                        <th>Nacionais (Total)</th>
+                        <th>Nacionais (Homem)</th>
+                        <th>Nacionais (Mulher)</th>
+                        <th>Emprego Indireto</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for op, op_data in analysis_data.items %}
+                        {% if op != 'TOTAL' %}
+                            <!-- Annual Data -->
+                            <tr class="table-primary">
+                                <td rowspan="5">{{ op }}</td>
+                                <td><b>Anual</b></td>
+                                <td>{{ op_data.annual.total_emprego_direto_total|floatformat:0 }}</td>
+                                <td>{{ op_data.annual.total_nacionais_total|floatformat:0 }}</td>
+                                <td>{{ op_data.annual.total_nacionais_homem|floatformat:0 }}</td>
+                                <td>{{ op_data.annual.total_nacionais_mulher|floatformat:0 }}</td>
+                                <td>{{ op_data.annual.total_emprego_indireto|floatformat:0 }}</td>
+                            </tr>
+                            <!-- Quarterly Data -->
+                            {% for q, q_data in op_data.quarterly.items %}
+                            <tr>
+                                <td><b>{{ q }}</b></td>
+                                <td>{{ q_data.total_emprego_direto_total|floatformat:0 }}</td>
+                                <td>{{ q_data.total_nacionais_total|floatformat:0 }}</td>
+                                <td>{{ q_data.total_nacionais_homem|floatformat:0 }}</td>
+                                <td>{{ q_data.total_nacionais_mulher|floatformat:0 }}</td>
+                                <td>{{ q_data.total_emprego_indireto|floatformat:0 }}</td>
+                            </tr>
+                            {% endfor %}
+                        {% endif %}
+                    {% endfor %}
+                    <!-- Total Market -->
+                     <tr class="table-dark">
+                        <td rowspan="5"><b>TOTAL Mercado</b></td>
+                        <td><b>Anual</b></td>
+                        <td>{{ analysis_data.TOTAL.annual.total_emprego_direto_total|floatformat:0 }}</td>
+                        <td>{{ analysis_data.TOTAL.annual.total_nacionais_total|floatformat:0 }}</td>
+                        <td>{{ analysis_data.TOTAL.annual.total_nacionais_homem|floatformat:0 }}</td>
+                        <td>{{ analysis_data.TOTAL.annual.total_nacionais_mulher|floatformat:0 }}</td>
+                        <td>{{ analysis_data.TOTAL.annual.total_emprego_indireto|floatformat:0 }}</td>
+                    </tr>
+                    {% for q, q_data in analysis_data.TOTAL.quarterly.items %}
+                    <tr class="table-secondary">
+                         <td><b>{{ q }}</b></td>
+                         <td>{{ q_data.total_emprego_direto_total|floatformat:0 }}</td>
+                         <td>{{ q_data.total_nacionais_total|floatformat:0 }}</td>
+                         <td>{{ q_data.total_nacionais_homem|floatformat:0 }}</td>
+                         <td>{{ q_data.total_nacionais_mulher|floatformat:0 }}</td>
+                         <td>{{ q_data.total_emprego_indireto|floatformat:0 }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block specific_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const analysisData = window.getAnalysisData();
+    if (!analysisData) return;
+    console.log("Emprego Data:", analysisData);
+
+    const operators = Object.keys(analysisData).filter(op => op !== 'TOTAL');
+    const colors = window.getOperatorColors();
+    const marketAnnual = analysisData['TOTAL']?.annual || {};
+
+    // Chart: Emprego Direto vs Indireto (Anual - Mercado)
+    const diretoIndiretoData = {
+        labels: ['Direto', 'Indireto'],
+        datasets: [{
+            label: 'Tipo de Emprego (Anual Total)',
+            data: [
+                marketAnnual.total_emprego_direto_total || 0,
+                marketAnnual.total_emprego_indireto || 0
+            ],
+            backgroundColor: ['rgba(54, 162, 235, 0.6)', 'rgba(255, 159, 64, 0.6)']
+        }]
+    };
+    window.createAnalysisChart('empregoDiretoIndiretoChart', 'pie', diretoIndiretoData.labels, diretoIndiretoData.datasets, { responsive: true, maintainAspectRatio: false });
+
+    // Chart: Distribuição Gênero (Emprego Direto Nacional - Anual Mercado)
+    const generoData = {
+        labels: ['Homens', 'Mulheres'],
+        datasets: [{
+            label: 'Gênero (Emprego Direto Nacional Anual)',
+            data: [
+                marketAnnual.total_nacionais_homem || 0,
+                marketAnnual.total_nacionais_mulher || 0
+            ],
+            backgroundColor: ['rgba(75, 192, 192, 0.6)', 'rgba(255, 99, 132, 0.6)']
+        }]
+    };
+    window.createAnalysisChart('empregoGeneroChart', 'doughnut', generoData.labels, generoData.datasets, { responsive: true, maintainAspectRatio: false });
+
+});
+</script>
+{% endblock %} 

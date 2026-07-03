@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4">Resumo de Empregos - {{ ano }}</h2>
+
+    <!-- Filtro de Operadora -->
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+            Filtrar por Operadora
+        </div>
+        <div class="card-body">
+            <form method="get" class="form-inline">
+                <div class="row align-items-center">
+                    <div class="col-auto">
+                        <select name="operadora" class="form-control">
+                            <option value="">Todas as Operadoras</option>
+                            {% for operadora in operadoras %}
+                                <option value="{{ operadora.id }}" {% if operadora.id == operadora_selecionada %}selected{% endif %}>{{ operadora.nome }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-auto">
+                        <button type="submit" class="btn btn-primary">Filtrar</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Gráfico de Empregos -->
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+            Gráfico de Empregos
+        </div>
+        <div class="card-body">
+            <canvas id="graficoEmpregos"></canvas>
+        </div>
+    </div>
+
+    <!-- Tabela de Empregos -->
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+            Tabela de Empregos
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover">
+                    <thead>
+                        <tr>
+                            <th>Operadora</th>
+                            <th>Empregos Diretos</th>
+                            <th>Empregos Indiretos</th>
+                            <th>Total de Empregos</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for emprego in empregos %}
+                        <tr>
+                            <td>{{ emprego.operadora.nome }}</td>
+                            <td>{{ emprego.diretos }}</td>
+                            <td>{{ emprego.indiretos }}</td>
+                            <td>{{ emprego.total }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,30 @@
+{% extends "questionarios/partials/base_list.html" %}
+
+{% block indicator_title %}Indicadores de Investimento{% endblock %}
+{% block indicator_subtitle %}Gestão e controle de dados de investimento por operadora{% endblock %}
+
+{% block create_url %}{% url 'questionarios:investimento_create' %}{% endblock %}
+
+{% block table_headers %}
+<th>Telecomunicações</th>
+<th>Internet</th>
+<th>Incorpóreo Telecom</th>
+<th>Incorpóreo Internet</th>
+<th>Total Geral</th>
+{% endblock %}
+
+{% block table_row_data %}
+<td>{{ indicador.servicos_telecomunicacoes|default:"-" }}</td>
+<td>{{ indicador.servicos_internet|default:"-" }}</td>
+<td>{{ indicador.servicos_telecomunicacoes_incorporeo|default:"-" }}</td>
+<td>{{ indicador.servicos_internet_incorporeo|default:"-" }}</td>
+<td><strong>{{ indicador.calcular_total_investimento|default:"-" }}</strong></td>
+{% endblock %}
+
+{% block detail_url %}{% url 'questionarios:investimento_detail' indicador.pk %}{% endblock %}
+{% block update_url %}{% url 'questionarios:investimento_update' indicador.pk %}{% endblock %}
+{% block delete_url %}{% url 'questionarios:investimento_delete' indicador.pk %}{% endblock %}
+
+{% block table_colspan %}9{% endblock %}
+
+{% block resumo_url %}{% url 'questionarios:investimento_resumo' 2024 %}{% endblock %}

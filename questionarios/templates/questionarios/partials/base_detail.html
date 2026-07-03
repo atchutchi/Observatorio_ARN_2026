@@ -1,0 +1,168 @@
+{% extends "questionarios/base_questionarios.html" %}
+{% load static %}
+
+{% block questionario_content %}
+<!-- Header do Detalhe -->
+<div class="questionario-header">
+    <div class="d-flex justify-content-between align-items-start">
+        <div>
+            <h1 class="questionario-title">{% block detail_title %}Detalhes{% endblock %}</h1>
+            <p class="questionario-subtitle">{% block detail_subtitle %}Visualização completa dos dados{% endblock %}</p>
+        </div>
+        <div class="questionario-actions">
+            <a href="{% block edit_url %}#{% endblock %}" class="btn-binance">
+                <i class="fas fa-edit me-2"></i>Editar
+            </a>
+            <a href="{% block list_url %}#{% endblock %}" class="btn btn-outline">
+                <i class="fas fa-arrow-left me-2"></i>Voltar à Lista
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Informações Básicas -->
+<div class="platform-card mb-4">
+    <div class="card-header">
+        <h3 class="card-title">
+            <i class="fas fa-info-circle me-2"></i>
+            Informações Básicas
+        </h3>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-3">
+                <div class="detail-info-item">
+                    <div class="detail-info-icon">
+                        {% if object.operadora == 'ORANGE' %}
+                            <i class="fas fa-signal" style="color: #FF6600;"></i>
+                        {% elif object.operadora == 'TELECEL' %}
+                            <i class="fas fa-broadcast-tower" style="color: #DC3545;"></i>
+                        {% else %}
+                            <i class="fas fa-tower-cell"></i>
+                        {% endif %}
+                    </div>
+                    <div class="detail-info-content">
+                        <strong>Operadora</strong>
+                        <p class="operadora-badge {{ object.operadora|lower }}">{{ object.operadora }}</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-3">
+                <div class="detail-info-item">
+                    <div class="detail-info-icon">
+                        <i class="fas fa-calendar"></i>
+                    </div>
+                    <div class="detail-info-content">
+                        <strong>Período</strong>
+                        <p>{{ object.ano }} - {{ object.trimestre }}º Trimestre</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-3">
+                <div class="detail-info-item">
+                    <div class="detail-info-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="detail-info-content">
+                        <strong>Última Atualização</strong>
+                        <p>{{ object.data_atualizacao|date:"d/m/Y H:i" }}</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-3">
+                <div class="detail-info-item">
+                    <div class="detail-info-icon">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="detail-info-content">
+                        <strong>Atualizado por</strong>
+                        <p>{{ object.atualizado_por.get_full_name|default:object.atualizado_por.username }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Dados Específicos -->
+<div class="platform-card">
+    <div class="card-header">
+        <h3 class="card-title">
+            <i class="fas fa-chart-bar me-2"></i>
+            Dados do Indicador
+        </h3>
+    </div>
+    <div class="card-body">
+        {% block detail_content %}
+        <!-- Conteúdo específico definido nos templates filhos -->
+        {% endblock %}
+    </div>
+</div>
+
+<!-- Ações -->
+<div class="platform-card mt-4">
+    <div class="card-header">
+        <h3 class="card-title">
+            <i class="fas fa-cogs me-2"></i>
+            Ações Disponíveis
+        </h3>
+    </div>
+    <div class="card-body">
+        <div class="d-flex gap-3 flex-wrap">
+            <a href="#" class="btn-binance" id="editIndicatorBtn">
+                <i class="fas fa-edit me-2"></i>Editar Indicador
+            </a>
+            <a href="{% block duplicate_url %}#{% endblock %}" class="btn btn-outline">
+                <i class="fas fa-copy me-2"></i>Duplicar
+            </a>
+            <a href="{% block export_url %}#{% endblock %}" class="btn btn-outline">
+                <i class="fas fa-download me-2"></i>Exportar
+            </a>
+            <a href="{% block delete_url %}#{% endblock %}" class="btn btn-danger" 
+               onclick="return confirm('Tem certeza que deseja excluir este indicador?')">
+                <i class="fas fa-trash me-2"></i>Excluir
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block questionario_js %}
+<script>
+// Melhorias para página de detalhes
+document.addEventListener('DOMContentLoaded', function() {
+    // Animar valores numéricos
+    const valueElements = document.querySelectorAll('.detail-value[data-value]');
+    
+    valueElements.forEach(element => {
+        const finalValue = element.dataset.value;
+        if (finalValue && !isNaN(finalValue)) {
+            QuestionariosJS.animateValue(element, 0, parseInt(finalValue));
+        }
+    });
+    
+    // Configurar botão de editar para usar URL do header
+    const editBtn = document.getElementById('editIndicatorBtn');
+    const headerEditBtn = document.querySelector('.questionario-actions .btn-binance');
+    
+    if (editBtn && headerEditBtn) {
+        editBtn.href = headerEditBtn.href;
+    }
+    
+    // Adicionar tooltips informativos
+    const infoItems = document.querySelectorAll('.detail-info-item');
+    infoItems.forEach(item => {
+        item.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-2px)';
+        });
+        
+        item.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0)';
+        });
+    });
+});
+</script>
+{% endblock %}

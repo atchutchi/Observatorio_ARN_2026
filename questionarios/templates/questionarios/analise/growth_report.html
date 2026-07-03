@@ -1,0 +1,325 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Relatório de Crescimento do Mercado{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4">
+    <h1 class="mt-4">Relatório de Crescimento do Mercado</h1>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item"><a href="{% url 'questionarios:index' %}">Home</a></li>
+        <li class="breadcrumb-item active">Relatório de Crescimento</li>
+    </ol>
+
+    {% if error %}
+    <div class="alert alert-warning" role="alert">
+        {{ error }}
+    </div>
+    {% endif %}
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <i class="fas fa-chart-line me-1"></i>
+            Taxas de Crescimento Anual
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-xl-6">
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <i class="fas fa-chart-line me-1"></i>
+                            Crescimento de Assinantes (%)
+                        </div>
+                        <div class="card-body">
+                            <canvas id="chartGrowthAssinantes" width="100%" height="40"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-6">
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <i class="fas fa-chart-line me-1"></i>
+                            Crescimento de Receitas (%)
+                        </div>
+                        <div class="card-body">
+                            <canvas id="chartGrowthReceitas" width="100%" height="40"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xl-6">
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <i class="fas fa-chart-line me-1"></i>
+                            Crescimento de Investimentos (%)
+                        </div>
+                        <div class="card-body">
+                            <canvas id="chartGrowthInvestimentos" width="100%" height="40"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-6">
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <i class="fas fa-chart-line me-1"></i>
+                            Crescimento do Mercado Total (%)
+                        </div>
+                        <div class="card-body">
+                            <canvas id="chartGrowthMercadoTotal" width="100%" height="40"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="card mb-4">
+        <div class="card-header">
+            <i class="fas fa-table me-1"></i>
+            Taxas de Crescimento por Operadora
+        </div>
+        <div class="card-body">
+            <ul class="nav nav-tabs" id="yearTabs" role="tablist">
+                {% for ano in anos %}
+                {% if forloop.first %}
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="tab-{{ ano }}" data-bs-toggle="tab" data-bs-target="#content-{{ ano }}" type="button" role="tab" aria-controls="content-{{ ano }}" aria-selected="true">{{ ano }}</button>
+                </li>
+                {% else %}
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="tab-{{ ano }}" data-bs-toggle="tab" data-bs-target="#content-{{ ano }}" type="button" role="tab" aria-controls="content-{{ ano }}" aria-selected="false">{{ ano }}</button>
+                </li>
+                {% endif %}
+                {% endfor %}
+            </ul>
+            <div class="tab-content" id="yearTabContent">
+                {% for ano in anos %}
+                {% if forloop.first %}
+                <div class="tab-pane fade show active" id="content-{{ ano }}" role="tabpanel" aria-labelledby="tab-{{ ano }}">
+                {% else %}
+                <div class="tab-pane fade" id="content-{{ ano }}" role="tabpanel" aria-labelledby="tab-{{ ano }}">
+                {% endif %}
+                    <div class="table-responsive mt-4">
+                        <table class="table table-bordered growth-table" data-year="{{ ano }}">
+                            <thead>
+                                <tr>
+                                    <th>Operadora</th>
+                                    <th>Assinantes Rede Móvel</th>
+                                    <th>Receita Total</th>
+                                    <th>Investimentos</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Dados serão inseridos via JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Dados recebidos do contexto Django
+    const growthData = {{ growth_data|safe }};
+    const anos = {{ anos|safe }};
+    const operadoras = {{ operadoras|safe }};
+    
+    // Cores por operadora
+    const operadoraColors = {
+        'orange': 'rgba(255, 165, 0, 0.7)',
+        'telecel': 'rgba(255, 255, 0, 0.7)',
+        'telecel': 'rgba(0, 128, 0, 0.7)',
+        'MERCADO_TOTAL': 'rgba(54, 162, 235, 0.7)'
+    };
+    
+    // Função para formatar números
+    function formatNumber(num) {
+        return num.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
+    }
+    
+    // Preencher as tabelas
+    document.querySelectorAll('.growth-table').forEach(table => {
+        const year = table.dataset.year;
+        const tbody = table.querySelector('tbody');
+        
+        operadoras.forEach(operadora => {
+            if (growthData[operadora] && growthData[operadora][year]) {
+                const row = document.createElement('tr');
+                const data = growthData[operadora][year];
+                
+                row.innerHTML = `
+                    <td>${operadora}</td>
+                    <td>${data.assinantes_rede_movel ? formatNumber(data.assinantes_rede_movel) : 'N/A'}%</td>
+                    <td>${data.receita_total ? formatNumber(data.receita_total) : 'N/A'}%</td>
+                    <td>${data.investimentos ? formatNumber(data.investimentos) : 'N/A'}%</td>
+                `;
+                
+                tbody.appendChild(row);
+            }
+        });
+    });
+    
+    // Preparar dados para gráficos de crescimento de assinantes
+    function prepareGrowthChartData(indicator) {
+        // Filtrar apenas anos com dados (remover o primeiro ano que não tem taxa de crescimento)
+        const yearsWithGrowth = anos.slice(1);
+        const datasets = [];
+        
+        operadoras.forEach(operadora => {
+            if (operadora === 'MERCADO_TOTAL') return; // Vamos adicionar o mercado total depois
+            
+            const data = [];
+            yearsWithGrowth.forEach(ano => {
+                if (growthData[operadora] && growthData[operadora][ano] && growthData[operadora][ano][indicator] !== undefined) {
+                    data.push(growthData[operadora][ano][indicator]);
+                } else {
+                    data.push(null);
+                }
+            });
+            
+            if (data.some(value => value !== null)) {
+                datasets.push({
+                    label: operadora,
+                    data: data,
+                    backgroundColor: operadoraColors[operadora] || 'rgba(100, 100, 100, 0.7)',
+                    borderColor: operadoraColors[operadora] ? operadoraColors[operadora].replace('0.7', '1') : 'rgba(100, 100, 100, 1)',
+                    borderWidth: 2,
+                    tension: 0.1
+                });
+            }
+        });
+        
+        return {
+            labels: yearsWithGrowth,
+            datasets: datasets
+        };
+    }
+    
+    // Preparar dados para o gráfico de crescimento do mercado total
+    function prepareMarketTotalGrowthData() {
+        // Filtrar apenas anos com dados (remover o primeiro ano que não tem taxa de crescimento)
+        const yearsWithGrowth = anos.slice(1);
+        const datasets = [];
+        
+        const indicators = ['assinantes_rede_movel', 'receita_total', 'investimentos'];
+        const indicatorLabels = {
+            'assinantes_rede_movel': 'Assinantes',
+            'receita_total': 'Receitas',
+            'investimentos': 'Investimentos'
+        };
+        
+        const indicatorColors = {
+            'assinantes_rede_movel': 'rgba(255, 99, 132, 0.7)',
+            'receita_total': 'rgba(54, 162, 235, 0.7)',
+            'investimentos': 'rgba(75, 192, 192, 0.7)'
+        };
+        
+        indicators.forEach(indicator => {
+            const data = [];
+            yearsWithGrowth.forEach(ano => {
+                if (growthData['MERCADO_TOTAL'] && growthData['MERCADO_TOTAL'][ano] && growthData['MERCADO_TOTAL'][ano][indicator] !== undefined) {
+                    data.push(growthData['MERCADO_TOTAL'][ano][indicator]);
+                } else {
+                    data.push(null);
+                }
+            });
+            
+            if (data.some(value => value !== null)) {
+                datasets.push({
+                    label: indicatorLabels[indicator],
+                    data: data,
+                    backgroundColor: indicatorColors[indicator],
+                    borderColor: indicatorColors[indicator].replace('0.7', '1'),
+                    borderWidth: 2,
+                    tension: 0.1
+                });
+            }
+        });
+        
+        return {
+            labels: yearsWithGrowth,
+            datasets: datasets
+        };
+    }
+    
+    // Criar gráficos
+    const ctxGrowthAssinantes = document.getElementById('chartGrowthAssinantes').getContext('2d');
+    new Chart(ctxGrowthAssinantes, {
+        type: 'line',
+        data: prepareGrowthChartData('assinantes_rede_movel'),
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: false,
+                    title: {
+                        display: true,
+                        text: 'Taxa de Crescimento (%)'
+                    }
+                }
+            }
+        }
+    });
+    
+    const ctxGrowthReceitas = document.getElementById('chartGrowthReceitas').getContext('2d');
+    new Chart(ctxGrowthReceitas, {
+        type: 'line',
+        data: prepareGrowthChartData('receita_total'),
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: false,
+                    title: {
+                        display: true,
+                        text: 'Taxa de Crescimento (%)'
+                    }
+                }
+            }
+        }
+    });
+    
+    const ctxGrowthInvestimentos = document.getElementById('chartGrowthInvestimentos').getContext('2d');
+    new Chart(ctxGrowthInvestimentos, {
+        type: 'line',
+        data: prepareGrowthChartData('investimentos'),
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: false,
+                    title: {
+                        display: true,
+                        text: 'Taxa de Crescimento (%)'
+                    }
+                }
+            }
+        }
+    });
+    
+    const ctxGrowthMercadoTotal = document.getElementById('chartGrowthMercadoTotal').getContext('2d');
+    new Chart(ctxGrowthMercadoTotal, {
+        type: 'line',
+        data: prepareMarketTotalGrowthData(),
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: false,
+                    title: {
+                        display: true,
+                        text: 'Taxa de Crescimento (%)'
+                    }
+                }
+            }
+        }
+    });
+</script>
+{% endblock %} 

@@ -1,0 +1,128 @@
+{% extends 'questionarios/analise/base_analise.html' %}
+{% load static %}
+
+{% block specific_charts %}
+<div class="row mt-4">
+    <div class="col-lg-6 mb-3">
+        <h5>Capacidade Contratada (Anual)</h5>
+        <canvas id="capacidadeContratadaChart"></canvas>
+    </div>
+     <div class="col-lg-6 mb-3">
+        <h5>Tráfego Médio Semanal (Anual)</h5>
+        <canvas id="trafegoMedioChart"></canvas>
+    </div>
+</div>
+{% endblock %}
+
+{% block data_table %}
+<div class="card mt-4">
+    <div class="card-header">
+        Dados Detalhados de LBI - {{ ano_selecionado }}
+    </div>
+    <div class="card-body">
+         <div class="table-responsive">
+            <table class="table table-bordered table-hover">
+                <thead class="table-light">
+                    <tr>
+                        <th>Operadora</th>
+                        <th>Período</th>
+                        <th>Capacidade Contratada (Mbps)</th>
+                        <th>Tráfego Médio Semanal (Mbps)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for op, op_data in analysis_data.items %}
+                        {% if op != 'TOTAL' %}
+                            <!-- Annual Data -->
+                            <tr class="table-primary">
+                                <td rowspan="5">{{ op }}</td>
+                                <td><b>Anual</b></td>
+                                <td>{{ op_data.annual.total_capacidade_contratada_mbps|floatformat:2 }}</td>
+                                <td>{{ op_data.annual.total_trafego_medio_semanal_mbps|floatformat:2 }}</td>
+                            </tr>
+                            <!-- Quarterly Data -->
+                            {% for q, q_data in op_data.quarterly.items %}
+                            <tr>
+                                <td><b>{{ q }}</b></td>
+                                <td>{{ q_data.total_capacidade_contratada_mbps|floatformat:2 }}</td>
+                                <td>{{ q_data.total_trafego_medio_semanal_mbps|floatformat:2 }}</td>
+                            </tr>
+                            {% endfor %}
+                        {% endif %}
+                    {% endfor %}
+                    <!-- Total Market -->
+                     <tr class="table-dark">
+                        <td rowspan="5"><b>TOTAL Mercado</b></td>
+                        <td><b>Anual</b></td>
+                        <td>{{ analysis_data.TOTAL.annual.total_capacidade_contratada_mbps|floatformat:2 }}</td>
+                        <td>{{ analysis_data.TOTAL.annual.total_trafego_medio_semanal_mbps|floatformat:2 }}</td>
+                    </tr>
+                    {% for q, q_data in analysis_data.TOTAL.quarterly.items %}
+                    <tr class="table-secondary">
+                         <td><b>{{ q }}</b></td>
+                        <td>{{ q_data.total_capacidade_contratada_mbps|floatformat:2 }}</td>
+                        <td>{{ q_data.total_trafego_medio_semanal_mbps|floatformat:2 }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block specific_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const analysisData = window.getAnalysisData();
+    if (!analysisData) return;
+    console.log("LBI Data:", analysisData);
+
+    const operators = Object.keys(analysisData).filter(op => op !== 'TOTAL');
+    const colors = window.getOperatorColors();
+    const marketAnnual = analysisData['TOTAL']?.annual || {};
+
+    // Chart: Capacidade Contratada (Anual)
+    const capacidadeData = {
+        labels: operators,
+        datasets: [{
+            label: 'Capacidade Contratada (Mbps - Anual)',
+            data: operators.map(op => analysisData[op]?.annual?.total_capacidade_contratada_mbps || 0),
+            backgroundColor: operators.map(op => colors[op] || '#cccccc'),
+        }]
+    };
+    window.createAnalysisChart('capacidadeContratadaChart', 'bar', capacidadeData.labels, capacidadeData.datasets);
+
+    // Chart: Tráfego Médio Semanal (Anual)
+    const trafegoMedioData = {
+        labels: operators,
+        datasets: [{
+            label: 'Tráfego Médio Semanal (Mbps - Anual)',
+            data: operators.map(op => analysisData[op]?.annual?.total_trafego_medio_semanal_mbps || 0),
+            backgroundColor: operators.map(op => colors[op] || '#cccccc'),
+             borderColor: 'rgba(75, 192, 192, 1)',
+             type: 'line', // Maybe show average as a line
+             yAxisID: 'yAvg' // Use a secondary axis if needed
+        }]
+    };
+    window.createAnalysisChart('trafegoMedioChart', 'bar', trafegoMedioData.labels, trafegoMedioData.datasets, {
+        scales: {
+            y: { 
+                beginAtZero: true, 
+                type: 'linear', 
+                position: 'left',
+                title: { display: true, text: 'Mbps' }
+            },
+            // yAvg: {
+            //     beginAtZero: true,
+            //     type: 'linear',
+            //     position: 'right',
+            //     grid: { drawOnChartArea: false }, // only want the grid lines for the main axis
+            //     title: { display: true, text: 'Avg Mbps' }
+            // }
+        }
+    });
+
+});
+</script>
+{% endblock %} 

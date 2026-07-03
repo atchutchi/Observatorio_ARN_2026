@@ -1,0 +1,305 @@
+{# dashboard/templates/dashboard/analytics.html #}
+{% extends "dashboard/base.html" %}
+{% load static %}
+
+{% block title %}Análises{% endblock %}
+
+{% block dashboard_content %}
+<div class="container-fluid">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="dashboard-card p-4">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h2 class="mb-0">Análise de Mercado</h2>
+                        <p class="text-secondary mb-0">Visualização e comparação de dados</p>
+                    </div>
+                    <div class="d-flex">
+                        <div class="dropdown me-2">
+                            <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="periodDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-calendar me-1"></i> {{ periodo|default:"2025" }}
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="periodDropdown">
+                                <li><a class="dropdown-item" href="?ano=2023">2023</a></li>
+                                <li><a class="dropdown-item" href="?ano=2024">2024</a></li>
+                                <li><a class="dropdown-item" href="?ano=2025">2025</a></li>
+                            </ul>
+                        </div>
+                        <div class="dropdown">
+                            <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="viewDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-eye me-1"></i> {{ view|default:"Mensal" }}
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="viewDropdown">
+                                <li><a class="dropdown-item" href="?view=mensal">Mensal</a></li>
+                                <li><a class="dropdown-item" href="?view=trimestral">Trimestral</a></li>
+                                <li><a class="dropdown-item" href="?view=anual">Anual</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Market Share -->
+    <div class="row mb-4">
+        <div class="col-lg-6">
+            <div class="dashboard-card p-4">
+                <h5 class="mb-3">Participação de Mercado</h5>
+                <div class="chart-container" style="position: relative; height:300px;">
+                    <canvas id="marketShareChart"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="dashboard-card p-4">
+                <h5 class="mb-3">Evolução de Assinantes</h5>
+                <div class="chart-container" style="position: relative; height:300px;">
+                    <canvas id="subscribersChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tráfego e Receitas -->
+    <div class="row mb-4">
+        <div class="col-lg-6">
+            <div class="dashboard-card p-4">
+                <h5 class="mb-3">Tráfego de Internet (GB)</h5>
+                <div class="chart-container" style="position: relative; height:300px;">
+                    <canvas id="internetTrafficChart"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="dashboard-card p-4">
+                <h5 class="mb-3">Receitas por Operadora</h5>
+                <div class="chart-container" style="position: relative; height:300px;">
+                    <canvas id="revenueChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Comparativo por Região -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="dashboard-card p-4">
+                <h5 class="mb-3">Distribuição Regional de Assinantes</h5>
+                <div class="chart-container" style="position: relative; height:400px;">
+                    <canvas id="regionalDistributionChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Cores das operadoras
+        const colors = {
+            orange: {
+                primary: '#FF6B00',
+                secondary: 'rgba(255, 107, 0, 0.2)'
+            },
+            telecel: {
+                primary: '#FFCE00',
+                secondary: 'rgba(255, 206, 0, 0.2)'
+            },
+            telecel: {
+                primary: '#E30613',
+                secondary: 'rgba(227, 6, 19, 0.2)'
+            }
+        };
+
+        // Market Share Chart
+        const marketShareCtx = document.getElementById('marketShareChart').getContext('2d');
+        new Chart(marketShareCtx, {
+            type: 'pie',
+            data: {
+                labels: ['Orange', 'TELECEL', 'TELECEL'],
+                datasets: [{
+                    label: 'Participação de Mercado',
+                    data: [45, 35, 20],
+                    backgroundColor: [
+                        colors.orange.primary,
+                        colors.telecel.primary,
+                        colors.telecel.primary
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false
+            }
+        });
+
+        // Subscribers Chart
+        const subscribersCtx = document.getElementById('subscribersChart').getContext('2d');
+        new Chart(subscribersCtx, {
+            type: 'line',
+            data: {
+                labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'],
+                datasets: [
+                    {
+                        label: 'Orange',
+                        data: [400000, 410000, 415000, 418000, 420000, 435000, 440000, 445000, 450000, 455000, 460000, 465000],
+                        backgroundColor: colors.orange.secondary,
+                        borderColor: colors.orange.primary,
+                        tension: 0.4,
+                        fill: true
+                    },
+                    {
+                        label: 'TELECEL',
+                        data: [350000, 355000, 360000, 365000, 370000, 375000, 380000, 385000, 390000, 395000, 400000, 405000],
+                        backgroundColor: colors.telecel.secondary,
+                        borderColor: colors.telecel.primary,
+                        tension: 0.4,
+                        fill: true
+                    },
+                    {
+                        label: 'TELECEL',
+                        data: [150000, 155000, 160000, 165000, 170000, 175000, 180000, 185000, 190000, 195000, 200000, 205000],
+                        backgroundColor: colors.telecel.secondary,
+                        borderColor: colors.telecel.primary,
+                        tension: 0.4,
+                        fill: true
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: false
+                    }
+                }
+            }
+        });
+
+        // Internet Traffic Chart
+        const internetTrafficCtx = document.getElementById('internetTrafficChart').getContext('2d');
+        new Chart(internetTrafficCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun'],
+                datasets: [
+                    {
+                        label: 'Orange',
+                        data: [3500, 3600, 3700, 3800, 3900, 4000],
+                        backgroundColor: colors.orange.primary
+                    },
+                    {
+                        label: 'TELECEL',
+                        data: [3000, 3100, 3200, 3300, 3400, 3500],
+                        backgroundColor: colors.telecel.primary
+                    },
+                    {
+                        label: 'TELECEL',
+                        data: [1500, 1600, 1700, 1800, 1900, 2000],
+                        backgroundColor: colors.telecel.primary
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+        // Revenue Chart
+        const revenueCtx = document.getElementById('revenueChart').getContext('2d');
+        new Chart(revenueCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun'],
+                datasets: [
+                    {
+                        label: 'Orange',
+                        data: [2200000, 2250000, 2300000, 2350000, 2400000, 2450000],
+                        backgroundColor: colors.orange.primary
+                    },
+                    {
+                        label: 'TELECEL',
+                        data: [1900000, 1950000, 2000000, 2050000, 2100000, 2150000],
+                        backgroundColor: colors.telecel.primary
+                    },
+                    {
+                        label: 'TELECEL',
+                        data: [900000, 950000, 1000000, 1050000, 1100000, 1150000],
+                        backgroundColor: colors.telecel.primary
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return value / 1000000 + 'M';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // Regional Distribution Chart
+        const regionalDistributionCtx = document.getElementById('regionalDistributionChart').getContext('2d');
+        new Chart(regionalDistributionCtx, {
+            type: 'radar',
+            data: {
+                labels: ['Bissau', 'Bafatá', 'Biombo', 'Bolama', 'Cacheu', 'Gabú', 'Oio', 'Quinara', 'Tombali'],
+                datasets: [
+                    {
+                        label: 'Orange',
+                        data: [80, 60, 65, 55, 70, 60, 65, 50, 45],
+                        backgroundColor: colors.orange.secondary,
+                        borderColor: colors.orange.primary,
+                        borderWidth: 2,
+                        pointBackgroundColor: colors.orange.primary
+                    },
+                    {
+                        label: 'TELECEL',
+                        data: [70, 65, 60, 50, 65, 70, 60, 45, 40],
+                        backgroundColor: colors.telecel.secondary,
+                        borderColor: colors.telecel.primary,
+                        borderWidth: 2,
+                        pointBackgroundColor: colors.telecel.primary
+                    },
+                    {
+                        label: 'TELECEL',
+                        data: [40, 35, 30, 25, 35, 40, 30, 25, 20],
+                        backgroundColor: colors.telecel.secondary,
+                        borderColor: colors.telecel.primary,
+                        borderWidth: 2,
+                        pointBackgroundColor: colors.telecel.primary
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                elements: {
+                    line: {
+                        tension: 0.1
+                    }
+                }
+            }
+        });
+    });
+</script>
+{% endblock %}

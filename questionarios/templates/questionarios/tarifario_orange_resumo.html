@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4">Resumo Tarifário Orange - {{ ano }}</h2>
+
+    <!-- Resumo Trimestral -->
+    <div class="row mb-4">
+        {% for trimestre in totais_trimestrais %}
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    {{ trimestre.trimestre }}º Trimestre
+                </div>
+                <div class="card-body">
+                    <p><strong>Total Internet Pré-pago:</strong> {{ trimestre.total_internet_prepago }}</p>
+                    <p><strong>Total Internet Residencial:</strong> {{ trimestre.total_internet_residencial }}</p>
+                    <p><strong>Total Passes:</strong> {{ trimestre.total_passes }}</p>
+                    <p><strong>Média Tarifa On-net:</strong> {{ trimestre.media_tarifa_onnet }}</p>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Resumo Anual -->
+    <div class="card mb-4">
+        <div class="card-header bg-success text-white">
+            Resumo Anual {{ ano }}
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-4">
+                    <p><strong>Total Internet Pré-pago:</strong> {{ total_internet_prepago_anual }}</p>
+                </div>
+                <div class="col-md-4">
+                    <p><strong>Total Internet Residencial:</strong> {{ total_internet_residencial_anual }}</p>
+                </div>
+                <div class="col-md-4">
+                    <p><strong>Total Passes:</strong> {{ total_passes_anual }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <a href="{% url 'questionarios:tarifario_orange_list' %}" class="btn btn-secondary">
+        <i class="fas fa-arrow-left"></i> Voltar para a Lista
+    </a>
+</div>
+{% endblock %}

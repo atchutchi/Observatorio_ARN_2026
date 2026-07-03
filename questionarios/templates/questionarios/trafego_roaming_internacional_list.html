@@ -1,0 +1,28 @@
+{% extends "questionarios/partials/base_list.html" %}
+
+{% block indicator_title %}Indicadores de Tráfego Roaming Internacional{% endblock %}
+{% block indicator_subtitle %}Gestão e controle de dados de roaming internacional por operadora{% endblock %}
+
+{% block create_url %}{% url 'questionarios:trafego_roaming_internacional_create' %}{% endblock %}
+
+{% block table_headers %}
+<th>Voz Enviado</th>
+<th>Voz Recebido</th>
+<th>SMS Enviado</th>
+<th>Dados</th>
+{% endblock %}
+
+{% block table_row_data %}
+<td>{{ indicador.voz_enviado|default:"-" }}</td>
+<td>{{ indicador.voz_recebido|default:"-" }}</td>
+<td>{{ indicador.sms_enviado|default:"-" }}</td>
+<td>{{ indicador.dados_roaming|default:"-" }}</td>
+{% endblock %}
+
+{% block detail_url %}{% url 'questionarios:trafego_roaming_internacional_detail' indicador.pk %}{% endblock %}
+{% block update_url %}{% url 'questionarios:trafego_roaming_internacional_update' indicador.pk %}{% endblock %}
+{% block delete_url %}{% url 'questionarios:trafego_roaming_internacional_delete' indicador.pk %}{% endblock %}
+
+{% block table_colspan %}8{% endblock %}
+
+{% block resumo_url %}{% url 'questionarios:trafego_roaming_internacional_resumo' 2024 %}{% endblock %}

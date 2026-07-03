@@ -1,0 +1,240 @@
+{# dashboard/templates/dashboard/home.html #}
+{% extends "dashboard/base.html" %}
+{% load static %}
+
+{% block dashboard_content %}
+<!-- Header de Boas-vindas -->
+<div class="platform-card mb-4">
+    <div class="card-header">
+        <h2 class="card-title mb-0">
+            <i class="fas fa-chart-line me-2"></i>
+            Bem-vindo, {{ request.user.get_full_name|default:request.user.email }}
+        </h2>
+        <p class="card-subtitle">Dashboard do Observatório das Telecomunicações da Guiné-Bissau</p>
+    </div>
+</div>
+
+<!-- KPIs Principais -->
+<div class="dashboard-kpis">
+    {% if request.user.is_operator %}
+        <!-- KPIs para Operadoras -->
+        <div class="kpi-card kpi-warning">
+            <div class="kpi-icon">
+                <i class="fas fa-clock"></i>
+            </div>
+            <div class="kpi-value">{{ stats.pending_submissions }}</div>
+            <div class="kpi-label">Submissões Pendentes</div>
+            <div class="kpi-change {% if stats.pending_submissions > 0 %}negative{% else %}positive{% endif %}">
+                <i class="fas fa-{% if stats.pending_submissions > 0 %}exclamation-triangle{% else %}check{% endif %}"></i>
+                {% if stats.pending_submissions > 0 %}Ação Necessária{% else %}Em Dia{% endif %}
+            </div>
+        </div>
+        
+        <div class="kpi-card kpi-info">
+            <div class="kpi-icon">
+                <i class="fas fa-calendar"></i>
+            </div>
+            <div class="kpi-value">{{ stats.last_submission|date:"d/m" }}</div>
+            <div class="kpi-label">Última Submissão</div>
+            <div class="kpi-change neutral">
+                <i class="fas fa-info-circle"></i>
+                {{ stats.last_submission|date:"M Y" }}
+            </div>
+        </div>
+        
+        <div class="kpi-card {% if stats.license_status == 'Válida' %}kpi-success{% else %}kpi-danger{% endif %}">
+            <div class="kpi-icon">
+                <i class="fas fa-certificate"></i>
+            </div>
+            <div class="kpi-value">{{ stats.license_status }}</div>
+            <div class="kpi-label">Status da Licença</div>
+            <div class="kpi-change {% if stats.license_status == 'Válida' %}positive{% else %}negative{% endif %}">
+                <i class="fas fa-{% if stats.license_status == 'Válida' %}check{% else %}times{% endif %}"></i>
+                {{ stats.license_status }}
+            </div>
+        </div>
+    {% else %}
+        <!-- KPIs para Administradores -->
+        <div class="kpi-card kpi-primary">
+            <div class="kpi-icon">
+                <i class="fas fa-building"></i>
+            </div>
+            <div class="kpi-value">{{ stats.total_operators }}</div>
+            <div class="kpi-label">Total Operadoras</div>
+            <div class="kpi-change positive">
+                <i class="fas fa-chart-line"></i>
+                Ativas
+            </div>
+        </div>
+        
+        <div class="kpi-card kpi-success">
+            <div class="kpi-icon">
+                <i class="fas fa-file-upload"></i>
+            </div>
+            <div class="kpi-value">{{ stats.monthly_submissions }}</div>
+            <div class="kpi-label">Submissões Este Mês</div>
+            <div class="kpi-change positive">
+                <i class="fas fa-arrow-up"></i>
+                +15%
+            </div>
+        </div>
+        
+        <div class="kpi-card kpi-warning">
+            <div class="kpi-icon">
+                <i class="fas fa-user-clock"></i>
+            </div>
+            <div class="kpi-value">{{ stats.pending_approvals }}</div>
+            <div class="kpi-label">Aprovações Pendentes</div>
+            <div class="kpi-change {% if stats.pending_approvals > 0 %}negative{% else %}positive{% endif %}">
+                <i class="fas fa-{% if stats.pending_approvals > 0 %}exclamation{% else %}check{% endif %}"></i>
+                {% if stats.pending_approvals > 0 %}Requer Ação{% else %}Em Dia{% endif %}
+            </div>
+        </div>
+        
+        <div class="kpi-card kpi-info">
+            <div class="kpi-icon">
+                <i class="fas fa-chart-pie"></i>
+            </div>
+            <div class="kpi-value">{{ stats.compliance_rate }}%</div>
+            <div class="kpi-label">Taxa de Compliance</div>
+            <div class="kpi-change {% if stats.compliance_rate >= 80 %}positive{% elif stats.compliance_rate >= 60 %}neutral{% else %}negative{% endif %}">
+                <i class="fas fa-{% if stats.compliance_rate >= 80 %}arrow-up{% elif stats.compliance_rate >= 60 %}minus{% else %}arrow-down{% endif %}"></i>
+                {% if stats.compliance_rate >= 80 %}Excelente{% elif stats.compliance_rate >= 60 %}Bom{% else %}Baixo{% endif %}
+            </div>
+        </div>
+    {% endif %}
+</div>
+
+<!-- Seção Principal -->
+<div class="dashboard-widgets">
+    <!-- Atividades Recentes -->
+    <div class="widget-card">
+        <div class="widget-header">
+            <h3 class="widget-title">
+                <i class="fas fa-history me-2"></i>
+                Atividades Recentes
+            </h3>
+            <p class="widget-subtitle">Últimas ações no sistema</p>
+        </div>
+        <div class="widget-body">
+            <div class="activity-feed">
+                {% for activity in recent_activities %}
+                <div class="activity-item">
+                    <div class="activity-icon activity-{{ activity.status_class|default:'info' }}">
+                        <i class="fas fa-{{ activity.icon|default:'info-circle' }}"></i>
+                    </div>
+                    <div class="activity-content">
+                        <h6>{{ activity.description }}</h6>
+                        <p>{{ activity.details|default:'Sem detalhes adicionais' }}</p>
+                        <div class="activity-time">{{ activity.date|date:"d/m/Y H:i" }}</div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="text-center py-4" style="color: var(--binance-text-muted);">
+                    <i class="fas fa-inbox fa-2x mb-3"></i>
+                    <p>Nenhuma atividade recente</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    
+    <!-- Ações Rápidas -->
+    <div class="widget-card">
+        <div class="widget-header">
+            <h3 class="widget-title">
+                <i class="fas fa-bolt me-2"></i>
+                Ações Rápidas
+            </h3>
+            <p class="widget-subtitle">Acesso direto às principais funções</p>
+        </div>
+        <div class="widget-body">
+            <div class="d-grid gap-3">
+                {% if request.user.is_operator %}
+                    <a href="{% url 'questionarios:estacoes_moveis_create' %}" class="btn-binance">
+                        <i class="fas fa-plus me-2"></i>Nova Submissão
+                    </a>
+                    <a href="{% url 'questionarios:estacoes_moveis_list' %}" class="btn btn-outline">
+                        <i class="fas fa-history me-2"></i>Ver Histórico
+                    </a>
+                    <a href="{% url 'questionarios:upload_excel' %}" class="btn btn-outline">
+                        <i class="fas fa-file-excel me-2"></i>Upload Excel
+                    </a>
+                {% else %}
+                    <a href="{% url 'dashboard:market-analytics' %}" class="btn-binance">
+                        <i class="fas fa-chart-line me-2"></i>Ver Analytics
+                    </a>
+                    <a href="{% url 'dashboard:market-report' %}" class="btn btn-outline">
+                        <i class="fas fa-file-alt me-2"></i>Gerar Relatório
+                    </a>
+                    <a href="{% url 'questionarios:analise_assinantes' %}" class="btn btn-outline">
+                        <i class="fas fa-chart-bar me-2"></i>Análises Detalhadas
+                    </a>
+                    <a href="{% url 'dashboard:chatbot' %}" class="btn btn-outline">
+                        <i class="fas fa-robot me-2"></i>Assistente IA
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Stats Summary -->
+{% if request.user.is_staff %}
+<div class="platform-card">
+    <div class="card-header">
+        <h3 class="card-title">
+            <i class="fas fa-chart-bar me-2"></i>
+            Resumo do Sistema
+        </h3>
+        <p class="card-subtitle">Visão geral dos dados mais recentes</p>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="dashboard-table">
+                <thead>
+                    <tr>
+                        <th>Indicador</th>
+                        <th>Valor Atual</th>
+                        <th>Tendência</th>
+                        <th>Última Atualização</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Assinantes Móveis</td>
+                        <td>1.885.870</td>
+                        <td>
+                            <div class="growth-indicator positive">
+                                <i class="fas fa-arrow-up"></i> +3.2%
+                            </div>
+                        </td>
+                        <td>15/08/2025</td>
+                    </tr>
+                    <tr>
+                        <td>Receitas Totais</td>
+                        <td>48.475M FCFA</td>
+                        <td>
+                            <div class="growth-indicator positive">
+                                <i class="fas fa-arrow-up"></i> +7.9%
+                            </div>
+                        </td>
+                        <td>10/08/2025</td>
+                    </tr>
+                    <tr>
+                        <td>Tráfego de Voz</td>
+                        <td>4.799M min</td>
+                        <td>
+                            <div class="growth-indicator positive">
+                                <i class="fas fa-arrow-up"></i> +28%
+                            </div>
+                        </td>
+                        <td>12/08/2025</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

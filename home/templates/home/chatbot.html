@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Chatbot - Observatório Telecom GB{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'home/css/chatbot.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <h1 class="mb-4">Assistente Virtual</h1>
+    
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="card shadow-sm" style="height: 600px; display: flex; flex-direction: column;">
+                <!-- Chat Messages -->
+                <div id="chat-messages" class="p-3 flex-grow-1" style="overflow-y: auto;">
+                    <div class="message system-message mb-3">
+                        <div class="message-content">
+                            Olá! Sou o assistente virtual do Observatório de Telecomunicações da Guiné-Bissau. Como posso ajudar você hoje?
+                        </div>
+                        <div class="message-time">Agora</div>
+                    </div>
+                    
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="message {% if message.is_user %}user-message{% else %}system-message{% endif %} mb-3">
+                                <div class="message-content">
+                                    {{ message.content }}
+                                </div>
+                                <div class="message-time">{{ message.timestamp }}</div>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+                
+                <!-- Chat Input -->
+                <div class="chat-input-container p-3 border-top">
+                    <form id="chat-form">
+                        {% csrf_token %}
+                        <div class="input-group">
+                            <input type="text" id="user-input" name="user_message" class="form-control" placeholder="Digite sua pergunta..." required>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <div class="text-center mt-3">
+                <p class="text-muted">Sugestões de perguntas:</p>
+                <div class="d-flex flex-wrap justify-content-center gap-2">
+                    <button class="btn btn-sm btn-outline-secondary suggestion-btn">Quais operadoras existem na Guiné-Bissau?</button>
+                    <button class="btn btn-sm btn-outline-secondary suggestion-btn">Qual a cobertura 4G no país?</button>
+                    <button class="btn btn-sm btn-outline-secondary suggestion-btn">Quantos assinantes de telefonia móvel existem?</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'home/js/chatbot.js' %}"></script>
+{% endblock %} 

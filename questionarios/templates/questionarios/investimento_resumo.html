@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4">Resumo de Investimentos - {{ ano }}</h2>
+
+    <!-- Filtro de Operadora -->
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">Filtrar por Operadora</h5>
+        </div>
+        <div class="card-body">
+            <form method="get" class="form-inline">
+                <div class="row align-items-center">
+                    <div class="col-auto">
+                        <select name="operadora" class="form-select">
+                            <option value="">Todas</option>
+                            <option value="orange" {% if operadora_selecionada == 'orange' %}selected{% endif %}>Orange</option>
+                            <option value="telecel" {% if operadora_selecionada == 'telecel' %}selected{% endif %}>TELECEL</option>
+                        </select>
+                    </div>
+                    <div class="col-auto">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-filter"></i> Filtrar
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    {% if operadora_selecionada %}
+    <div class="alert alert-info">
+        Mostrando dados da operadora: {{ operadora_selecionada|upper }}
+    </div>
+    {% endif %}
+
+    <!-- Resumos Trimestrais -->
+    <h3>Totais Trimestrais</h3>
+    {% for trimestre in totais_trimestrais %}
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">{{ trimestre.trimestre }}º Trimestre</h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <h6>Investimento Corpóreo</h6>
+                    <p>Total: {{ trimestre.total_corporeo|floatformat:2 }} FCFA</p>
+                </div>
+                <div class="col-md-6">
+                    <h6>Investimento Incorpóreo</h6>
+                    <p>Total: {{ trimestre.total_incorporeo|floatformat:2 }} FCFA</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <h6>Outros Investimentos</h6>
+                    <p>Total: {{ trimestre.total_outros|floatformat:2 }} FCFA</p>
+                </div>
+                <div class="col-md-6">
+                    <h6>Total Trimestral</h6>
+                    <p>Total: {{ trimestre.total_geral|floatformat:2 }} FCFA</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+
+    <!-- Totais Anuais -->
+    <div class="card mb-4">
+        <div class="card-header bg-success text-white">
+            <h5 class="mb-0">Totais Anuais - {{ ano }}</h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <h6>Investimento Corpóreo</h6>
+                    <p>Total: {{ total_corporeo_anual|floatformat:2 }} FCFA</p>
+                </div>
+                <div class="col-md-6">
+                    <h6>Investimento Incorpóreo</h6>
+                    <p>Total: {{ total_incorporeo_anual|floatformat:2 }} FCFA</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <h6>Outros Investimentos</h6>
+                    <p>Total: {{ total_outros_anual|floatformat:2 }} FCFA</p>
+                </div>
+                <div class="col-md-6">
+                    <h6>Total Anual</h6>
+                    <p class="h4">{{ total_geral_anual|floatformat:2 }} FCFA</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Botões de Ação -->
+    <div class="mt-4 mb-4">
+        <a href="{% url 'questionarios:investimento_list' %}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Voltar para a Lista
+        </a>
+        <button onclick="window.print()" class="btn btn-primary">
+            <i class="fas fa-print"></i> Imprimir Relatório
+        </button>
+    </div>
+</div>
+{% endblock %}

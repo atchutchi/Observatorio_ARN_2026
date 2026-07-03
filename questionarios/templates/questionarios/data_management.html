@@ -1,0 +1,326 @@
+{% extends "questionarios/base_questionarios.html" %}
+{% load static %}
+
+{% block questionario_title %}Central de Gestão de Dados{% endblock %}
+
+{% block questionario_content %}
+<!-- Header Principal -->
+<div class="questionario-header">
+    <div class="text-center">
+        <h1 class="questionario-title">Central de Gestão de Dados</h1>
+        <p class="questionario-subtitle">Acesso a todos os indicadores e formulários de telecomunicações</p>
+    </div>
+</div>
+
+<!-- Grid de Indicadores -->
+<div class="data-management-grid">
+    <!-- Dados Principais -->
+    <div class="data-section">
+        <h3 class="data-section-title">
+            <i class="fas fa-chart-line me-2"></i>
+            Indicadores Principais
+        </h3>
+        <div class="data-cards-grid">
+            <a href="{% url 'questionarios:estacoes_moveis_list' %}" class="data-management-card">
+                <div class="data-card-icon">
+                    <i class="fas fa-signal"></i>
+                </div>
+                <div class="data-card-content">
+                    <h4>Estações Móveis</h4>
+                    <p>Gestão de estações móveis e banda larga por operadora</p>
+                    <div class="data-card-stats">
+                        <span class="badge-questionario badge-questionario-info">3G + 4G</span>
+                    </div>
+                </div>
+            </a>
+            
+            <a href="{% url 'questionarios:assinantes_list' %}" class="data-management-card">
+                <div class="data-card-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <div class="data-card-content">
+                    <h4>Assinantes</h4>
+                    <p>Dados detalhados de assinantes por plano e serviço</p>
+                    <div class="data-card-stats">
+                        <span class="badge-questionario badge-questionario-success">Pré/Pós-pago</span>
+                    </div>
+                </div>
+            </a>
+            
+            <a href="{% url 'questionarios:receitas_list' %}" class="data-management-card">
+                <div class="data-card-icon">
+                    <i class="fas fa-dollar-sign"></i>
+                </div>
+                <div class="data-card-content">
+                    <h4>Receitas</h4>
+                    <p>Faturamento e receitas por operadora e serviço</p>
+                    <div class="data-card-stats">
+                        <span class="badge-questionario badge-questionario-warning">FCFA</span>
+                    </div>
+                </div>
+            </a>
+            
+            <a href="{% url 'questionarios:investimento_list' %}" class="data-management-card">
+                <div class="data-card-icon">
+                    <i class="fas fa-chart-pie"></i>
+                </div>
+                <div class="data-card-content">
+                    <h4>Investimento</h4>
+                    <p>Investimentos em infraestrutura e tecnologia</p>
+                    <div class="data-card-stats">
+                        <span class="badge-questionario badge-questionario-info">CAPEX</span>
+                    </div>
+                </div>
+            </a>
+            
+            <a href="{% url 'questionarios:emprego_list' %}" class="data-management-card">
+                <div class="data-card-icon">
+                    <i class="fas fa-briefcase"></i>
+                </div>
+                <div class="data-card-content">
+                    <h4>Emprego</h4>
+                    <p>Dados de emprego direto e indireto no setor</p>
+                    <div class="data-card-stats">
+                        <span class="badge-questionario badge-questionario-success">RH</span>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
+    
+    <!-- Dados de Tráfego -->
+    <div class="data-section">
+        <h3 class="data-section-title">
+            <i class="fas fa-phone me-2"></i>
+            Tráfego de Voz e Dados
+        </h3>
+        <div class="data-cards-grid">
+            <a href="{% url 'questionarios:trafego_originado_list' %}" class="data-management-card">
+                <div class="data-card-icon">
+                    <i class="fas fa-phone"></i>
+                </div>
+                <div class="data-card-content">
+                    <h4>Tráfego Originado</h4>
+                    <p>Chamadas originadas por operadora</p>
+                    <div class="data-card-stats">
+                        <span class="badge-questionario badge-questionario-info">On/Off-Net</span>
+                    </div>
+                </div>
+            </a>
+            
+            <a href="{% url 'questionarios:trafego_terminado_list' %}" class="data-management-card">
+                <div class="data-card-icon">
+                    <i class="fas fa-phone-incoming"></i>
+                </div>
+                <div class="data-card-content">
+                    <h4>Tráfego Terminado</h4>
+                    <p>Chamadas terminadas e recebidas</p>
+                    <div class="data-card-stats">
+                        <span class="badge-questionario badge-questionario-success">Incoming</span>
+                    </div>
+                </div>
+            </a>
+            
+            <a href="{% url 'questionarios:trafego_roaming_internacional_list' %}" class="data-management-card">
+                <div class="data-card-icon">
+                    <i class="fas fa-globe-americas"></i>
+                </div>
+                <div class="data-card-content">
+                    <h4>Tráfego Roaming</h4>
+                    <p>Roaming internacional e dados</p>
+                    <div class="data-card-stats">
+                        <span class="badge-questionario badge-questionario-warning">Internacional</span>
+                    </div>
+                </div>
+            </a>
+            
+            <a href="{% url 'questionarios:trafego_internet_list' %}" class="data-management-card">
+                <div class="data-card-icon">
+                    <i class="fas fa-globe"></i>
+                </div>
+                <div class="data-card-content">
+                    <h4>Tráfego Internet</h4>
+                    <p>Dados de tráfego de internet e navegação</p>
+                    <div class="data-card-stats">
+                        <span class="badge-questionario badge-questionario-info">Download/Upload</span>
+                    </div>
+                </div>
+            </a>
+            
+            <a href="{% url 'questionarios:internet_fixo_list' %}" class="data-management-card">
+                <div class="data-card-icon">
+                    <i class="fas fa-ethernet"></i>
+                </div>
+                <div class="data-card-content">
+                    <h4>Internet Fixo</h4>
+                    <p>Serviços de internet fixa e banda larga</p>
+                    <div class="data-card-stats">
+                        <span class="badge-questionario badge-questionario-success">Banda Larga</span>
+                    </div>
+                </div>
+            </a>
+            
+            <a href="{% url 'questionarios:lbi_list' %}" class="data-management-card">
+                <div class="data-card-icon">
+                    <i class="fas fa-broadcast-tower"></i>
+                </div>
+                <div class="data-card-content">
+                    <h4>LBI (Banda Larga)</h4>
+                    <p>Licenças de Banda Larga Individual</p>
+                    <div class="data-card-stats">
+                        <span class="badge-questionario badge-questionario-warning">3G/4G</span>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
+    
+    <!-- Tarifários -->
+    <div class="data-section">
+        <h3 class="data-section-title">
+            <i class="fas fa-phone-square me-2"></i>
+            Tarifários de Voz
+        </h3>
+        <div class="data-cards-grid">
+            <a href="{% url 'questionarios:tarifario_orange_list' %}" class="data-management-card">
+                <div class="data-card-icon">
+                    <i class="fas fa-phone-square" style="color: #FF6600;"></i>
+                </div>
+                <div class="data-card-content">
+                    <h4>Tarifário Orange</h4>
+                    <p>Tarifas de voz da operadora Orange</p>
+                    <div class="data-card-stats">
+                        <span class="badge-questionario badge-questionario-warning">Orange</span>
+                    </div>
+                </div>
+            </a>
+            
+            <a href="{% url 'questionarios:tarifario_telecel_list' %}" class="data-management-card">
+                <div class="data-card-icon">
+                    <i class="fas fa-phone-square" style="color: #DC3545;"></i>
+                </div>
+                <div class="data-card-content">
+                    <h4>Tarifário TELECEL</h4>
+                    <p>Tarifas de voz da operadora TELECEL</p>
+                    <div class="data-card-stats">
+                        <span class="badge-questionario badge-questionario-danger">TELECEL</span>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
+    
+    <!-- Ferramentas -->
+    <div class="data-section">
+        <h3 class="data-section-title">
+            <i class="fas fa-tools me-2"></i>
+            Ferramentas de Gestão
+        </h3>
+        <div class="data-cards-grid">
+            <a href="{% url 'questionarios:upload_excel' %}" class="data-management-card special">
+                <div class="data-card-icon">
+                    <i class="fas fa-file-excel"></i>
+                </div>
+                <div class="data-card-content">
+                    <h4>Upload Excel</h4>
+                    <p>Importar dados em massa via planilhas Excel</p>
+                    <div class="data-card-stats">
+                        <span class="badge-questionario badge-questionario-success">Bulk Import</span>
+                    </div>
+                </div>
+            </a>
+            
+            <a href="{% url 'dashboard:market-report' %}" class="data-management-card special">
+                <div class="data-card-icon">
+                    <i class="fas fa-chart-area"></i>
+                </div>
+                <div class="data-card-content">
+                    <h4>Relatórios</h4>
+                    <p>Gerar relatórios executivos e análises</p>
+                    <div class="data-card-stats">
+                        <span class="badge-questionario badge-questionario-info">PDF/Excel</span>
+                    </div>
+                </div>
+            </a>
+            
+            <a href="{% url 'dashboard:arn-assistant' %}" class="data-management-card special">
+                <div class="data-card-icon">
+                    <i class="fas fa-robot"></i>
+                </div>
+                <div class="data-card-content">
+                    <h4>Assistente IA</h4>
+                    <p>Consulte dados usando inteligência artificial</p>
+                    <div class="data-card-stats">
+                        <span class="badge-questionario badge-questionario-success">IA</span>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Estatísticas Rápidas -->
+<div class="platform-card mt-4">
+    <div class="card-header">
+        <h3 class="card-title">
+            <i class="fas fa-chart-bar me-2"></i>
+            Resumo dos Dados
+        </h3>
+        <p class="card-subtitle">Estatísticas rápidas dos indicadores cadastrados</p>
+    </div>
+    <div class="card-body">
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-database"></i>
+                </div>
+                <div class="stat-value">15+</div>
+                <div class="stat-label">Tipos de Indicadores</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-building"></i>
+                </div>
+                <div class="stat-value">3</div>
+                <div class="stat-label">Operadoras Ativas</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-calendar"></i>
+                </div>
+                <div class="stat-value">{{ current_year }}</div>
+                <div class="stat-label">Ano Atual</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <div class="stat-value">10</div>
+                <div class="stat-label">Análises Disponíveis</div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block questionario_js %}
+<script>
+// Adicionar efeitos hover e animações
+document.addEventListener('DOMContentLoaded', function() {
+    const cards = document.querySelectorAll('.data-management-card');
+    
+    cards.forEach(card => {
+        card.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-5px) scale(1.02)';
+        });
+        
+        card.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0) scale(1)';
+        });
+    });
+});
+</script>
+{% endblock %}

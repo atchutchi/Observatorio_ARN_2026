@@ -1,0 +1,140 @@
+{% extends "questionarios/partials/base_list.html" %}
+{% load humanize %}
+
+{% block indicator_title %}Indicadores de Estações Móveis - KPI ARN{% endblock %}
+{% block indicator_subtitle %}Gestão completa de estações móveis, banda larga, Mobile Money e linhas alugadas{% endblock %}
+
+{% block create_url %}{% url 'questionarios:estacoes_moveis_create' %}{% endblock %}
+
+{% block list_stats %}
+<!-- Estatísticas Resumidas -->
+{% if estatisticas %}
+<div class="row mb-4">
+    <div class="col-md-4">
+        <div class="stat-summary-card">
+            <i class="fas fa-mobile-alt"></i>
+            <div>
+                <small>Total Estações</small>
+                <h4>{{ estatisticas.total_estacoes|intcomma }}</h4>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="stat-summary-card">
+            <i class="fas fa-users"></i>
+            <div>
+                <small>Utilizadores Mobile Money</small>
+                <h4>{{ estatisticas.total_mobile_money_users|intcomma }}</h4>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="stat-summary-card">
+            <i class="fas fa-money-bill-wave"></i>
+            <div>
+                <small>Volume Carregamentos</small>
+                <h4>{{ estatisticas.total_carregamentos_valor|floatformat:2|intcomma }}</h4>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block table_headers %}
+<th data-sortable="true">Mês</th>
+<th data-sortable="true">Estações Móveis</th>
+<th data-sortable="true">SMS</th>
+<th data-sortable="true">3G</th>
+<th data-sortable="true">4G</th>
+<th data-sortable="true">Banda Larga</th>
+<th data-sortable="true">Mobile Money</th>
+<th data-sortable="true">Linhas</th>
+{% endblock %}
+
+{% block table_row_data %}
+<td data-column="mes">
+    <span class="badge bg-secondary">{{ indicador.get_mes_display|default:indicador.mes }}</span>
+</td>
+<td data-column="estacoes">
+    <div class="d-flex flex-column">
+        <strong>{{ indicador.calcular_total_estacoes_moveis|intcomma }}</strong>
+        <small class="text-muted">
+            Pós: {{ indicador.afectos_planos_pos_pagos|intcomma }} | 
+            Pré: {{ indicador.afectos_planos_pre_pagos|intcomma }}
+        </small>
+    </div>
+</td>
+<td data-column="sms">
+    <span class="badge bg-info">{{ indicador.sms|intcomma }}</span>
+</td>
+<td data-column="3g">
+    <span class="badge bg-success">{{ indicador.utilizadores_servico_3g_upgrades|intcomma }}</span>
+</td>
+<td data-column="4g">
+    <span class="badge bg-primary">{{ indicador.utilizadores_servico_4g|intcomma }}</span>
+</td>
+<td data-column="banda_larga">
+    <strong class="text-warning">{{ indicador.calcular_total_banda_larga|intcomma }}</strong>
+</td>
+<td data-column="mobile_money">
+    <div class="d-flex flex-column">
+        <strong>{{ indicador.numero_utilizadores|intcomma }}</strong>
+        <small class="text-muted">
+            C: {{ indicador.total_carregamentos|floatformat:0|intcomma }}
+        </small>
+    </div>
+</td>
+<td data-column="linhas">
+    {% if indicador.calcular_total_linhas_alugadas > 0 %}
+        <span class="badge bg-warning">{{ indicador.calcular_total_linhas_alugadas }}</span>
+    {% else %}
+        <span class="text-muted">-</span>
+    {% endif %}
+</td>
+{% endblock %}
+
+{% block detail_url %}{% url 'questionarios:estacoes_moveis_detail' indicador.pk %}{% endblock %}
+{% block update_url %}{% url 'questionarios:estacoes_moveis_update' indicador.pk %}{% endblock %}
+{% block delete_url %}{% url 'questionarios:estacoes_moveis_delete' indicador.pk %}{% endblock %}
+
+{% block table_colspan %}11{% endblock %}
+
+{% block resumo_url %}{% url 'questionarios:estacoes_moveis_resumo' 2024 %}{% endblock %}
+
+{% block list_styles %}
+<style>
+    .stat-summary-card {
+        background: var(--binance-dark);
+        border: 1px solid var(--binance-border);
+        border-radius: 8px;
+        padding: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+    
+    .stat-summary-card i {
+        font-size: 2rem;
+        color: var(--binance-yellow);
+    }
+    
+    .stat-summary-card small {
+        color: var(--binance-text-muted);
+        display: block;
+    }
+    
+    .stat-summary-card h4 {
+        margin: 0;
+        color: var(--binance-text);
+    }
+    
+    .questionario-table td {
+        vertical-align: middle;
+    }
+    
+    .badge {
+        font-weight: normal;
+    }
+</style>
+{% endblock %}

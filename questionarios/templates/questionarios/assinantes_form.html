@@ -1,0 +1,189 @@
+{% extends "questionarios/partials/base_form.html" %}
+{% load static %}
+
+{% block form_title %}{% if form.instance.pk %}Editar{% else %}Criar{% endif %} Indicador de Assinantes{% endblock %}
+{% block form_subtitle %}Gestão de dados de assinantes por plano e serviço{% endblock %}
+
+{% block list_url %}{% url 'questionarios:assinantes_list' %}{% endblock %}
+
+{% block form_fields %}
+<!-- Assinantes Móveis -->
+<div class="platform-card mb-4">
+    <div class="card-header">
+        <h4 class="card-title">
+            <i class="fas fa-mobile-alt me-2"></i>
+            Assinantes de Telefonia Móvel
+        </h4>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group-questionario">
+                    <label class="form-label-questionario">Assinantes Pré-pago</label>
+                    {{ form.assinantes_pre_pago }}
+                    {% if form.assinantes_pre_pago.errors %}
+                        <div class="invalid-feedback">
+                            {% for error in form.assinantes_pre_pago.errors %}{{ error }}{% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group-questionario">
+                    <label class="form-label-questionario">Assinantes Pós-pago</label>
+                    {{ form.assinantes_pos_pago }}
+                    {% if form.assinantes_pos_pago.errors %}
+                        <div class="invalid-feedback">
+                            {% for error in form.assinantes_pos_pago.errors %}{{ error }}{% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Telefonia Fixa -->
+<div class="platform-card mb-4">
+    <div class="card-header">
+        <h4 class="card-title">
+            <i class="fas fa-phone me-2"></i>
+            Telefonia Fixa
+        </h4>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="form-group-questionario">
+                    <label class="form-label-questionario">Assinantes de Telefonia Fixa</label>
+                    {{ form.assinantes_fixo }}
+                    {% if form.assinantes_fixo.errors %}
+                        <div class="invalid-feedback">
+                            {% for error in form.assinantes_fixo.errors %}{{ error }}{% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Internet -->
+<div class="platform-card mb-4">
+    <div class="card-header">
+        <h4 class="card-title">
+            <i class="fas fa-globe me-2"></i>
+            Serviços de Internet
+        </h4>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group-questionario">
+                    <label class="form-label-questionario">Internet Móvel</label>
+                    {{ form.assinantes_internet_movel }}
+                    {% if form.assinantes_internet_movel.errors %}
+                        <div class="invalid-feedback">
+                            {% for error in form.assinantes_internet_movel.errors %}{{ error }}{% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group-questionario">
+                    <label class="form-label-questionario">Internet Fixa</label>
+                    {{ form.assinantes_internet_fixa }}
+                    {% if form.assinantes_internet_fixa.errors %}
+                        <div class="invalid-feedback">
+                            {% for error in form.assinantes_internet_fixa.errors %}{{ error }}{% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Preview dos Totais -->
+<div class="platform-card mb-4">
+    <div class="card-header">
+        <h4 class="card-title">
+            <i class="fas fa-calculator me-2"></i>
+            Totais Calculados (Preview)
+        </h4>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-4">
+                <div class="detail-info-item">
+                    <div class="detail-info-icon">
+                        <i class="fas fa-mobile-alt"></i>
+                    </div>
+                    <div class="detail-info-content">
+                        <strong>Total Móvel</strong>
+                        <p class="detail-value" id="totalMovel">--</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="detail-info-item">
+                    <div class="detail-info-icon">
+                        <i class="fas fa-globe"></i>
+                    </div>
+                    <div class="detail-info-content">
+                        <strong>Total Internet</strong>
+                        <p class="detail-value" id="totalInternet">--</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="detail-info-item">
+                    <div class="detail-info-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="detail-info-content">
+                        <strong>Total Geral</strong>
+                        <p class="detail-value" id="totalGeral">--</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block submit_text %}{% if form.instance.pk %}Atualizar{% else %}Criar{% endif %} Assinantes{% endblock %}
+
+{% block questionario_js %}
+<script>
+// Calcular totais em tempo real
+document.addEventListener('DOMContentLoaded', function() {
+    const inputs = document.querySelectorAll('input[type="number"]');
+    
+    function calcularTotais() {
+        const prePago = parseInt(document.querySelector('[name="assinantes_pre_pago"]')?.value || 0);
+        const posPago = parseInt(document.querySelector('[name="assinantes_pos_pago"]')?.value || 0);
+        const fixo = parseInt(document.querySelector('[name="assinantes_fixo"]')?.value || 0);
+        const internetMovel = parseInt(document.querySelector('[name="assinantes_internet_movel"]')?.value || 0);
+        const internetFixa = parseInt(document.querySelector('[name="assinantes_internet_fixa"]')?.value || 0);
+        
+        const totalMovel = prePago + posPago;
+        const totalInternet = internetMovel + internetFixa;
+        const totalGeral = totalMovel + fixo + totalInternet;
+        
+        document.getElementById('totalMovel').textContent = totalMovel.toLocaleString('pt-BR');
+        document.getElementById('totalInternet').textContent = totalInternet.toLocaleString('pt-BR');
+        document.getElementById('totalGeral').textContent = totalGeral.toLocaleString('pt-BR');
+    }
+    
+    inputs.forEach(input => {
+        input.addEventListener('input', calcularTotais);
+    });
+    
+    // Calcular na inicialização
+    calcularTotais();
+});
+</script>
+{% endblock %}

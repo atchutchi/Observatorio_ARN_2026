@@ -1,0 +1,147 @@
+{% extends "questionarios/partials/base_list.html" %}
+{% load humanize %}
+
+{% block indicator_title %}Indicadores de Tráfego Originado - KPI ARN{% endblock %}
+{% block indicator_subtitle %}Seção 5: Gestão de tráfego de dados, SMS, voz e chamadas por operadora{% endblock %}
+
+{% block create_url %}{% url 'questionarios:trafego_originado_create' %}{% endblock %}
+
+{% block list_stats %}
+<!-- Estatísticas Resumidas -->
+{% if estatisticas %}
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="detail-info-item">
+            <div class="detail-info-icon">
+                <i class="fas fa-database"></i>
+            </div>
+            <div class="detail-info-content">
+                <strong>Total Dados</strong>
+                <p class="detail-value">{{ estatisticas.total_dados_gb|floatformat:1 }} GB</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="detail-info-item">
+            <div class="detail-info-icon">
+                <i class="fas fa-sms"></i>
+            </div>
+            <div class="detail-info-content">
+                <strong>Total SMS</strong>
+                <p class="detail-value">{{ estatisticas.total_sms|intcomma }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="detail-info-item">
+            <div class="detail-info-icon">
+                <i class="fas fa-phone-alt"></i>
+            </div>
+            <div class="detail-info-content">
+                <strong>Total Minutos</strong>
+                <p class="detail-value">{{ estatisticas.total_voz_minutos|intcomma }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="detail-info-item">
+            <div class="detail-info-icon">
+                <i class="fas fa-phone-volume"></i>
+            </div>
+            <div class="detail-info-content">
+                <strong>Total Chamadas</strong>
+                <p class="detail-value">{{ estatisticas.total_chamadas|intcomma }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block table_headers %}
+<th data-sortable="true">Mês</th>
+<th data-sortable="true">Dados (GB)</th>
+<th data-sortable="true">SMS</th>
+<th data-sortable="true">Voz (min)</th>
+<th data-sortable="true">Chamadas</th>
+<th data-sortable="true">On-net %</th>
+<th data-sortable="true">Internacional %</th>
+{% endblock %}
+
+{% block table_row_data %}
+<td data-column="mes">
+    <span class="badge bg-secondary">{{ indicador.get_mes_display|default:indicador.mes }}</span>
+</td>
+<td data-column="dados">
+    <div class="d-flex flex-column">
+        <strong>{{ indicador.calcular_total_dados_gb|floatformat:1 }} GB</strong>
+        <small class="text-muted">
+            2G: {{ indicador.calcular_total_dados_2g_gb|floatformat:1 }} | 
+            3G: {{ indicador.calcular_total_dados_3g_gb|floatformat:1 }} | 
+            4G: {{ indicador.calcular_total_dados_4g_gb|floatformat:1 }}
+        </small>
+    </div>
+</td>
+<td data-column="sms">
+    <div class="d-flex flex-column">
+        <span class="badge bg-success">{{ indicador.calcular_total_sms|intcomma }}</span>
+        <small class="text-muted">
+            On-net: {{ indicador.sms_on_net|intcomma }}
+        </small>
+    </div>
+</td>
+<td data-column="voz">
+    <div class="d-flex flex-column">
+        <span class="badge bg-info">{{ indicador.calcular_total_voz_minutos|intcomma }}</span>
+        <small class="text-muted">
+            {{ indicador.calcular_total_voz_horas|floatformat:0 }} horas
+        </small>
+    </div>
+</td>
+<td data-column="chamadas">
+    <div class="d-flex flex-column">
+        <span class="badge bg-warning">{{ indicador.calcular_total_chamadas|intcomma }}</span>
+        <small class="text-muted">
+            {% if indicador.calcular_total_chamadas > 0 %}
+                ~{{ indicador.calcular_duracao_media_chamada|floatformat:1 }} min/ch
+            {% else %}
+                -
+            {% endif %}
+        </small>
+    </div>
+</td>
+<td data-column="onnet">
+    {% if indicador.calcular_total_voz_minutos > 0 %}
+        <div class="progress" style="height: 20px;">
+            <div class="progress-bar bg-primary" 
+                 role="progressbar" 
+                 style="width: {{ indicador.get_percentual_on_net|floatformat:0 }}%">
+                {{ indicador.get_percentual_on_net|floatformat:1 }}%
+            </div>
+        </div>
+    {% else %}
+        <span class="text-muted">-</span>
+    {% endif %}
+</td>
+<td data-column="internacional">
+    {% if indicador.calcular_total_voz_minutos > 0 %}
+        <div class="progress" style="height: 20px;">
+            <div class="progress-bar bg-warning" 
+                 role="progressbar" 
+                 style="width: {{ indicador.get_percentual_internacional|floatformat:0 }}%">
+                {{ indicador.get_percentual_internacional|floatformat:1 }}%
+            </div>
+        </div>
+    {% else %}
+        <span class="text-muted">-</span>
+    {% endif %}
+</td>
+{% endblock %}
+
+{% block detail_url %}{% url 'questionarios:trafego_originado_detail' indicador.pk %}{% endblock %}
+{% block update_url %}{% url 'questionarios:trafego_originado_update' indicador.pk %}{% endblock %}
+{% block delete_url %}{% url 'questionarios:trafego_originado_delete' indicador.pk %}{% endblock %}
+
+{% block table_colspan %}10{% endblock %}
+
+{% block resumo_url %}{% url 'questionarios:trafego_originado_resumo' 2024 %}{% endblock %}

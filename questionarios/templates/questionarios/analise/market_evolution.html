@@ -1,0 +1,324 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Evolução do Mercado de Telecomunicações{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4">
+    <h1 class="mt-4">Evolução do Mercado de Telecomunicações</h1>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item"><a href="{% url 'questionarios:index' %}">Home</a></li>
+        <li class="breadcrumb-item active">Evolução do Mercado</li>
+    </ol>
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <i class="fas fa-chart-line me-1"></i>
+            Evolução dos Principais Indicadores
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-xl-6">
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <i class="fas fa-chart-line me-1"></i>
+                            Evolução de Assinantes
+                        </div>
+                        <div class="card-body">
+                            <canvas id="chartAssinantes" width="100%" height="40"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-6">
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <i class="fas fa-chart-line me-1"></i>
+                            Evolução de Receitas (XOF)
+                        </div>
+                        <div class="card-body">
+                            <canvas id="chartReceitas" width="100%" height="40"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xl-6">
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <i class="fas fa-chart-line me-1"></i>
+                            Evolução de Tráfego de Dados (GB)
+                        </div>
+                        <div class="card-body">
+                            <canvas id="chartTrafegoDados" width="100%" height="40"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-6">
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <i class="fas fa-chart-line me-1"></i>
+                            Evolução de Investimentos (XOF)
+                        </div>
+                        <div class="card-body">
+                            <canvas id="chartInvestimentos" width="100%" height="40"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <i class="fas fa-chart-area me-1"></i>
+            Evolução da Banda Larga
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-xl-6">
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <i class="fas fa-chart-area me-1"></i>
+                            Banda Larga Móvel
+                        </div>
+                        <div class="card-body">
+                            <canvas id="chartBandaLargaMovel" width="100%" height="40"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-6">
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <i class="fas fa-chart-area me-1"></i>
+                            Banda Larga Fixa
+                        </div>
+                        <div class="card-body">
+                            <canvas id="chartBandaLargaFixa" width="100%" height="40"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <i class="fas fa-table me-1"></i>
+            Dados Históricos
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Ano</th>
+                            <th>Assinantes</th>
+                            <th>Banda Larga Móvel</th>
+                            <th>Banda Larga Fixa</th>
+                            <th>Receita Total (XOF)</th>
+                            <th>Tráfego de Dados (GB)</th>
+                            <th>Investimentos (XOF)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="evolutionDataTable">
+                        <!-- Dados serão inseridos via JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Dados recebidos do contexto Django
+    const evolutionData = {{ evolution_data|safe }};
+    const anos = {{ anos|safe }};
+    const assinantes = {{ assinantes_total|safe }};
+    const receitas = {{ receita_total|safe }};
+    const trafegoDados = {{ trafego_dados_total|safe }};
+    const investimentos = {{ investimentos_total|safe }};
+    
+    // Função para formatar números grandes
+    function formatNumber(num) {
+        return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
+    }
+    
+    // Preencher a tabela com os dados históricos
+    const tableBody = document.getElementById('evolutionDataTable');
+    evolutionData.forEach(data => {
+        const row = document.createElement('tr');
+        
+        row.innerHTML = `
+            <td>${data.ano}</td>
+            <td>${formatNumber(data.assinantes_total)}</td>
+            <td>${formatNumber(data.banda_larga_movel.total)}</td>
+            <td>${formatNumber(data.banda_larga_fixa.total)}</td>
+            <td>${formatNumber(Math.round(data.receita_total))} XOF</td>
+            <td>${formatNumber(data.trafego_dados)} GB</td>
+            <td>${formatNumber(Math.round(data.investimentos))} XOF</td>
+        `;
+        
+        tableBody.appendChild(row);
+    });
+    
+    // Criar gráfico de evolução de assinantes
+    const ctxAssinantes = document.getElementById('chartAssinantes').getContext('2d');
+    new Chart(ctxAssinantes, {
+        type: 'line',
+        data: {
+            labels: anos,
+            datasets: [{
+                label: 'Assinantes Totais',
+                data: assinantes,
+                backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                borderColor: 'rgba(54, 162, 235, 1)',
+                borderWidth: 2,
+                tension: 0.1
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+    
+    // Criar gráfico de evolução de receitas
+    const ctxReceitas = document.getElementById('chartReceitas').getContext('2d');
+    new Chart(ctxReceitas, {
+        type: 'line',
+        data: {
+            labels: anos,
+            datasets: [{
+                label: 'Receita Total (XOF)',
+                data: receitas,
+                backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                borderColor: 'rgba(255, 99, 132, 1)',
+                borderWidth: 2,
+                tension: 0.1
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+    
+    // Criar gráfico de evolução de tráfego de dados
+    const ctxTrafegoDados = document.getElementById('chartTrafegoDados').getContext('2d');
+    new Chart(ctxTrafegoDados, {
+        type: 'line',
+        data: {
+            labels: anos,
+            datasets: [{
+                label: 'Tráfego de Dados (GB)',
+                data: trafegoDados,
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 2,
+                tension: 0.1
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+    
+    // Criar gráfico de evolução de investimentos
+    const ctxInvestimentos = document.getElementById('chartInvestimentos').getContext('2d');
+    new Chart(ctxInvestimentos, {
+        type: 'line',
+        data: {
+            labels: anos,
+            datasets: [{
+                label: 'Investimentos (XOF)',
+                data: investimentos,
+                backgroundColor: 'rgba(153, 102, 255, 0.2)',
+                borderColor: 'rgba(153, 102, 255, 1)',
+                borderWidth: 2,
+                tension: 0.1
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+    
+    // Criar gráfico de evolução da banda larga móvel
+    const ctxBandaLargaMovel = document.getElementById('chartBandaLargaMovel').getContext('2d');
+    new Chart(ctxBandaLargaMovel, {
+        type: 'line',
+        data: {
+            labels: anos,
+            datasets: [{
+                label: 'Total Banda Larga Móvel',
+                data: evolutionData.map(data => data.banda_larga_movel.total),
+                backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                borderColor: 'rgba(54, 162, 235, 1)',
+                borderWidth: 2,
+                tension: 0.1
+            }, {
+                label: 'Assinantes 4G',
+                data: evolutionData.map(data => data.banda_larga_movel['4g']),
+                backgroundColor: 'rgba(255, 206, 86, 0.2)',
+                borderColor: 'rgba(255, 206, 86, 1)',
+                borderWidth: 2,
+                tension: 0.1
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+    
+    // Criar gráfico de evolução da banda larga fixa
+    const ctxBandaLargaFixa = document.getElementById('chartBandaLargaFixa').getContext('2d');
+    new Chart(ctxBandaLargaFixa, {
+        type: 'line',
+        data: {
+            labels: anos,
+            datasets: [{
+                label: 'Total Banda Larga Fixa',
+                data: evolutionData.map(data => data.banda_larga_fixa.total),
+                backgroundColor: 'rgba(255, 159, 64, 0.2)',
+                borderColor: 'rgba(255, 159, 64, 1)',
+                borderWidth: 2,
+                tension: 0.1
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+</script>
+{% endblock %} 

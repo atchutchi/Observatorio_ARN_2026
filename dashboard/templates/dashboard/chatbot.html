@@ -1,0 +1,80 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+
+{% block title %}Chatbot{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'dashboard/css/chatbot.css' %}">
+{% endblock %}
+
+{% block dashboard_content %}
+<div class="container-fluid">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="dashboard-card p-4">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h2 class="mb-0">Assistente Virtual</h2>
+                        <p class="text-secondary mb-0">Faça perguntas sobre dados do mercado</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chat Interface -->
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="dashboard-card p-0" style="height: 600px; display: flex; flex-direction: column;">
+                <!-- Chat Messages -->
+                <div id="chat-messages" class="p-3 flex-grow-1" style="overflow-y: auto;">
+                    <div class="message system-message mb-3">
+                        <div class="message-content">
+                            Olá! Sou o assistente virtual do Observatório de Mercado. Como posso ajudar você hoje?
+                        </div>
+                        <div class="message-time">Agora</div>
+                    </div>
+                    
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="message {% if message.is_user %}user-message{% else %}system-message{% endif %} mb-3">
+                                <div class="message-content">
+                                    {{ message.content }}
+                                </div>
+                                <div class="message-time">{{ message.timestamp }}</div>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+                
+                <!-- Chat Input -->
+                <div class="chat-input-container p-3 border-top">
+                    <form id="chat-form">
+                        {% csrf_token %}
+                        <div class="input-group">
+                            <input type="text" id="user-input" name="user_message" class="form-control" placeholder="Digite sua pergunta..." required>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <div class="text-center mt-3">
+                <p class="text-muted small">Sugestões de perguntas:</p>
+                <div class="d-flex flex-wrap justify-content-center gap-2">
+                    <button class="btn btn-sm btn-outline-secondary suggestion-btn">Qual operadora tem mais assinantes?</button>
+                    <button class="btn btn-sm btn-outline-secondary suggestion-btn">Compare o tráfego entre operadoras</button>
+                    <button class="btn btn-sm btn-outline-secondary suggestion-btn">Qual região tem mais usuários?</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'dashboard/js/chatbot.js' %}"></script>
+{% endblock %} 

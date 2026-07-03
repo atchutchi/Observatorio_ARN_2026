@@ -1,0 +1,29 @@
+{% extends "questionarios/partials/base_detail.html" %}
+{% load static %}
+
+{% block detail_title %}Detalhes de Tarifario Telecel{% endblock %}
+{% block detail_subtitle %}{{ object.operadora }} - {{ object.ano }}/{{ object.trimestre }}º Trimestre{% endblock %}
+
+{% block list_url %}{% url 'questionarios:tarifario_telecel_list' %}{% endblock %}
+{% block edit_url %}{% url 'questionarios:tarifario_telecel_update' object.pk %}{% endblock %}
+{% block delete_url %}{% url 'questionarios:tarifario_telecel_delete' object.pk %}{% endblock %}
+
+{% block detail_content %}
+<!-- Dados específicos do indicador -->
+<div class="alert-questionario alert-questionario-info">
+    <i class="fas fa-info-circle"></i>
+    <span>Template gerado automaticamente. Personalize a exibição dos dados conforme necessário.</span>
+</div>
+
+<div class="table-responsive">
+    <table class="questionario-table">
+        <tbody>
+            <!-- Adicione aqui os campos específicos do modelo -->
+            <tr>
+                <td><strong>Dados:</strong></td>
+                <td>Personalize este template com os campos específicos do modelo</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+{% endblock %}

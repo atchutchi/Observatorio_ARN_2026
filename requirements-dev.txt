@@ -1,0 +1,59 @@
+# ========================================
+# OBSERVATÓRIO ARN - Dependências de Desenvolvimento
+# ========================================
+# Atualizado em: 2025-11-04
+# 
+# Instalação:
+# pip install -r requirements.txt
+# pip install -r requirements-dev.txt
+
+# ==================== TESTING ====================
+pytest==9.0.3
+pytest-django==4.8.0
+pytest-cov==4.1.0
+pytest-xdist==3.5.0
+factory-boy==3.3.0
+faker==23.1.0
+
+# ==================== CODE QUALITY ====================
+# Formatação
+black==26.3.1
+isort==5.13.2
+
+# Linting
+flake8==7.0.0
+pylint==3.0.3
+pylint-django==2.5.5
+
+# Type Checking
+mypy==1.8.0
+django-stubs==4.2.7
+djangorestframework-stubs==3.14.5
+
+# ==================== DEBUGGING ====================
+django-debug-toolbar==4.3.0
+ipython==8.21.0
+ipdb==0.13.13
+
+# ==================== DOCUMENTATION ====================
+sphinx==7.2.6
+sphinx-rtd-theme==2.0.0
+sphinx-autobuild==2024.2.4
+
+# ==================== SECURITY ====================
+bandit==1.7.6
+safety==3.0.1
+
+# ==================== PERFORMANCE ====================
+django-silk==5.0.4
+locust==2.20.1
+
+# ==================== DATABASE ====================
+django-extensions==3.2.3
+werkzeug==3.1.6
+
+# ==================== UTILITIES ====================
+pre-commit==3.6.0
+pip-tools==7.3.0
+watchdog==3.0.0
+

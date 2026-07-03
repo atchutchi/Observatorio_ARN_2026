@@ -1,0 +1,207 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/binance-style.css' %}">
+<link rel="stylesheet" href="{% static 'dashboard/css/dashboard-binance.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="platform-container">
+    <!-- SIDEBAR DASHBOARD -->
+    <nav class="platform-sidebar" id="sidebar">
+        <!-- Header da Sidebar -->
+        <div class="sidebar-header">
+            <a href="{% url 'dashboard:home' %}" class="sidebar-logo">
+                <i class="fas fa-chart-line"></i>
+                Dashboard ARN
+            </a>
+        </div>
+        
+        <!-- Navegação da Sidebar -->
+        <div class="sidebar-nav">
+            <div class="sidebar-nav-item">
+                <a href="{% url 'dashboard:home' %}" class="sidebar-nav-link {% if active_page == 'home' %}active{% endif %}">
+                    <i class="fas fa-tachometer-alt"></i>
+                    Dashboard Principal
+                </a>
+            </div>
+
+            <!-- Analytics -->
+            <div class="sidebar-nav-item">
+                <button class="sidebar-nav-link" type="button" data-bs-toggle="collapse" data-bs-target="#analyticsMenu" aria-expanded="false">
+                    <i class="fas fa-chart-bar"></i>
+                    Analytics
+                    <i class="fas fa-chevron-down ms-auto"></i>
+                </button>
+                <div class="collapse sidebar-dropdown" id="analyticsMenu">
+                    <a href="{% url 'dashboard:market-analytics' %}" class="sidebar-dropdown-link">
+                        <i class="fas fa-chart-pie"></i>
+                        Análise de Mercado
+                    </a>
+                    <a href="{% url 'dashboard:traffic-analytics' %}" class="sidebar-dropdown-link">
+                        <i class="fas fa-phone"></i>
+                        Análise de Tráfego
+                    </a>
+                    <a href="{% url 'dashboard:revenue-analytics' %}" class="sidebar-dropdown-link">
+                        <i class="fas fa-dollar-sign"></i>
+                        Análise de Receitas
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Relatórios -->
+            {% if request.user.is_staff %}
+            <div class="sidebar-nav-item">
+                <button class="sidebar-nav-link" type="button" data-bs-toggle="collapse" data-bs-target="#reportsMenu" aria-expanded="false">
+                    <i class="fas fa-file-alt"></i>
+                    Relatórios
+                    <i class="fas fa-chevron-down ms-auto"></i>
+                </button>
+                <div class="collapse sidebar-dropdown" id="reportsMenu">
+                    <a href="{% url 'dashboard:market-report' %}" class="sidebar-dropdown-link">
+                        <i class="fas fa-chart-area"></i>
+                        Relatório de Mercado
+                    </a>
+                    <a href="{% url 'dashboard:executive-dashboard' %}" class="sidebar-dropdown-link">
+                        <i class="fas fa-crown"></i>
+                        Dashboard Executivo
+                    </a>
+                    <a href="{% url 'dashboard:comparative-report' %}" class="sidebar-dropdown-link">
+                        <i class="fas fa-balance-scale"></i>
+                        Análise Comparativa
+                    </a>
+                    <a href="{% url 'dashboard:report-history' %}" class="sidebar-dropdown-link">
+                        <i class="fas fa-history"></i>
+                        Histórico
+                    </a>
+                </div>
+            </div>
+            {% endif %}
+            
+            <!-- Análises Avançadas (NOVO - PRIORIDADE 1) -->
+            {% if request.user.is_staff %}
+            <div class="sidebar-nav-item">
+                <button class="sidebar-nav-link" type="button" data-bs-toggle="collapse" data-bs-target="#advancedMenu" aria-expanded="false">
+                    <i class="fas fa-brain"></i>
+                    Análises Avançadas
+                    <i class="fas fa-chevron-down ms-auto"></i>
+                    <span class="badge bg-warning ms-2">NOVO</span>
+                </button>
+                <div class="collapse sidebar-dropdown" id="advancedMenu">
+                    <a href="{% url 'dashboard:advanced-dashboard' %}" class="sidebar-dropdown-link">
+                        <i class="fas fa-chart-line"></i>
+                        Dashboard Consolidado
+                    </a>
+                    <a href="{% url 'dashboard:advanced-predictions' %}" class="sidebar-dropdown-link">
+                        <i class="fas fa-chart-line"></i>
+                        Previsões ML
+                    </a>
+                    <a href="{% url 'dashboard:advanced-geographic' %}" class="sidebar-dropdown-link">
+                        <i class="fas fa-map-marked-alt"></i>
+                        Análise Geográfica
+                    </a>
+                    <a href="{% url 'dashboard:advanced-prices' %}" class="sidebar-dropdown-link">
+                        <i class="fas fa-tags"></i>
+                        Comparador de Preços
+                    </a>
+                </div>
+            </div>
+            {% endif %}
+            
+            <!-- Chatbot -->
+            <div class="sidebar-nav-item">
+                <a href="{% url 'dashboard:chatbot' %}" class="sidebar-nav-link">
+                    <i class="fas fa-robot"></i>
+                    Assistente IA
+                </a>
+            </div>
+
+            <!-- Link para Questionários -->
+            <div class="sidebar-nav-item">
+                <a href="{% url 'questionarios:estacoes_moveis_list' %}" class="sidebar-nav-link">
+                    <i class="fas fa-database"></i>
+                    Gestão de Dados
+                </a>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- CONTEÚDO PRINCIPAL -->
+    <div class="platform-content">
+        <!-- NAVBAR SUPERIOR -->
+        <header class="platform-navbar">
+            <div class="d-flex align-items-center">
+                <button class="navbar-btn d-md-none" id="sidebarToggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <h1 class="h4 mb-0 ms-2">{% block dashboard_title %}Dashboard{% endblock %}</h1>
+            </div>
+            
+            <!-- Busca -->
+            <div class="navbar-search d-none d-md-block">
+                <input type="text" class="search-input" placeholder="Buscar relatórios, dados...">
+            </div>
+            
+            <!-- Ações da Navbar -->
+            <div class="navbar-actions">
+                <!-- Notificações -->
+                <button class="navbar-btn position-relative" data-bs-toggle="dropdown">
+                    <i class="fas fa-bell"></i>
+                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                        {{ unread_notifications_count|default:0 }}
+                        <span class="visually-hidden">notificações não lidas</span>
+                    </span>
+                </button>
+                
+                <!-- Menu do Usuário -->
+                <div class="user-menu dropdown">
+                    <div class="user-avatar" data-bs-toggle="dropdown" aria-expanded="false">
+                        {{ user.first_name.0|default:user.email.0|upper }}
+                    </div>
+                    <ul class="dropdown-menu dropdown-menu-end" style="background-color: var(--binance-dark-light); border-color: var(--binance-border);">
+                        <li><a class="dropdown-item" href="#" style="color: var(--binance-text);">
+                            <i class="fas fa-user me-2"></i>Perfil
+                        </a></li>
+                        <li><a class="dropdown-item" href="#" style="color: var(--binance-text);">
+                            <i class="fas fa-cog me-2"></i>Configurações
+                        </a></li>
+                        <li><hr class="dropdown-divider" style="border-color: var(--binance-border);"></li>
+                        <li><a class="dropdown-item" href="/accounts/logout/" style="color: var(--binance-danger);">
+                            <i class="fas fa-sign-out-alt me-2"></i>Sair
+                        </a></li>
+                    </ul>
+                </div>
+            </div>
+        </header>
+        
+        <!-- ÁREA DE CONTEÚDO -->
+        <main class="platform-main">
+            {% if messages %}
+            <div class="notification-container">
+                {% for message in messages %}
+                <div class="notification notification-{{ message.tags }}">
+                    <div>
+                        <i class="fas fa-info-circle"></i>
+                    </div>
+                    <div>
+                        <strong>{{ message.tags|title }}</strong>
+                        <p class="mb-0 mt-1">{{ message }}</p>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+            
+            {% block dashboard_content %}{% endblock %}
+        </main>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/platform.js' %}"></script>
+<script src="{% static 'dashboard/js/dashboard-binance.js' %}"></script>
+<script src="{% static 'dashboard/js/export_reports.js' %}"></script>
+{% block dashboard_js %}{% endblock %}
+{% endblock %}

@@ -1,0 +1,814 @@
+/* ===============================
+   DASHBOARD BINANCE STYLE
+   =============================== */
+
+/* DASHBOARD ESPECÍFICOS */
+.dashboard-container {
+    max-width: 100%;
+}
+
+/* KPIs DASHBOARD */
+.dashboard-kpis {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.kpi-card {
+    background-color: var(--binance-dark-light);
+    border: 1px solid var(--binance-border);
+    border-radius: 12px;
+    padding: 2rem;
+    text-align: center;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.kpi-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+}
+
+.kpi-card.kpi-success::before {
+    background: linear-gradient(90deg, var(--binance-success), #019A63);
+}
+
+.kpi-card.kpi-warning::before {
+    background: linear-gradient(90deg, var(--binance-warning), #D4A00A);
+}
+
+.kpi-card.kpi-info::before {
+    background: linear-gradient(90deg, var(--binance-info), #3E9CDB);
+}
+
+.kpi-card.kpi-primary::before {
+    background: linear-gradient(90deg, var(--binance-yellow), #D4A00A);
+}
+
+.kpi-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-dark);
+}
+
+.kpi-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    color: var(--binance-yellow);
+}
+
+.kpi-value {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--binance-text);
+    margin-bottom: 0.5rem;
+    line-height: 1;
+}
+
+.kpi-label {
+    color: var(--binance-text-muted);
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+}
+
+.kpi-change {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+}
+
+.kpi-change.positive {
+    color: var(--binance-success);
+}
+
+.kpi-change.negative {
+    color: var(--binance-danger);
+}
+
+.kpi-change.neutral {
+    color: var(--binance-text-muted);
+}
+
+/* DASHBOARD WIDGETS */
+.dashboard-widgets {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
+
+.widget-card {
+    background-color: var(--binance-dark-light);
+    border: 1px solid var(--binance-border);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: var(--shadow-light);
+}
+
+.widget-header {
+    background-color: var(--binance-hover);
+    padding: 1.5rem 2rem;
+    border-bottom: 1px solid var(--binance-border);
+}
+
+.widget-title {
+    color: var(--binance-text);
+    font-size: 1.125rem;
+    font-weight: 600;
+    margin: 0;
+}
+
+.widget-subtitle {
+    color: var(--binance-text-muted);
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+    margin-bottom: 0;
+}
+
+.widget-body {
+    padding: 2rem;
+}
+
+/* CHART CONTAINERS DASHBOARD */
+.dashboard-chart-container {
+    position: relative;
+    height: 350px;
+    background-color: var(--binance-dark);
+    border-radius: 8px;
+    padding: 1rem;
+}
+
+.dashboard-chart-title {
+    color: var(--binance-text);
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+/* TABELAS DASHBOARD */
+.dashboard-table {
+    width: 100%;
+    background-color: transparent;
+}
+
+.dashboard-table th {
+    background: linear-gradient(135deg, var(--binance-yellow) 0%, #D4A00A 100%);
+    color: var(--binance-dark);
+    font-weight: 600;
+    border: none;
+    padding: 1rem;
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.dashboard-table td {
+    padding: 1rem;
+    vertical-align: middle;
+    border-color: var(--binance-border);
+    color: var(--binance-text);
+    background-color: transparent;
+}
+
+.dashboard-table tbody tr {
+    transition: all 0.3s ease;
+    border-bottom: 1px solid var(--binance-border);
+}
+
+.dashboard-table tbody tr:hover {
+    background-color: var(--binance-hover);
+}
+
+/* OPERADORA BADGES */
+.operadora-badge {
+    padding: 0.375rem 0.75rem;
+    border-radius: 50px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.operadora-badge.orange {
+    background-color: #FF6600;
+    color: white;
+}
+
+.operadora-badge.telecel {
+    background-color: #DC3545;
+    color: white;
+}
+
+/* GROWTH INDICATORS */
+.growth-indicator {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.growth-indicator.positive {
+    background-color: rgba(2, 192, 118, 0.2);
+    color: var(--binance-success);
+}
+
+.growth-indicator.negative {
+    background-color: rgba(248, 64, 96, 0.2);
+    color: var(--binance-danger);
+}
+
+.growth-indicator.neutral {
+    background-color: rgba(183, 189, 198, 0.2);
+    color: var(--binance-text-muted);
+}
+
+/* QUICK ACTIONS */
+.quick-actions {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 2rem;
+}
+
+.quick-action {
+    background-color: var(--binance-dark-light);
+    border: 1px solid var(--binance-border);
+    border-radius: 8px;
+    padding: 1rem 1.5rem;
+    text-decoration: none;
+    color: var(--binance-text);
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.quick-action:hover {
+    background-color: var(--binance-hover);
+    transform: translateY(-2px);
+    color: var(--binance-yellow);
+    text-decoration: none;
+}
+
+.quick-action-icon {
+    font-size: 1.25rem;
+    color: var(--binance-yellow);
+}
+
+/* ACTIVITY FEED */
+.activity-feed {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.activity-item {
+    padding: 1rem;
+    border-bottom: 1px solid var(--binance-border);
+    display: flex;
+    gap: 1rem;
+}
+
+.activity-item:last-child {
+    border-bottom: none;
+}
+
+.activity-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.activity-icon.activity-success {
+    background-color: rgba(2, 192, 118, 0.2);
+    color: var(--binance-success);
+}
+
+.activity-icon.activity-info {
+    background-color: rgba(78, 174, 255, 0.2);
+    color: var(--binance-info);
+}
+
+.activity-icon.activity-warning {
+    background-color: rgba(240, 185, 11, 0.2);
+    color: var(--binance-warning);
+}
+
+.activity-content h6 {
+    color: var(--binance-text);
+    font-size: 0.875rem;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+}
+
+.activity-content p {
+    color: var(--binance-text-muted);
+    font-size: 0.75rem;
+    margin-bottom: 0.25rem;
+}
+
+.activity-time {
+    color: var(--binance-text-muted);
+    font-size: 0.75rem;
+}
+
+/* DASHBOARD FILTERS */
+.dashboard-filters {
+    background-color: var(--binance-hover);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.dashboard-filters-title {
+    color: var(--binance-text);
+    font-size: 1.125rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.dashboard-filter-group {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    align-items: end;
+}
+
+/* EXPORT BUTTONS */
+.export-buttons {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.btn-export {
+    background-color: var(--binance-dark);
+    color: var(--binance-text);
+    border: 1px solid var(--binance-border);
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.btn-export:hover {
+    background-color: var(--binance-hover);
+    border-color: var(--binance-yellow);
+    color: var(--binance-yellow);
+    text-decoration: none;
+}
+
+/* STATUS INDICATORS */
+.status-indicator {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 0.5rem;
+}
+
+.status-indicator.online {
+    background-color: var(--binance-success);
+}
+
+.status-indicator.offline {
+    background-color: var(--binance-danger);
+}
+
+.status-indicator.pending {
+    background-color: var(--binance-warning);
+}
+
+/* ===== ARN CHAT ASSISTANT STYLES ===== */
+
+.arn-chat-container {
+    display: flex;
+    flex-direction: column;
+    height: 600px;
+    background-color: var(--binance-dark-light);
+    border: 1px solid var(--binance-border);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: var(--shadow-light);
+    margin-right: 320px; /* Space for sidebar */
+}
+
+.arn-chat-messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1.5rem;
+    background-color: var(--binance-dark);
+}
+
+.arn-message {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    animation: messageSlideIn 0.3s ease;
+}
+
+.arn-message.user-message {
+    flex-direction: row-reverse;
+}
+
+.message-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 1.2rem;
+}
+
+.bot-message .message-avatar {
+    background: linear-gradient(135deg, var(--binance-yellow) 0%, #D4A00A 100%);
+    color: var(--binance-dark);
+}
+
+.user-message .message-avatar {
+    background-color: var(--binance-info);
+    color: white;
+}
+
+.message-content {
+    max-width: 70%;
+    background-color: var(--binance-dark-light);
+    border-radius: 12px;
+    padding: 1rem 1.5rem;
+    border: 1px solid var(--binance-border);
+}
+
+.user-message .message-content {
+    background-color: var(--binance-yellow);
+    color: var(--binance-dark);
+}
+
+.message-text {
+    color: var(--binance-text);
+    line-height: 1.5;
+}
+
+.user-message .message-text {
+    color: var(--binance-dark);
+}
+
+.message-text ul {
+    margin: 0.5rem 0;
+    padding-left: 1.5rem;
+}
+
+.message-text strong {
+    color: var(--binance-yellow);
+}
+
+.user-message .message-text strong {
+    color: var(--binance-dark);
+}
+
+.message-suggestions {
+    margin-top: 1rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.suggestion-btn {
+    background-color: var(--binance-hover);
+    color: var(--binance-text);
+    border: 1px solid var(--binance-border);
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.suggestion-btn:hover {
+    background-color: var(--binance-yellow);
+    color: var(--binance-dark);
+    border-color: var(--binance-yellow);
+}
+
+.message-timestamp {
+    font-size: 0.75rem;
+    color: var(--binance-text-muted);
+    margin-top: 0.5rem;
+    text-align: right;
+}
+
+/* CHAT INPUT */
+.arn-chat-input {
+    background-color: var(--binance-hover);
+    border-top: 1px solid var(--binance-border);
+    padding: 1rem 1.5rem;
+}
+
+.chat-input-container {
+    display: flex;
+    gap: 0.5rem;
+    align-items: stretch;
+}
+
+.chat-input-field {
+    flex: 1;
+    background-color: var(--binance-dark);
+    border: 1px solid var(--binance-border);
+    border-radius: 25px;
+    padding: 0.75rem 1.25rem;
+    color: var(--binance-text);
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.chat-input-field:focus {
+    outline: none;
+    border-color: var(--binance-yellow);
+    box-shadow: 0 0 0 2px rgba(240, 185, 11, 0.2);
+}
+
+.chat-input-field::placeholder {
+    color: var(--binance-text-muted);
+}
+
+.chat-send-btn {
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(135deg, var(--binance-yellow) 0%, #D4A00A 100%);
+    color: var(--binance-dark);
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+}
+
+.chat-send-btn:hover {
+    background: linear-gradient(135deg, #D4A00A 0%, #B8900A 100%);
+    transform: scale(1.05);
+}
+
+.chat-send-btn:disabled {
+    background-color: var(--binance-border);
+    color: var(--binance-text-muted);
+    transform: none;
+    cursor: not-allowed;
+}
+
+.chat-quick-actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.75rem;
+    justify-content: center;
+}
+
+.quick-action-btn {
+    background-color: var(--binance-dark);
+    color: var(--binance-text-muted);
+    border: 1px solid var(--binance-border);
+    width: 35px;
+    height: 35px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.quick-action-btn:hover {
+    background-color: var(--binance-hover);
+    color: var(--binance-yellow);
+    border-color: var(--binance-yellow);
+}
+
+/* CHAT SIDEBAR */
+.arn-chat-sidebar {
+    position: fixed;
+    top: 80px; /* Depois do navbar */
+    right: 2rem;
+    width: 300px;
+    height: calc(100vh - 120px);
+    overflow-y: auto;
+    z-index: 100;
+}
+
+.status-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.5rem 0;
+    font-size: 0.875rem;
+    color: var(--binance-text);
+}
+
+.data-stats {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.data-stat-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.5rem;
+    background-color: var(--binance-hover);
+    border-radius: 6px;
+    font-size: 0.875rem;
+    color: var(--binance-text);
+}
+
+.data-stat-item i {
+    color: var(--binance-yellow);
+}
+
+.example-questions {
+    font-size: 0.875rem;
+}
+
+.example-category {
+    margin-bottom: 1rem;
+}
+
+.example-category h6 {
+    color: var(--binance-text) !important;
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+}
+
+.example-category ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.example-category li {
+    color: var(--binance-text-muted);
+    padding: 0.25rem 0;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.example-category li:hover {
+    color: var(--binance-yellow);
+}
+
+/* LOADING ANIMATION */
+.arn-loading {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(11, 14, 17, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.loading-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    color: var(--binance-text);
+}
+
+.loading-spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid var(--binance-border);
+    border-top-color: var(--binance-yellow);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+@keyframes messageSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* CHART CONTAINERS IN CHAT */
+.chat-chart-container {
+    background-color: var(--binance-dark);
+    border-radius: 8px;
+    padding: 1rem;
+    margin: 1rem 0;
+    height: 300px;
+    position: relative;
+}
+
+.chat-chart-title {
+    color: var(--binance-text);
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+/* RESPONSIVO CHAT */
+@media (max-width: 1200px) {
+    .arn-chat-container {
+        margin-right: 0;
+    }
+    
+    .arn-chat-sidebar {
+        display: none;
+    }
+}
+
+@media (max-width: 768px) {
+    .arn-chat-container {
+        height: calc(100vh - 160px);
+    }
+    
+    .message-content {
+        max-width: 85%;
+    }
+    
+    .chat-input-field {
+        font-size: 16px; /* Prevent zoom on iOS */
+    }
+    
+    .message-suggestions {
+        flex-direction: column;
+    }
+    
+    .suggestion-btn {
+        width: 100%;
+        text-align: left;
+    }
+}
+
+/* RESPONSIVO DASHBOARD */
+@media (max-width: 768px) {
+    .dashboard-kpis {
+        grid-template-columns: 1fr;
+    }
+    
+    .dashboard-widgets {
+        grid-template-columns: 1fr;
+    }
+    
+    .kpi-card {
+        padding: 1.5rem;
+    }
+    
+    .kpi-value {
+        font-size: 2rem;
+    }
+    
+    .dashboard-chart-container {
+        height: 250px;
+    }
+    
+    .quick-actions {
+        flex-direction: column;
+    }
+    
+    .dashboard-filter-group {
+        grid-template-columns: 1fr;
+    }
+    
+    .export-buttons {
+        justify-content: center;
+    }
+}

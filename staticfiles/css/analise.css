@@ -1,0 +1,362 @@
+/* ===============================
+   ANÁLISE CSS
+   =============================== */
+
+/* CONTAINER PRINCIPAL */
+.analise-container {
+    max-width: 100%;
+}
+
+/* HEADER DAS ANÁLISES */
+.analise-header {
+    background: linear-gradient(135deg, var(--binance-info) 0%, #3E9CDB 100%);
+    color: white;
+    border-radius: 12px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: var(--shadow-dark);
+}
+
+.analise-title {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    color: white !important;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.analise-subtitle {
+    opacity: 0.9;
+    font-size: 1rem;
+    margin-bottom: 0;
+}
+
+.analise-controls {
+    min-width: 250px;
+}
+
+.year-selector .form-group {
+    margin-bottom: 0;
+}
+
+.year-selector .form-label {
+    color: white;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+}
+
+.year-selector .form-select-questionario {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.3);
+    color: white;
+    backdrop-filter: blur(10px);
+}
+
+.year-selector .form-select-questionario:focus {
+    background-color: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.5);
+    color: white;
+}
+
+.year-selector .form-select-questionario option {
+    background-color: var(--binance-dark);
+    color: var(--binance-text);
+}
+
+/* ESTATÍSTICAS DAS ANÁLISES */
+.analise-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.analise-stat-card {
+    background-color: var(--binance-dark-light);
+    border: 1px solid var(--binance-border);
+    border-radius: 12px;
+    padding: 2rem;
+    text-align: center;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.analise-stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--binance-yellow), var(--binance-info));
+}
+
+.analise-stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-dark);
+}
+
+.analise-stat-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    color: var(--binance-yellow);
+}
+
+.analise-stat-value {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--binance-text);
+    margin-bottom: 0.5rem;
+    line-height: 1;
+}
+
+.analise-stat-label {
+    color: var(--binance-text-muted);
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 500;
+}
+
+.analise-stat-change {
+    margin-top: 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.analise-stat-change.positive {
+    color: var(--binance-success);
+}
+
+.analise-stat-change.negative {
+    color: var(--binance-danger);
+}
+
+.analise-stat-change.neutral {
+    color: var(--binance-text-muted);
+}
+
+/* GRÁFICOS DAS ANÁLISES */
+.analise-charts {
+    margin-bottom: 2rem;
+}
+
+.chart-container {
+    position: relative;
+    height: 400px;
+    background-color: var(--binance-dark);
+    border-radius: 8px;
+    padding: 1rem;
+}
+
+.chart-title {
+    color: var(--binance-text);
+    font-size: 1.125rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+.chart-legend {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.chart-legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    color: var(--binance-text);
+}
+
+.chart-legend-color {
+    width: 16px;
+    height: 16px;
+    border-radius: 2px;
+}
+
+/* TABELAS DAS ANÁLISES */
+.analise-data .platform-card {
+    margin-bottom: 0;
+}
+
+.analise-table {
+    width: 100%;
+    background-color: transparent;
+}
+
+.analise-table th {
+    background: linear-gradient(135deg, var(--binance-info) 0%, #3E9CDB 100%);
+    color: white;
+    font-weight: 600;
+    border: none;
+    padding: 1rem;
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.analise-table td {
+    padding: 0.75rem 1rem;
+    vertical-align: middle;
+    border-color: var(--binance-border);
+    color: var(--binance-text);
+    background-color: transparent;
+}
+
+.analise-table tbody tr {
+    transition: all 0.3s ease;
+    border-bottom: 1px solid var(--binance-border);
+}
+
+.analise-table tbody tr:hover {
+    background-color: var(--binance-hover);
+}
+
+.analise-table tbody tr.table-primary {
+    background-color: rgba(78, 174, 255, 0.1);
+    border-color: var(--binance-info);
+}
+
+.analise-table tbody tr.table-primary:hover {
+    background-color: rgba(78, 174, 255, 0.2);
+}
+
+/* BADGES E INDICADORES */
+.badge-analise {
+    padding: 0.5rem 1rem;
+    border-radius: 50px;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.badge-analise-growth {
+    background-color: var(--binance-success);
+    color: white;
+}
+
+.badge-analise-decline {
+    background-color: var(--binance-danger);
+    color: white;
+}
+
+.badge-analise-stable {
+    background-color: var(--binance-warning);
+    color: var(--binance-dark);
+}
+
+/* FILTROS DE ANÁLISE */
+.analise-filters {
+    background-color: var(--binance-hover);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.analise-filters-title {
+    color: var(--binance-text);
+    font-size: 1.125rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.analise-filter-group {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    align-items: end;
+}
+
+/* COMPARAÇÕES */
+.comparison-section {
+    background-color: var(--binance-dark-light);
+    border-radius: 12px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    border: 1px solid var(--binance-border);
+}
+
+.comparison-title {
+    color: var(--binance-text);
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+}
+
+.comparison-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+}
+
+.comparison-item {
+    text-align: center;
+}
+
+.comparison-value {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.comparison-label {
+    color: var(--binance-text-muted);
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.comparison-vs {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--binance-text-muted);
+    font-size: 1.125rem;
+    font-weight: 600;
+}
+
+/* RESPONSIVO */
+@media (max-width: 768px) {
+    .analise-header {
+        padding: 1.5rem;
+    }
+    
+    .analise-title {
+        font-size: 1.5rem;
+    }
+    
+    .analise-controls {
+        min-width: auto;
+        margin-top: 1rem;
+    }
+    
+    .analise-stats {
+        grid-template-columns: 1fr;
+    }
+    
+    .chart-container {
+        height: 300px;
+    }
+    
+    .analise-filter-group {
+        grid-template-columns: 1fr;
+    }
+    
+    .comparison-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .analise-table {
+        font-size: 0.875rem;
+    }
+    
+    .analise-table th,
+    .analise-table td {
+        padding: 0.5rem;
+    }
+}

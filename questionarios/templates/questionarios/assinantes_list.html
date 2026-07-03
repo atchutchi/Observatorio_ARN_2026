@@ -1,0 +1,30 @@
+{% extends "questionarios/partials/base_list.html" %}
+
+{% block indicator_title %}Indicadores de Assinantes{% endblock %}
+{% block indicator_subtitle %}Gestão e controle de dados de assinantes por operadora{% endblock %}
+
+{% block create_url %}{% url 'questionarios:assinantes_create' %}{% endblock %}
+
+{% block table_headers %}
+<th>Pré-pago</th>
+<th>Pós-pago</th>
+<th>Fixo</th>
+<th>Internet Móvel</th>
+<th>Internet Fixo</th>
+{% endblock %}
+
+{% block table_row_data %}
+<td>{{ indicador.assinantes_pre_pago|default:"-" }}</td>
+<td>{{ indicador.assinantes_pos_pago|default:"-" }}</td>
+<td>{{ indicador.assinantes_fixo|default:"-" }}</td>
+<td>{{ indicador.assinantes_internet_movel|default:"-" }}</td>
+<td>{{ indicador.assinantes_internet_fixa|default:"-" }}</td>
+{% endblock %}
+
+{% block detail_url %}{% url 'questionarios:assinantes_detail' indicador.pk %}{% endblock %}
+{% block update_url %}{% url 'questionarios:assinantes_update' indicador.pk %}{% endblock %}
+{% block delete_url %}{% url 'questionarios:assinantes_delete' indicador.pk %}{% endblock %}
+
+{% block table_colspan %}9{% endblock %}
+
+{% block resumo_url %}{% url 'questionarios:assinantes_resumo' 2024 %}{% endblock %} 
