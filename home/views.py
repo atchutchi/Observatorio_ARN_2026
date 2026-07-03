@@ -7,6 +7,7 @@ from django.views import View
 import json
 from django.contrib.auth.decorators import login_required
 from django.db.models.functions import Coalesce
+from django.core.cache import cache
 from decimal import Decimal
 
 from .models import Operadora, DadoEstatistico, TipoServico, Notification, UserActivity
@@ -25,67 +26,73 @@ chatbot_instance = Chatbot()
 def get_latest_year(model):
     return model.objects.aggregate(latest_year=Max('ano')).get('latest_year')
 
+def _get_home_market_context():
+    """Carrega e guarda em cache os números pesados da tela inicial.
+
+    O login redireciona para ``/``; sem cache, cada entrada executava várias
+    agregações de KPIs antes de renderizar o dashboard, dando a sensação de
+    que o login estava lento. O cache é curto para manter os dados recentes e
+    remover esse custo do caminho crítico de autenticação.
+    """
+
+    cache_key = 'home_market_context_v1'
+    cached_context = cache.get(cache_key)
+    if cached_context is not None:
+        return cached_context
+
+    market_context = {
+        'total_assinantes': 0,
+        'total_receitas': Decimal('0'),
+        'total_investimento': Decimal('0'),
+        'num_operadoras': 0,
+    }
+
+    try:
+        latest_year = get_latest_year(AssinantesIndicador)
+        if latest_year:
+            assinantes_data = AssinantesIndicador.objects.filter(ano=latest_year)
+            assinantes_expr = F('assinantes_pre_pago') + F('assinantes_pos_pago')
+            market_context['total_assinantes'] = assinantes_data.aggregate(
+                total=Sum(assinantes_expr)
+            )['total'] or 0
+            market_context['assinantes_por_operadora'] = [
+                {
+                    'operadora': item['operadora'],
+                    'assinantes': item['total_assinantes'],
+                }
+                for item in assinantes_data.values('operadora').annotate(
+                    total_assinantes=Sum(assinantes_expr)
+                )
+            ]
+            market_context['latest_year'] = latest_year
+            market_context['num_operadoras'] = assinantes_data.values('operadora').distinct().count()
+
+        latest_year_receitas = get_latest_year(ReceitasIndicador)
+        if latest_year_receitas:
+            market_context['total_receitas'] = ReceitasIndicador.objects.filter(
+                ano=latest_year_receitas
+            ).aggregate(total=Sum('receita_total'))['total'] or Decimal('0')
+
+        latest_year_invest = get_latest_year(InvestimentoIndicador)
+        if latest_year_invest:
+            market_context['total_investimento'] = InvestimentoIndicador.objects.filter(
+                ano=latest_year_invest
+            ).aggregate(total=Sum('investimento_total'))['total'] or Decimal('0')
+    except Exception as e:
+        logger.error(f"Erro ao carregar dados da home: {e}")
+
+    cache.set(cache_key, market_context, 60 * 5)
+    return market_context
+
+
 def index(request):
     """View principal da home page com estatísticas do mercado."""
     context = {
         'title': 'Observatório do Mercado de Telecomunicações',
-        'page': 'home'
+        'page': 'home',
+        **_get_home_market_context(),
     }
-    
-    try:
-        # Obter dados de assinantes
-        latest_year = get_latest_year(AssinantesIndicador)
-        if latest_year:
-            assinantes_data = AssinantesIndicador.objects.filter(ano=latest_year)
-            total_assinantes = assinantes_data.aggregate(
-                total=Sum(F('assinantes_pre_pago') + F('assinantes_pos_pago'))
-            )['total'] or 0
-            context['total_assinantes'] = total_assinantes
-            
-            # Preparar dados para gráficos - agrupar por operadora
-            assinantes_agregados = assinantes_data.values('operadora').annotate(
-                total_assinantes=Sum(F('assinantes_pre_pago') + F('assinantes_pos_pago'))
-            )
-            context['assinantes_por_operadora'] = [
-                {
-                    'operadora': item['operadora'],
-                    'assinantes': item['total_assinantes']
-                }
-                for item in assinantes_agregados
-            ]
-        
-        # Obter dados de receitas
-        latest_year_receitas = get_latest_year(ReceitasIndicador)
-        if latest_year_receitas:
-            receitas_data = ReceitasIndicador.objects.filter(ano=latest_year_receitas)
-            total_receitas = receitas_data.aggregate(
-                total=Sum('receita_total')
-            )['total'] or Decimal('0')
-            context['total_receitas'] = total_receitas
-        
-        # Obter dados de investimento
-        latest_year_invest = get_latest_year(InvestimentoIndicador)
-        if latest_year_invest:
-            investimento_data = InvestimentoIndicador.objects.filter(ano=latest_year_invest)
-            total_investimento = investimento_data.aggregate(
-                total=Sum('investimento_total')
-            )['total'] or Decimal('0')
-            context['total_investimento'] = total_investimento
-        
-        # Estatísticas complementares
-        if latest_year:
-            context['latest_year'] = latest_year
-            context['num_operadoras'] = assinantes_data.count() if 'assinantes_data' in locals() else 0
-        
-    except Exception as e:
-        logger.error(f"Erro ao carregar dados da home: {e}")
-        context.update({
-            'total_assinantes': 0,
-            'total_receitas': Decimal('0'),
-            'total_investimento': Decimal('0'),
-            'num_operadoras': 0
-        })
-    
+
     # Usar template diferente se usuário estiver autenticado
     template = 'home/dashboard.html' if request.user.is_authenticated else 'home/index.html'
     return render(request, template, context)
