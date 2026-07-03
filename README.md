@@ -78,7 +78,7 @@ python manage.py runserver
 Se esqueceu a senha do administrador, pode criar/atualizar um superusuário sem apagar dados:
 
 ```bash
-ADMIN_USERNAME=admin ADMIN_EMAIL=idrissa.a.so@arn.gw ADMIN_PASSWORD='troque-esta-senha' \
+ADMIN_USERNAME=admin ADMIN_EMAIL=admin@arn.gw ADMIN_PASSWORD='troque-esta-senha' \
   python manage.py create_admin_user --reset-password
 ```
 
