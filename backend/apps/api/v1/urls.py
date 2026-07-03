@@ -2,6 +2,7 @@ from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
+from apps.accounts.serializers import EmailOrUsernameTokenObtainPairSerializer
 from apps.accounts.views import UserViewSet
 from apps.operators.views import OperatorTypeViewSet, OperatorViewSet
 from apps.indicators.views import IndicatorCategoryViewSet, IndicatorViewSet, PeriodViewSet
@@ -10,6 +11,11 @@ from apps.data_entry.views import (
 )
 from apps.reports.views import ReportViewSet
 from apps.ai_assistant.views import AssistantQueryView, ChatSessionViewSet
+
+
+class EmailOrUsernameTokenObtainPairView(TokenObtainPairView):
+    serializer_class = EmailOrUsernameTokenObtainPairSerializer
+
 
 router = DefaultRouter()
 router.register(r'users', UserViewSet, basename='user')
@@ -26,7 +32,7 @@ router.register(r'reports', ReportViewSet, basename='report')
 router.register(r'assistant/sessions', ChatSessionViewSet, basename='chat-session')
 
 urlpatterns = [
-    path('auth/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('auth/token/', EmailOrUsernameTokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('auth/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('auth/profile/', UserViewSet.as_view({'get': 'profile', 'patch': 'profile'}), name='profile'),
     path('dashboard/', include('apps.dashboards.urls')),

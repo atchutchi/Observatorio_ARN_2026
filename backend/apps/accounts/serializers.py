@@ -1,7 +1,29 @@
-from rest_framework import serializers
 from django.contrib.auth import get_user_model
+from rest_framework import serializers
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 User = get_user_model()
+
+
+class EmailOrUsernameTokenObtainPairSerializer(TokenObtainPairSerializer):
+    """Permite login com username ou email no mesmo campo do formulário.
+
+    O frontend envia sempre o valor no campo ``username``. O Simple JWT padrão
+    autentica apenas pelo username do modelo, por isso emails como
+    ``admin@abiptom.gw`` eram rejeitados mesmo quando pertenciam ao admin.
+    """
+
+    def validate(self, attrs):
+        login_value = attrs.get(self.username_field)
+        if login_value and '@' in login_value:
+            user = (
+                User.objects.filter(email__iexact=login_value.strip())
+                .only('username')
+                .first()
+            )
+            if user:
+                attrs[self.username_field] = user.get_username()
+        return super().validate(attrs)
 
 
 class UserSerializer(serializers.ModelSerializer):
