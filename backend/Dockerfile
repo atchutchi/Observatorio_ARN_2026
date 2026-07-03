@@ -22,6 +22,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 
 RUN chmod +x entrypoint.sh
+RUN DJANGO_SETTINGS_MODULE=config.settings.production python manage.py collectstatic --noinput
 
 EXPOSE 8000
 

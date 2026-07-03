@@ -8,14 +8,17 @@ is_true() {
     esac
 }
 
-echo "Waiting for PostgreSQL..."
-python - <<'PY'
+if is_true "${WAIT_FOR_POSTGRES:-true}"; then
+    echo "Waiting for PostgreSQL..."
+    python - <<'PY'
 import os
 import time
 
 import psycopg2
 
 database_url = os.environ.get('DATABASE_URL')
+timeout = int(os.environ.get('POSTGRES_WAIT_TIMEOUT', '60'))
+started_at = time.time()
 
 while True:
     try:
@@ -31,16 +34,29 @@ while True:
             )
         conn.close()
         break
-    except psycopg2.Error:
+    except psycopg2.Error as exc:
+        if time.time() - started_at >= timeout:
+            raise SystemExit(f'PostgreSQL not ready after {timeout}s: {exc}')
         time.sleep(1)
 PY
-echo "PostgreSQL is ready."
+    echo "PostgreSQL is ready."
+else
+    echo "Skipping PostgreSQL wait. Set WAIT_FOR_POSTGRES=true to enable it."
+fi
 
-echo "Running migrations..."
-python manage.py migrate --noinput
+if is_true "${RUN_MIGRATIONS_ON_STARTUP:-true}"; then
+    echo "Running migrations..."
+    python manage.py migrate --noinput
+else
+    echo "Skipping migrations. Set RUN_MIGRATIONS_ON_STARTUP=true to run them."
+fi
 
-echo "Collecting static files..."
-python manage.py collectstatic --noinput
+if is_true "${RUN_COLLECTSTATIC_ON_STARTUP:-false}"; then
+    echo "Collecting static files..."
+    python manage.py collectstatic --noinput
+else
+    echo "Skipping collectstatic at startup. Static files should be collected at build time."
+fi
 
 echo "Ensuring superuser if configured..."
 python manage.py shell -c "
