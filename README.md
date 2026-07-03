@@ -82,6 +82,8 @@ ADMIN_USERNAME=admin ADMIN_EMAIL=admin@arn.gw ADMIN_PASSWORD='troque-esta-senha'
   python manage.py create_admin_user --reset-password
 ```
 
+Para este projeto, o email administrativo esperado é `admin@arn.gw`. Defina a senha real apenas no terminal/variáveis de ambiente e não faça commit de senhas em arquivos do repositório.
+
 Também pode usar o modo seguro interativo, que não mostra a senha no terminal:
 
 ```bash
