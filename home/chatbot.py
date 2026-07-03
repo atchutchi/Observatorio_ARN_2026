@@ -10,7 +10,7 @@ from django.db.models import Q, Sum, Avg, Max # Import aggregators
 from decimal import Decimal
 
 # Import Hugging Face client
-from huggingface_hub import InferenceApi
+from huggingface_hub import InferenceClient
 
 # Import your actual indicator models 
 # (Ensure all necessary models are imported)
@@ -139,16 +139,14 @@ class Chatbot:
             # --- Chamada à API Hugging Face --- 
             logger.info(f"Enviando para API Hugging Face. Histórico: {len(conversation_history)} mensagens.")
             try:
-                client = InferenceApi(repo_id=self.model, token=self.api_token)
+                client = InferenceClient(model=self.model, token=self.api_token)
                 formatted_prompt = self._format_history_for_mistral(conversation_history)
                 
-                api_response_raw = client(
-                    inputs=formatted_prompt,
-                    parameters={
-                        "max_new_tokens": self.max_tokens,
-                        "temperature": self.temperature,
-                        "do_sample": True,
-                    }
+                api_response_raw = client.text_generation(
+                    formatted_prompt,
+                    max_new_tokens=self.max_tokens,
+                    temperature=self.temperature,
+                    do_sample=True,
                 )
                 
                 assistant_message = self._process_mistral_response(api_response_raw)

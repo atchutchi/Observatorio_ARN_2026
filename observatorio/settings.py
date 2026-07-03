@@ -65,15 +65,20 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    # 'allauth.account.middleware.AccountMiddleware',  # Middleware do allauth - Comentado para versão 0.54.0
-    
-    # Logging middleware
-    'observatorio.utils.middleware.RequestLoggingMiddleware',  # Log de requisições
-    'observatorio.utils.middleware.DatabaseLoggingMiddleware',  # Log de operações de banco de dados
+    'allauth.account.middleware.AccountMiddleware',  # Necessário para django-allauth 65+
     
     # Platform middleware
     'observatorio.utils.middleware.PlatformAuthMiddleware',  # Autenticação obrigatória para plataforma
 ]
+
+# Logging de requisições/SQL fica desligado por padrão para não atrasar login
+# e navegação em produção. Ative com ENABLE_REQUEST_LOGGING=True quando precisar
+# diagnosticar performance.
+if os.getenv('ENABLE_REQUEST_LOGGING', 'False').lower() == 'true':
+    MIDDLEWARE.insert(-1, 'observatorio.utils.middleware.RequestLoggingMiddleware')
+
+if os.getenv('ENABLE_DB_LOGGING', 'False').lower() == 'true':
+    MIDDLEWARE.insert(-1, 'observatorio.utils.middleware.DatabaseLoggingMiddleware')
 
 ROOT_URLCONF = 'observatorio.urls'
 
@@ -130,9 +135,8 @@ AUTHENTICATION_BACKENDS = [
 SITE_ID = 1
 
 # Configurações do Django AllAuth
-ACCOUNT_AUTHENTICATION_METHOD = 'email'
-ACCOUNT_EMAIL_REQUIRED = True
-ACCOUNT_USERNAME_REQUIRED = False
+ACCOUNT_LOGIN_METHODS = {'email'}
+ACCOUNT_SIGNUP_FIELDS = ['email*', 'password1*', 'password2*']
 ACCOUNT_EMAIL_VERIFICATION = 'none'  # Desabilitado para desenvolvimento
 ACCOUNT_UNIQUE_EMAIL = True
 ACCOUNT_SESSION_REMEMBER = True
@@ -290,12 +294,12 @@ LOGGING = {
         },
         'observatorio': {
             'handlers': ['console', 'file'],
-            'level': 'DEBUG',
+            'level': os.getenv('OBSERVATORIO_LOG_LEVEL', 'INFO'),
             'propagate': False,
         },
         'observatorio.db': {
             'handlers': ['console', 'db_file'],
-            'level': 'DEBUG',
+            'level': 'DEBUG' if DEBUG and DETAILED_DB_LOGGING else 'INFO',
             'propagate': False,
         },
         'observatorio.migrations': {
@@ -366,7 +370,7 @@ else:
 SESSION_COOKIE_HTTPONLY = True
 SESSION_COOKIE_SAMESITE = 'Lax'
 SESSION_COOKIE_AGE = 3600  # 1 hora
-SESSION_SAVE_EVERY_REQUEST = True
+SESSION_SAVE_EVERY_REQUEST = os.getenv('SESSION_SAVE_EVERY_REQUEST', 'False').lower() == 'true'
 
 # CSRF Protection
 CSRF_COOKIE_HTTPONLY = True
