@@ -217,6 +217,9 @@ GEMINI_MODEL = os.environ.get('GEMINI_MODEL', 'gemini-2.0-flash')
 # Reference data
 POPULATION_REFERENCE = int(os.environ.get('POPULATION_REFERENCE', 2070000))
 
+# Dashboard cache
+DASHBOARD_CACHE_TIMEOUT = int(os.environ.get('DASHBOARD_CACHE_TIMEOUT', 300))
+
 # File upload
 FILE_UPLOAD_MAX_MEMORY_SIZE = 52428800  # 50MB
 DATA_UPLOAD_MAX_MEMORY_SIZE = 52428800

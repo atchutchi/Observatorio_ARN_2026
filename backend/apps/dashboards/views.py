@@ -1,4 +1,7 @@
 from datetime import datetime
+
+from django.conf import settings
+from django.core.cache import cache
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
@@ -7,6 +10,31 @@ from rest_framework import status
 from apps.indicators.models import IndicatorCategory, Indicator
 from apps.indicators.serializers import IndicatorCategorySerializer
 from .services import DashboardService
+
+
+DASHBOARD_CACHE_TIMEOUT = int(getattr(settings, 'DASHBOARD_CACHE_TIMEOUT', 300))
+
+
+def _cache_part(value):
+    if value is None or value == '':
+        return 'all'
+    return str(value).strip().lower()
+
+
+def _dashboard_cache_key(namespace, *parts):
+    safe_parts = ':'.join(_cache_part(part) for part in parts)
+    return f'dashboard:v1:{namespace}:{safe_parts}'
+
+
+def _get_cached_dashboard_data(namespace, parts, factory):
+    cache_key = _dashboard_cache_key(namespace, *parts)
+    cached_data = cache.get(cache_key)
+    if cached_data is not None:
+        return cached_data
+
+    data = factory()
+    cache.set(cache_key, data, DASHBOARD_CACHE_TIMEOUT)
+    return data
 
 
 class DashboardSummaryView(APIView):
@@ -18,7 +46,11 @@ class DashboardSummaryView(APIView):
         quarter = int(quarter) if quarter else None
         operator = request.query_params.get('operator')
 
-        data = DashboardService.get_summary(year, quarter, operator)
+        data = _get_cached_dashboard_data(
+            'summary',
+            (year, quarter, operator),
+            lambda: DashboardService.get_summary(year, quarter, operator),
+        )
         return Response(data)
 
 
@@ -26,7 +58,11 @@ class DashboardLatestYearView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        year = DashboardService.get_latest_data_year() or datetime.now().year
+        year = _get_cached_dashboard_data(
+            'latest_year',
+            (),
+            lambda: DashboardService.get_latest_data_year() or datetime.now().year,
+        )
         return Response({'year': year})
 
 
@@ -76,7 +112,11 @@ class DashboardMarketShareView(APIView):
         market = request.query_params.get('market', 'mobile')
         operator = request.query_params.get('operator')
 
-        data = DashboardService.get_market_share(year, quarter, market, operator)
+        data = _get_cached_dashboard_data(
+            'market_share',
+            (year, quarter, market, operator),
+            lambda: DashboardService.get_market_share(year, quarter, market, operator),
+        )
         return Response({'market': market, 'year': year, 'data': data})
 
 
@@ -90,19 +130,25 @@ class DashboardTrendsView(APIView):
         end_year = int(request.query_params.get('end_year', datetime.now().year))
         operator = request.query_params.get('operator')
 
-        data = DashboardService.get_trends(category, indicator, start_year, end_year, operator)
-
-        operators = DashboardService.get_applicable_operators(category, operator)
-        operator_info = [
-            {'code': op.code, 'name': op.name, 'color': op.brand_color}
-            for op in operators
-        ]
+        payload = _get_cached_dashboard_data(
+            'trends',
+            (category, indicator, start_year, end_year, operator),
+            lambda: {
+                'data': DashboardService.get_trends(
+                    category, indicator, start_year, end_year, operator,
+                ),
+                'operators': [
+                    {'code': op.code, 'name': op.name, 'color': op.brand_color}
+                    for op in DashboardService.get_applicable_operators(category, operator)
+                ],
+            },
+        )
 
         return Response({
             'category': category,
             'indicator': indicator,
-            'operators': operator_info,
-            'data': data,
+            'operators': payload['operators'],
+            'data': payload['data'],
         })
 
 
@@ -173,7 +219,11 @@ class DashboardHHIView(APIView):
         year = int(request.query_params.get('year', datetime.now().year))
         market = request.query_params.get('market', 'mobile')
 
-        data = DashboardService.get_hhi(year, market)
+        data = _get_cached_dashboard_data(
+            'hhi',
+            (year, market),
+            lambda: DashboardService.get_hhi(year, market),
+        )
         return Response(data)
 
 

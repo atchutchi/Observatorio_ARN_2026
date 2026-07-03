@@ -18,7 +18,7 @@ type AuthState = {
 
 export const useAuthStore = create<AuthState>()(
   persist(
-    (set, get) => ({
+    (set) => ({
       user: null,
       tokens: null,
       isLoading: false,
@@ -36,8 +36,10 @@ export const useAuthStore = create<AuthState>()(
             access: response.data.access,
             refresh: response.data.refresh,
           }
-          set({ tokens })
-          await get().fetchProfile()
+          set({ tokens, user: null })
+          // Não bloquear a entrada à espera do perfil. O layout autenticado
+          // carrega o perfil em background, deixando o utilizador entrar assim
+          // que o token é emitido.
         } finally {
           set({ isLoading: false })
         }

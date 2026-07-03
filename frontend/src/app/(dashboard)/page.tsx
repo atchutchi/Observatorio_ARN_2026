@@ -69,8 +69,10 @@ const DashboardPage = () => {
       const params: Record<string, number> = { year }
       if (quarter) params.quarter = quarter
 
-      const [sumRes, trendRes, shareRes, revRes, dataRes, fixedRes, hhiRes] = await Promise.all([
-        api.get('/dashboard/summary/', { params }),
+      const sumRes = await api.get('/dashboard/summary/', { params })
+      setSummary(sumRes.data)
+
+      const [trendRes, shareRes, revRes, dataRes, fixedRes, hhiRes] = await Promise.all([
         api.get('/dashboard/trends/', { params: { category: 'estacoes_moveis', start_year: 2018, end_year: year } }),
         api.get('/dashboard/market-share/', { params: { ...params, market: 'mobile' } }),
         api.get('/dashboard/trends/', { params: { category: 'receitas', indicator: '8', start_year: 2018, end_year: year } }),
@@ -79,7 +81,6 @@ const DashboardPage = () => {
         api.get('/dashboard/hhi/', { params: { year, market: 'mobile' } }),
       ])
 
-      setSummary(sumRes.data)
       setTrends(trendRes.data.data || [])
       setTrendOperators(trendRes.data.operators || [])
       setMarketShare(shareRes.data.data || [])
