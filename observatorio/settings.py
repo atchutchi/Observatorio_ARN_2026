@@ -67,13 +67,18 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'allauth.account.middleware.AccountMiddleware',  # Necessário para django-allauth 65+
     
-    # Logging middleware
-    'observatorio.utils.middleware.RequestLoggingMiddleware',  # Log de requisições
-    'observatorio.utils.middleware.DatabaseLoggingMiddleware',  # Log de operações de banco de dados
-    
     # Platform middleware
     'observatorio.utils.middleware.PlatformAuthMiddleware',  # Autenticação obrigatória para plataforma
 ]
+
+# Logging de requisições/SQL fica desligado por padrão para não atrasar login
+# e navegação em produção. Ative com ENABLE_REQUEST_LOGGING=True quando precisar
+# diagnosticar performance.
+if os.getenv('ENABLE_REQUEST_LOGGING', 'False').lower() == 'true':
+    MIDDLEWARE.insert(-1, 'observatorio.utils.middleware.RequestLoggingMiddleware')
+
+if os.getenv('ENABLE_DB_LOGGING', 'False').lower() == 'true':
+    MIDDLEWARE.insert(-1, 'observatorio.utils.middleware.DatabaseLoggingMiddleware')
 
 ROOT_URLCONF = 'observatorio.urls'
 
@@ -289,12 +294,12 @@ LOGGING = {
         },
         'observatorio': {
             'handlers': ['console', 'file'],
-            'level': 'DEBUG',
+            'level': os.getenv('OBSERVATORIO_LOG_LEVEL', 'INFO'),
             'propagate': False,
         },
         'observatorio.db': {
             'handlers': ['console', 'db_file'],
-            'level': 'DEBUG',
+            'level': 'DEBUG' if DEBUG and DETAILED_DB_LOGGING else 'INFO',
             'propagate': False,
         },
         'observatorio.migrations': {
@@ -365,7 +370,7 @@ else:
 SESSION_COOKIE_HTTPONLY = True
 SESSION_COOKIE_SAMESITE = 'Lax'
 SESSION_COOKIE_AGE = 3600  # 1 hora
-SESSION_SAVE_EVERY_REQUEST = True
+SESSION_SAVE_EVERY_REQUEST = os.getenv('SESSION_SAVE_EVERY_REQUEST', 'False').lower() == 'true'
 
 # CSRF Protection
 CSRF_COOKIE_HTTPONLY = True

@@ -73,6 +73,24 @@ python manage.py createsuperuser
 python manage.py runserver
 ```
 
+### 🔑 Criar ou resetar administrador
+
+Se esqueceu a senha do administrador, pode criar/atualizar um superusuário sem apagar dados:
+
+```bash
+ADMIN_USERNAME=admin ADMIN_EMAIL=idrissa.a.so@arn.gw ADMIN_PASSWORD='troque-esta-senha' \
+  python manage.py create_admin_user --reset-password
+```
+
+Também pode usar o modo seguro interativo, que não mostra a senha no terminal:
+
+```bash
+python manage.py create_admin_user --interactive --reset-password
+```
+
+Depois entre em `/accounts/login/` com o email configurado ou em `/admin/` com o username.
+
+
 **Acesse:** http://127.0.0.1:8000
 
 📖 **Documentação completa:** [QUICKSTART.md](QUICKSTART.md) | [SETUP.md](SETUP.md)
