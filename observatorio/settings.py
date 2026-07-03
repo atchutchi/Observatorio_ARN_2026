@@ -65,7 +65,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    # 'allauth.account.middleware.AccountMiddleware',  # Middleware do allauth - Comentado para versão 0.54.0
+    'allauth.account.middleware.AccountMiddleware',  # Necessário para django-allauth 65+
     
     # Logging middleware
     'observatorio.utils.middleware.RequestLoggingMiddleware',  # Log de requisições
@@ -130,9 +130,8 @@ AUTHENTICATION_BACKENDS = [
 SITE_ID = 1
 
 # Configurações do Django AllAuth
-ACCOUNT_AUTHENTICATION_METHOD = 'email'
-ACCOUNT_EMAIL_REQUIRED = True
-ACCOUNT_USERNAME_REQUIRED = False
+ACCOUNT_LOGIN_METHODS = {'email'}
+ACCOUNT_SIGNUP_FIELDS = ['email*', 'password1*', 'password2*']
 ACCOUNT_EMAIL_VERIFICATION = 'none'  # Desabilitado para desenvolvimento
 ACCOUNT_UNIQUE_EMAIL = True
 ACCOUNT_SESSION_REMEMBER = True
