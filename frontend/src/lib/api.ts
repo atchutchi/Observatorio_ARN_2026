@@ -12,15 +12,23 @@ const getDefaultApiBaseUrl = () => {
     return 'http://localhost:8000/api/v1'
   }
 
-  return '/_/backend/api/v1'
+  return 'https://observatorio-arn-backend.onrender.com/api/v1'
 }
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || getDefaultApiBaseUrl()
+const configuredApiBaseUrl = process.env.NEXT_PUBLIC_API_URL
+const API_BASE_URL = (
+  configuredApiBaseUrl && !configuredApiBaseUrl.startsWith('/_/backend')
+    ? configuredApiBaseUrl
+    : getDefaultApiBaseUrl()
+).replace(/\/$/, '')
 type RetriableRequestConfig = InternalAxiosRequestConfig & { _retry?: boolean }
 let refreshRequest: Promise<AuthTokens> | null = null
 
 const api = axios.create({
   baseURL: API_BASE_URL,
+  // O backend Render gratuito pode demorar a acordar. Usar acesso direto ao
+  // Render e um timeout explícito evita que o proxy/frontend falhe cedo demais.
+  timeout: 120000,
   headers: {
     'Content-Type': 'application/json',
   },
